@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "ddd-react": {
+      "source": "salimramirez/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ddd-react/SKILL.md",
+      "computedHash": "2af8718759eb365ddb8fa0569ff9dc4775bcc93c0f44c69fecdc63a77ce07368"
+    }
+  }
+}
