@@ -44,6 +44,11 @@
     --text-overline: var(--vk-text-overline-size);
     --text-overline--line-height: var(--vk-text-overline-lh);
 
+    /* Elevation, so a card can say shadow-elevation-1 instead of a literal. */
+    --shadow-elevation-1: var(--vk-elevation-1);
+    --shadow-elevation-2: var(--vk-elevation-2);
+    --shadow-elevation-3: var(--vk-elevation-3);
+
     /* Radii: the exact Figma scale, not shadcn's derived multiples. */
     --radius-sm: var(--vk-radius-sm);
     --radius-md: var(--vk-radius-md);
