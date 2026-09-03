@@ -29,6 +29,11 @@
        the md breakpoint without any component knowing about it. */
     --text-display: var(--vk-text-display-size);
     --text-display--line-height: var(--vk-text-display-lh);
+    /* Landing/Hero shares the display size but tightens tracking to -2%;
+       it gets its own token so a money figure and a headline stay distinct. */
+    --text-hero: var(--vk-text-display-size);
+    --text-hero--line-height: var(--vk-text-display-lh);
+    --text-hero--letter-spacing: -0.02em;
     --text-h1: var(--vk-text-h1-size);
     --text-h1--line-height: var(--vk-text-h1-lh);
     --text-h2: var(--vk-text-h2-size);
@@ -43,6 +48,9 @@
     --text-caption--line-height: var(--vk-text-caption-lh);
     --text-overline: var(--vk-text-overline-size);
     --text-overline--line-height: var(--vk-text-overline-lh);
+    /* +8% tracking, from App/Overline. The uppercasing stays a utility
+       (text-transform is not part of a type scale in CSS either). */
+    --text-overline--letter-spacing: 0.08em;
 
     /* Elevation, so a card can say shadow-elevation-1 instead of a literal. */
     --shadow-elevation-1: var(--vk-elevation-1);
