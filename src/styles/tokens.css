@@ -105,6 +105,14 @@
   --vk-family-app: "Plus Jakarta Sans Variable", system-ui, sans-serif;
   --vk-family-display: "Poppins", system-ui, sans-serif;
 
+  /* Font weights. Figma stores these as face names ("SemiBold"); CSS needs the
+     numeric axis, so the mapping happens here rather than in each component. */
+  --vk-weight-regular: 400;
+  --vk-weight-medium: 500;
+  --vk-weight-semibold: 600;
+  --vk-weight-bold: 700;
+  --vk-weight-extrabold: 800;
+
   /* ---- Theme: light. The .dark block below overrides only these. ---- */
   --vk-surface-base: #EFF6FD;
   --vk-surface-raised: #FFFFFF;
