@@ -19,6 +19,12 @@
     --font-display: var(--vk-family-display);
     --font-heading: var(--font-sans);
 
+    --font-weight-regular: var(--vk-weight-regular);
+    --font-weight-medium: var(--vk-weight-medium);
+    --font-weight-semibold: var(--vk-weight-semibold);
+    --font-weight-bold: var(--vk-weight-bold);
+    --font-weight-extrabold: var(--vk-weight-extrabold);
+
     /* Type ramp. Sizes come from the Density collection, so they rescale at
        the md breakpoint without any component knowing about it. */
     --text-display: var(--vk-text-display-size);
