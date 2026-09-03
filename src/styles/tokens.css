@@ -98,9 +98,13 @@
   --vk-radius-lg: 12px;
   --vk-radius-xl: 16px;
   --vk-radius-full: 9999px;
-  --vk-border-hairline: 1px;
-  --vk-border-thick: 2px;
-  --vk-border-focus: 3px;
+  /* Widths are namespaced because Figma keeps border/focus in two different
+     collections — a float in Primitives and a colour in Theme. They coexist
+     there; flattened into custom properties on one :root they collide, and the
+     later declaration silently wins. */
+  --vk-border-width-hairline: 1px;
+  --vk-border-width-thick: 2px;
+  --vk-border-width-focus: 3px;
 
   --vk-family-app: "Plus Jakarta Sans Variable", system-ui, sans-serif;
   --vk-family-display: "Poppins", system-ui, sans-serif;
@@ -112,6 +116,18 @@
   --vk-weight-semibold: 600;
   --vk-weight-bold: 700;
   --vk-weight-extrabold: 800;
+
+  /* Elevation, matching Elevation/1..3 in the Figma library. Each level stacks
+     two shadows exactly as the Figma effect style does — CSS can express that
+     directly, unlike Compose, which models one shadow per surface.
+
+     Tinted with the brand navy rather than black: pure black dirties a
+     blue-leaning surface. In dark mode prefer raising the surface
+     (surface/raised over surface/base) — a shadow barely reads on a dark
+     ground. */
+  --vk-elevation-1: 0 1px 2px rgb(9 44 76 / 0.06), 0 2px 6px rgb(9 44 76 / 0.04);
+  --vk-elevation-2: 0 2px 4px rgb(9 44 76 / 0.08), 0 6px 14px rgb(9 44 76 / 0.06);
+  --vk-elevation-3: 0 8px 16px rgb(9 44 76 / 0.10), 0 16px 32px rgb(9 44 76 / 0.12);
 
   /* ---- Theme: light. The .dark block below overrides only these. ---- */
   --vk-surface-base: #EFF6FD;
