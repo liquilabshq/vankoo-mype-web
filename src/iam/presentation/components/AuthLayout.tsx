@@ -1,0 +1,50 @@
+import type {ReactNode} from 'react';
+import {BrandPanel} from './BrandPanel';
+import {DotField} from './DotField';
+
+interface AuthLayoutProps {
+    children: ReactNode;
+}
+
+/**
+ * The shell every authentication screen sits in.
+ *
+ * Two compositions, one component, because that is what the mockups agreed on: a
+ * split on desktop with the brand panel holding the left 560px, and on narrow screens
+ * the same panel collapsed to a band across the top with the form on clean surface
+ * below.
+ *
+ * The dot field is a sibling of the card, not an ancestor, so nothing decorative ever
+ * ends up behind the text. The legal row at the bottom is deliberate too: it fills the
+ * lower third with something useful instead of more ornament.
+ */
+export function AuthLayout({children}: AuthLayoutProps) {
+    return (
+        <div className="bg-surface min-h-dvh lg:grid lg:grid-cols-[560px_1fr]">
+            <BrandPanel />
+
+            <main className="relative flex flex-col items-center justify-center px-4 py-10 lg:px-16">
+                <DotField />
+
+                {/*
+                  The card is a desktop composition only. On a 390px screen a card
+                  with margins either side wastes the width the form needs, so the
+                  mockups drop it there and let the surface itself be the card —
+                  which is also why the dot field is only visible around it on wide
+                  screens.
+                */}
+                <div className="lg:bg-surface-raised lg:shadow-elevation-2 relative w-full max-w-110 lg:rounded-xl lg:p-8">
+                    {children}
+                </div>
+
+                <footer className="text-caption text-fg-muted relative mt-10 flex items-center gap-2">
+                    <a className="hover:text-fg-secondary" href="#">Términos</a>
+                    <span aria-hidden>·</span>
+                    <a className="hover:text-fg-secondary" href="#">Privacidad</a>
+                    <span aria-hidden>·</span>
+                    <a className="text-fg-link hover:underline" href="#">¿Necesitas ayuda?</a>
+                </footer>
+            </main>
+        </div>
+    );
+}
