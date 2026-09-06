@@ -1,0 +1,80 @@
+{
+  "common": {
+    "tagline": "Tu liquidez, hoy.",
+    "signOut": "Cerrar sesión",
+    "legal": {
+      "terms": "Términos",
+      "privacy": "Privacidad",
+      "help": "¿Necesitas ayuda?"
+    }
+  },
+  "iam": {
+    "fields": {
+      "email": "Correo",
+      "password": "Contraseña",
+      "passwordConfirmation": "Confirmar contraseña",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña"
+    },
+    "signIn": {
+      "title": "Bienvenido de vuelta",
+      "subtitle": "Ingresa para gestionar tus facturas.",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "submit": "Ingresar",
+      "submitting": "Ingresando…",
+      "noAccount": "¿No tienes cuenta?",
+      "createOne": "Crea una"
+    },
+    "signUp": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Empieza a financiar tus facturas en minutos.",
+      "passwordHint_one": "Mínimo {{count}} carácter.",
+      "passwordHint_other": "Mínimo {{count}} caracteres.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "acceptTerms": "Acepto los Términos y la Política de Privacidad.",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta…",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "signInLink": "Inicia sesión"
+    },
+    "recover": {
+      "back": "Volver a iniciar sesión",
+      "title": "Recupera tu contraseña",
+      "subtitle": "Escribe tu correo y te enviaremos un enlace para crear una nueva.",
+      "unavailableTitle": "Todavía no disponible",
+      "unavailableBody": "El servicio de identidad aún no tiene recuperación de contraseña. Escríbenos y te ayudamos a entrar.",
+      "submit": "Enviar enlace"
+    },
+    "recoverSent": {
+      "title": "Revisa tu correo",
+      "body": "Si existe una cuenta con ese correo, te llegará un enlace en unos minutos.",
+      "back": "Volver a iniciar sesión"
+    },
+    "errors": {
+      "email-already-in-use": "Ya existe una cuenta con este correo.",
+      "invalid-credentials": "Correo o contraseña incorrectos.",
+      "role-not-allowed": "No pudimos crear tu cuenta con ese tipo de perfil.",
+      "validation-failed": "Revisa los datos: hay algo que no está bien.",
+      "invalid-request": "Revisa los datos: hay algo que no está bien.",
+      "user-not-found": "No encontramos ninguna cuenta con ese correo.",
+      "unauthenticated": "Tu sesión expiró. Vuelve a iniciar sesión.",
+      "forbidden": "Tu cuenta no tiene permiso para hacer esto.",
+      "unreachable": "No pudimos conectar con Vankoo. Inténtalo en unos minutos.",
+      "signInFailed": "Correo o contraseña incorrectos.",
+      "signUpFailed": "No pudimos crear tu cuenta. Inténtalo de nuevo."
+    }
+  },
+  "home": {
+    "title": "Sesión iniciada",
+    "signedInAs": "Entraste como <strong>{{email}}</strong>.",
+    "roles": "Roles",
+    "expiresAt": "La sesión caduca",
+    "placeholder": "Pantalla provisional. El panel de la MYPE llega cuando se diseñen facturas, perfil y billetera."
+  },
+  "notFound": {
+    "code": "Error 404",
+    "title": "Esta página no existe",
+    "body": "Puede que el enlace esté mal escrito o que la página se haya movido.",
+    "back": "Volver al inicio"
+  }
+}

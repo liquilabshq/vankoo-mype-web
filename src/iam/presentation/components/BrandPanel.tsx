@@ -1,3 +1,4 @@
+import {useTranslation} from 'react-i18next';
 import {Wordmark} from '../../../shared/presentation/components/Wordmark';
 
 /**
@@ -24,6 +25,8 @@ import {Wordmark} from '../../../shared/presentation/components/Wordmark';
  * makes the browser land in the same place.
  */
 export function BrandPanel() {
+    const {t} = useTranslation();
+
     return (
         <aside
             className="relative isolate flex h-50 flex-col items-center justify-center overflow-hidden px-4 text-center lg:h-auto lg:px-16"
@@ -45,7 +48,7 @@ export function BrandPanel() {
 
             <div className="text-decor-panel-fg relative flex flex-col items-center gap-3">
                 <Wordmark className="w-45 lg:w-60" />
-                <p className="text-h2 font-bold">Tu liquidez, hoy.</p>
+                <p className="text-h2 font-bold">{t('common.tagline')}</p>
             </div>
         </aside>
     );

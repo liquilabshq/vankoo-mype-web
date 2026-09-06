@@ -1,0 +1,80 @@
+{
+  "common": {
+    "tagline": "Your liquidity, today.",
+    "signOut": "Sign out",
+    "legal": {
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "help": "Need help?"
+    }
+  },
+  "iam": {
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "passwordConfirmation": "Confirm password",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "signIn": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to manage your invoices.",
+      "forgotPassword": "Forgot your password?",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "subtitle": "Start financing your invoices in minutes.",
+      "passwordHint_one": "At least {{count}} character.",
+      "passwordHint_other": "At least {{count}} characters.",
+      "passwordMismatch": "The passwords do not match.",
+      "acceptTerms": "I accept the Terms and the Privacy Policy.",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in"
+    },
+    "recover": {
+      "back": "Back to sign in",
+      "title": "Recover your password",
+      "subtitle": "Enter your email and we will send you a link to create a new one.",
+      "unavailableTitle": "Not available yet",
+      "unavailableBody": "The identity service does not have password recovery yet. Write to us and we will help you get in.",
+      "submit": "Send link"
+    },
+    "recoverSent": {
+      "title": "Check your email",
+      "body": "If an account exists for that address, a link will arrive in a few minutes.",
+      "back": "Back to sign in"
+    },
+    "errors": {
+      "email-already-in-use": "An account with this email already exists.",
+      "invalid-credentials": "Incorrect email or password.",
+      "role-not-allowed": "We could not create your account with that profile type.",
+      "validation-failed": "Check the details: something is not right.",
+      "invalid-request": "Check the details: something is not right.",
+      "user-not-found": "We could not find an account with that email.",
+      "unauthenticated": "Your session expired. Please sign in again.",
+      "forbidden": "Your account is not allowed to do this.",
+      "unreachable": "We could not reach Vankoo. Try again in a few minutes.",
+      "signInFailed": "Incorrect email or password.",
+      "signUpFailed": "We could not create your account. Please try again."
+    }
+  },
+  "home": {
+    "title": "Signed in",
+    "signedInAs": "You are signed in as <strong>{{email}}</strong>.",
+    "roles": "Roles",
+    "expiresAt": "Session expires",
+    "placeholder": "Placeholder screen. The MYPE dashboard arrives once invoices, profile and wallet are designed."
+  },
+  "notFound": {
+    "code": "Error 404",
+    "title": "This page does not exist",
+    "body": "The link may be misspelled, or the page may have moved.",
+    "back": "Back to home"
+  }
+}

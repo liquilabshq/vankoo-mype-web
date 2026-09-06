@@ -1,5 +1,6 @@
 import {useId, useState} from 'react';
 import {Eye, EyeOff} from 'lucide-react';
+import {useTranslation} from 'react-i18next';
 import {Field, FieldDescription, FieldLabel} from '@/components/ui/field';
 import {InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput} from '@/components/ui/input-group';
 
@@ -32,6 +33,7 @@ export function PasswordField({
     autoComplete = 'current-password',
     disabled = false
 }: PasswordFieldProps) {
+    const {t} = useTranslation();
     const id = useId();
     const [visible, setVisible] = useState(false);
 
@@ -52,7 +54,7 @@ export function PasswordField({
                     <InputGroupButton
                         type="button"
                         size="icon-sm"
-                        aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        aria-label={visible ? t('iam.fields.hidePassword') : t('iam.fields.showPassword')}
                         aria-pressed={visible}
                         onClick={() => setVisible(current => !current)}
                     >

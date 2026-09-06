@@ -1,6 +1,5 @@
 import {create} from 'zustand';
 import {IamApi} from '../infrastructure/iam-api';
-import {messageFor} from './iam-error-messages';
 import {iamInterceptor} from '../infrastructure/iam.interceptor';
 import {SessionAssembler} from '../infrastructure/session.assembler';
 import {SignInAssembler} from '../infrastructure/sign-in.assembler';
@@ -70,18 +69,20 @@ export const useIamStore = create<IamState>()(set => ({
             const resource = SignInAssembler.toResourceFromResponse(response);
             const session = resource && SessionAssembler.toSessionFromResource(resource);
             if (!session) {
-                set({errors: [new Error('Correo o contraseña incorrectos.')], submitting: false});
+                // Nothing threw: the call answered, and the answer was unusable. The
+                // message is diagnostic and never reaches a screen — the view has its
+                // own wording for a failure the server did not explain.
+                set({errors: [new Error('Sign-in answered without a usable session')], submitting: false});
                 return false;
             }
             localStorage.setItem(TOKEN_STORAGE_KEY, session.token);
             set({session, submitting: false, signedUpEmail: null});
             return true;
         } catch (error) {
-            // IAM answers both sign-in failures with the same 401, so there is nothing
-            // here to tell apart even if we wanted to — and we do not: saying which of
-            // the two it was would let anyone probe the service for registered
-            // addresses. What this does distinguish is a rejection from an outage.
-            set({errors: [new Error(messageFor(error, 'Correo o contraseña incorrectos.'))], submitting: false});
+            // The error is stored as it arrived, not as a sentence. Wording it here
+            // would freeze it in one language, and the store is the wrong place to
+            // decide what a user reads anyway.
+            set({errors: [error as Error], submitting: false});
             return false;
         }
     },
@@ -92,7 +93,7 @@ export const useIamStore = create<IamState>()(set => ({
             const response = await iamApi.signUp(command);
             const resource = SignUpAssembler.toResourceFromResponse(response);
             if (!resource) {
-                set({errors: [new Error('No pudimos crear tu cuenta. Inténtalo de nuevo.')], submitting: false});
+                set({errors: [new Error('Sign-up answered without a user')], submitting: false});
                 return false;
             }
             // Sign-up answers without a token, so there is no session to open here:
@@ -100,10 +101,7 @@ export const useIamStore = create<IamState>()(set => ({
             set({signedUpEmail: resource.email, submitting: false});
             return true;
         } catch (error) {
-            set({
-                errors: [new Error(messageFor(error, 'No pudimos crear tu cuenta. Inténtalo de nuevo.'))],
-                submitting: false
-            });
+            set({errors: [error as Error], submitting: false});
             return false;
         }
     },

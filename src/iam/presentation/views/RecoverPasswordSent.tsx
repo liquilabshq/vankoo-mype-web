@@ -1,4 +1,5 @@
 import {CircleCheck} from 'lucide-react';
+import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {AuthLayout} from '../components/AuthLayout';
@@ -16,6 +17,7 @@ import {iamPaths} from '../iam-paths';
  * registered.
  */
 export function RecoverPasswordSent() {
+    const {t} = useTranslation();
     const navigate = useNavigate();
 
     return (
@@ -24,10 +26,8 @@ export function RecoverPasswordSent() {
                 <CircleCheck className="size-7" />
             </span>
 
-            <h1 className="text-h1 text-fg mt-5 font-bold">Revisa tu correo</h1>
-            <p className="text-body text-fg-secondary mt-2">
-                Si existe una cuenta con ese correo, te llegará un enlace en unos minutos.
-            </p>
+            <h1 className="text-h1 text-fg mt-5 font-bold">{t('iam.recoverSent.title')}</h1>
+            <p className="text-body text-fg-secondary mt-2">{t('iam.recoverSent.body')}</p>
 
             <Button
                 type="button"
@@ -36,7 +36,7 @@ export function RecoverPasswordSent() {
                 className="mt-6 w-full"
                 onClick={() => navigate(iamPaths.signIn())}
             >
-                Volver a iniciar sesión
+                {t('iam.recoverSent.back')}
             </Button>
         </AuthLayout>
     );
