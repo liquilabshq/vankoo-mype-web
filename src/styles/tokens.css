@@ -191,6 +191,17 @@
   --vk-accent-green-finance-bg: #D6F2E6;
   --vk-avatar-bg: #E2ECF7;
   --vk-avatar-fg: #396698;
+
+  /* Decoration for fixed-brand surfaces. The panel is navy in BOTH modes, like
+     the Logo, so its four tokens do not flip — only the dot does, because it
+     sits on surface/base. Opacity is not a token: the brand green stays under
+     20% with a 200px+ blur, and that ceiling is a written rule, not enforced. */
+  --vk-decor-panel-from: #274C74;
+  --vk-decor-panel-to: #071D33;
+  --vk-decor-panel-fg: #FFFFFF;
+  --vk-decor-light-primary: #00C897;
+  --vk-decor-light-secondary: #00B87E;
+  --vk-decor-dot: #BFC5CC;
   --vk-status-uploaded-fg: #5F646B;
   --vk-status-uploaded-bg: #E5EBF3;
   --vk-status-ocr-processing-fg: #4F4FCB;
@@ -304,6 +315,11 @@
   --vk-accent-green-finance-bg: #003E21;
   --vk-avatar-bg: #274C74;
   --vk-avatar-fg: #CBDCF0;
+
+  /* Only the dot flips: it lives on surface/base. decor/panel-* and panel-fg are
+     fixed on purpose — a fixed surface needs a fixed foreground, or the text
+     goes navy-on-navy (1.92:1). */
+  --vk-decor-dot: #274C74;
   --vk-status-uploaded-fg: #BFC5CC;
   --vk-status-uploaded-bg: #2A2E34;
   --vk-status-ocr-processing-fg: #B2BEFF;

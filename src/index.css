@@ -137,6 +137,13 @@
     --color-avatar: var(--vk-avatar-fg);
     --color-avatar-bg: var(--vk-avatar-bg);
 
+    --color-decor-panel-from: var(--vk-decor-panel-from);
+    --color-decor-panel-to: var(--vk-decor-panel-to);
+    --color-decor-panel-fg: var(--vk-decor-panel-fg);
+    --color-decor-light: var(--vk-decor-light-primary);
+    --color-decor-light-2: var(--vk-decor-light-secondary);
+    --color-decor-dot: var(--vk-decor-dot);
+
     --color-risk-a: var(--vk-risk-a-fg);
     --color-risk-a-bg: var(--vk-risk-a-bg);
     --color-risk-b: var(--vk-risk-b-fg);
