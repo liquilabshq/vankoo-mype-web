@@ -4,6 +4,7 @@ import {Outlet, useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {useIamStore} from '../../../iam/application/iam.store';
 import {iamPaths} from '../../../iam/presentation/iam-paths';
+import {PreferencesBar} from './PreferencesBar';
 import {Wordmark} from './Wordmark';
 
 /**
@@ -28,15 +29,26 @@ export function Layout() {
         <div className="bg-surface min-h-dvh">
             <header className="border-subtle flex items-center justify-between border-b px-6 py-4">
                 <Wordmark className="text-fg text-2xl" />
-                {session && (
-                    <div className="flex items-center gap-4">
-                        <span className="text-caption text-fg-secondary hidden sm:inline">{session.user.email}</span>
-                        <Button type="button" variant="ghost" size="sm" onClick={handleSignOut}>
-                            <LogOut data-icon="inline-start" />
-                            {t('common.signOut')}
-                        </Button>
-                    </div>
-                )}
+                {/*
+                  The switcher lives here too, and not only on the IAM screens: once a
+                  session is open those screens are gone, and losing the way to change
+                  language or theme with them would be a strange kind of reward for
+                  signing in. This shell is not in Figma yet — see Home.
+                */}
+                <div className="flex items-center gap-4">
+                    <PreferencesBar />
+                    {session && (
+                        <>
+                            <span className="text-caption text-fg-secondary hidden sm:inline">
+                                {session.user.email}
+                            </span>
+                            <Button type="button" variant="ghost" size="sm" onClick={handleSignOut}>
+                                <LogOut data-icon="inline-start" />
+                                {t('common.signOut')}
+                            </Button>
+                        </>
+                    )}
+                </div>
             </header>
             <Outlet />
         </div>

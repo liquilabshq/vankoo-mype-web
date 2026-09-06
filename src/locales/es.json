@@ -2,6 +2,11 @@
     "common": {
         "tagline": "Tu liquidez, hoy.",
         "signOut": "Cerrar sesión",
+        "preferences": {
+            "switchLanguage": "Cambiar a inglés",
+            "switchToDark": "Cambiar al tema oscuro",
+            "switchToLight": "Cambiar al tema claro"
+        },
         "legal": {
             "terms": "Términos",
             "privacy": "Privacidad",
