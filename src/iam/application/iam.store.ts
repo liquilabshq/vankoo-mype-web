@@ -1,5 +1,6 @@
 import {create} from 'zustand';
 import {IamApi} from '../infrastructure/iam-api';
+import {messageFor} from './iam-error-messages';
 import {iamInterceptor} from '../infrastructure/iam.interceptor';
 import {SessionAssembler} from '../infrastructure/session.assembler';
 import {SignInAssembler} from '../infrastructure/sign-in.assembler';
@@ -75,12 +76,12 @@ export const useIamStore = create<IamState>()(set => ({
             localStorage.setItem(TOKEN_STORAGE_KEY, session.token);
             set({session, submitting: false, signedUpEmail: null});
             return true;
-        } catch {
-            // Every business failure arrives as a 500 today, so "wrong credentials"
-            // and "no such account" are indistinguishable here. The generic wording
-            // is also the right one on purpose: saying which of the two it was would
-            // let anyone probe the service for registered addresses.
-            set({errors: [new Error('Correo o contraseña incorrectos.')], submitting: false});
+        } catch (error) {
+            // IAM answers both sign-in failures with the same 401, so there is nothing
+            // here to tell apart even if we wanted to — and we do not: saying which of
+            // the two it was would let anyone probe the service for registered
+            // addresses. What this does distinguish is a rejection from an outage.
+            set({errors: [new Error(messageFor(error, 'Correo o contraseña incorrectos.'))], submitting: false});
             return false;
         }
     },
@@ -98,12 +99,9 @@ export const useIamStore = create<IamState>()(set => ({
             // the user goes to sign in, and this is what fills the form for them.
             set({signedUpEmail: resource.email, submitting: false});
             return true;
-        } catch {
-            // A duplicate email is a 500 like everything else, so the wording has to
-            // hedge. Once IAM grows a @ControllerAdvice that answers 409, this becomes
-            // the precise message the mockup already shows on the email field.
+        } catch (error) {
             set({
-                errors: [new Error('No pudimos crear tu cuenta. Es posible que ese correo ya esté registrado.')],
+                errors: [new Error(messageFor(error, 'No pudimos crear tu cuenta. Inténtalo de nuevo.'))],
                 submitting: false
             });
             return false;
