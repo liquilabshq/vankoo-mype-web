@@ -1,6 +1,7 @@
 import type {RouteObject} from 'react-router';
 import {RecoverPassword} from './views/RecoverPassword';
 import {RecoverPasswordSent} from './views/RecoverPasswordSent';
+import {ResetPassword} from './views/ResetPassword';
 import {SignIn} from './views/SignIn';
 import {SignUp} from './views/SignUp';
 
@@ -14,5 +15,6 @@ export const iamRoutes: RouteObject[] = [
     {path: 'sign-in', Component: SignIn},
     {path: 'sign-up', Component: SignUp},
     {path: 'recover', Component: RecoverPassword},
-    {path: 'recover/sent', Component: RecoverPasswordSent}
+    {path: 'recover/sent', Component: RecoverPasswordSent},
+    {path: 'reset', Component: ResetPassword}
 ];

@@ -4,6 +4,8 @@ import {iamInterceptor} from '../infrastructure/iam.interceptor';
 import {SessionAssembler} from '../infrastructure/session.assembler';
 import {SignInAssembler} from '../infrastructure/sign-in.assembler';
 import {SignUpAssembler} from '../infrastructure/sign-up.assembler';
+import type {RequestPasswordResetCommand} from '../domain/model/request-password-reset.command';
+import type {ResetPasswordCommand} from '../domain/model/reset-password.command';
 import type {Session} from '../domain/model/session.entity';
 import type {SignInCommand} from '../domain/model/sign-in.command';
 import type {SignUpCommand} from '../domain/model/sign-up.command';
@@ -38,8 +40,12 @@ export interface IamState {
     submitting: boolean;
     /** Carries the address from sign-up to sign-in, so the form arrives filled in. */
     signedUpEmail: string | null;
+    /** Carries the address to the confirmation screen, so it can say where it wrote. */
+    recoveryEmail: string | null;
     signIn: (command: SignInCommand) => Promise<boolean>;
     signUp: (command: SignUpCommand) => Promise<boolean>;
+    requestPasswordReset: (command: RequestPasswordResetCommand) => Promise<boolean>;
+    resetPassword: (command: ResetPasswordCommand) => Promise<boolean>;
     signOut: () => void;
     clearErrors: () => void;
 }
@@ -61,6 +67,7 @@ export const useIamStore = create<IamState>()(set => ({
     errors: [],
     submitting: false,
     signedUpEmail: null,
+    recoveryEmail: null,
 
     signIn: async (command: SignInCommand) => {
         set({submitting: true, errors: []});
@@ -106,11 +113,38 @@ export const useIamStore = create<IamState>()(set => ({
         }
     },
 
+    requestPasswordReset: async (command: RequestPasswordResetCommand) => {
+        set({submitting: true, errors: []});
+        try {
+            await iamApi.requestPasswordReset(command);
+            // True regardless of whether that address has an account: the service
+            // answers 202 either way, and asking again here would undo the point.
+            set({recoveryEmail: command.email, submitting: false});
+            return true;
+        } catch (error) {
+            set({errors: [error as Error], submitting: false});
+            return false;
+        }
+    },
+
+    resetPassword: async (command: ResetPasswordCommand) => {
+        set({submitting: true, errors: []});
+        try {
+            await iamApi.resetPassword(command);
+            // The link is spent and the address it belonged to is no longer needed.
+            set({recoveryEmail: null, submitting: false});
+            return true;
+        } catch (error) {
+            set({errors: [error as Error], submitting: false});
+            return false;
+        }
+    },
+
     signOut: () => {
         // There is no logout endpoint: the service is stateless and the token stays
         // valid until it expires. Signing out is forgetting it on this device.
         localStorage.removeItem(TOKEN_STORAGE_KEY);
-        set({session: null, errors: [], signedUpEmail: null});
+        set({session: null, errors: [], signedUpEmail: null, recoveryEmail: null});
     },
 
     clearErrors: () => set({errors: []})
