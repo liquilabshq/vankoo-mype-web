@@ -20,7 +20,9 @@ interface PasswordFieldProps {
  * acceptable is not its business.
  *
  * The toggle lives in an `InputGroupAddon` rather than being positioned by hand, so
- * the input reserves room for it instead of running text underneath.
+ * the input reserves room for it instead of running text underneath. It takes a size
+ * up from the addon's `xs` default: at 24px it read as an afterthought next to a 40px
+ * field, and the mockup gives it the same weight as the icon it carries.
  */
 export function PasswordField({
     label,
@@ -49,6 +51,7 @@ export function PasswordField({
                 <InputGroupAddon align="inline-end">
                     <InputGroupButton
                         type="button"
+                        size="icon-sm"
                         aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                         aria-pressed={visible}
                         onClick={() => setVisible(current => !current)}
