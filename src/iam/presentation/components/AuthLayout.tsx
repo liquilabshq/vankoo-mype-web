@@ -34,7 +34,7 @@ export function AuthLayout({children}: AuthLayoutProps) {
             <main className="relative flex flex-1 flex-col px-4 py-8 lg:px-16">
                 <DotField />
 
-                <div className="relative flex flex-1 items-center justify-center">
+                <div className="relative flex flex-1 items-start justify-center lg:items-center">
                     {/*
                       The card is a desktop composition only. On a 390px screen a card
                       with margins either side wastes the width the form needs, so the
