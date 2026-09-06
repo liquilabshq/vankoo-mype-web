@@ -1,6 +1,6 @@
 import {useId, useState, type FormEvent} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Link, useNavigate} from 'react-router';
-import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
 import {Checkbox} from '@/components/ui/checkbox';
 import {Field, FieldGroup, FieldLabel} from '@/components/ui/field';
@@ -9,6 +9,7 @@ import {Spinner} from '@/components/ui/spinner';
 import {useIamStore} from '../../application/iam.store';
 import {SignUpCommand} from '../../domain/model/sign-up.command';
 import {AuthLayout} from '../components/AuthLayout';
+import {IamErrorAlert} from '../components/IamErrorAlert';
 import {PasswordField} from '../components/PasswordField';
 import {iamPaths} from '../iam-paths';
 
@@ -17,6 +18,7 @@ const MINIMUM_PASSWORD_LENGTH = 8;
 
 /** Routed view that creates an account. */
 export function SignUp() {
+    const {t} = useTranslation();
     const navigate = useNavigate();
     const emailId = useId();
     const termsId = useId();
@@ -55,19 +57,15 @@ export function SignUp() {
 
     return (
         <AuthLayout>
-            <h1 className="text-h1 text-fg font-bold">Crea tu cuenta</h1>
-            <p className="text-body text-fg-secondary mt-2">Empieza a financiar tus facturas en minutos.</p>
+            <h1 className="text-h1 text-fg font-bold">{t('iam.signUp.title')}</h1>
+            <p className="text-body text-fg-secondary mt-2">{t('iam.signUp.subtitle')}</p>
 
             <form className="mt-6" onSubmit={handleSubmit}>
                 <FieldGroup>
-                    {errors.length > 0 && (
-                        <Alert variant="destructive" role="alert">
-                            <AlertDescription>{errors.map(error => error.message).join(' ')}</AlertDescription>
-                        </Alert>
-                    )}
+                    <IamErrorAlert errors={errors} fallback="iam.errors.signUpFailed" />
 
                     <Field>
-                        <FieldLabel htmlFor={emailId}>Correo</FieldLabel>
+                        <FieldLabel htmlFor={emailId}>{t('iam.fields.email')}</FieldLabel>
                         <Input
                             id={emailId}
                             type="email"
@@ -80,19 +78,19 @@ export function SignUp() {
                     </Field>
 
                     <PasswordField
-                        label="Contraseña"
+                        label={t('iam.fields.password')}
                         value={password}
                         onValueChange={setPassword}
-                        description={`Mínimo ${MINIMUM_PASSWORD_LENGTH} caracteres.`}
+                        description={t('iam.signUp.passwordHint', {count: MINIMUM_PASSWORD_LENGTH})}
                         autoComplete="new-password"
                         disabled={submitting}
                     />
 
                     <PasswordField
-                        label="Confirmar contraseña"
+                        label={t('iam.fields.passwordConfirmation')}
                         value={confirmation}
                         onValueChange={setConfirmation}
-                        description={confirmation.length > 0 && !passwordsMatch ? 'Las contraseñas no coinciden.' : undefined}
+                        description={confirmation.length > 0 && !passwordsMatch ? t('iam.signUp.passwordMismatch') : undefined}
                         autoComplete="new-password"
                         disabled={submitting}
                     />
@@ -105,19 +103,19 @@ export function SignUp() {
                             disabled={submitting}
                         />
                         <FieldLabel htmlFor={termsId} className="text-caption font-normal">
-                            Acepto los Términos y la Política de Privacidad.
+                            {t('iam.signUp.acceptTerms')}
                         </FieldLabel>
                     </Field>
 
                     <Button type="submit" size="lg" className="w-full" disabled={!canSubmit}>
                         {submitting && <Spinner data-icon="inline-start" />}
-                        {submitting ? 'Creando cuenta…' : 'Crear cuenta'}
+                        {submitting ? t('iam.signUp.submitting') : t('iam.signUp.submit')}
                     </Button>
 
                     <p className="text-caption text-fg-secondary text-center">
-                        ¿Ya tienes cuenta?{' '}
+                        {t('iam.signUp.haveAccount')}{' '}
                         <Link className="text-fg-link font-semibold hover:underline" to={iamPaths.signIn()}>
-                            Inicia sesión
+                            {t('iam.signUp.signInLink')}
                         </Link>
                     </p>
                 </FieldGroup>

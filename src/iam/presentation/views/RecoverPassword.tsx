@@ -1,5 +1,6 @@
 import {useId, useState} from 'react';
 import {ChevronLeft} from 'lucide-react';
+import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
@@ -17,6 +18,7 @@ import {iamPaths} from '../iam-paths';
  * a confirmation, would be worse than shipping one that says so.
  */
 export function RecoverPassword() {
+    const {t} = useTranslation();
     const emailId = useId();
     const [email, setEmail] = useState('');
 
@@ -27,26 +29,21 @@ export function RecoverPassword() {
                 to={iamPaths.signIn()}
             >
                 <ChevronLeft className="size-4" />
-                Volver a iniciar sesión
+                {t('iam.recover.back')}
             </Link>
 
-            <h1 className="text-h1 text-fg mt-4 font-bold">Recupera tu contraseña</h1>
-            <p className="text-body text-fg-secondary mt-2">
-                Escribe tu correo y te enviaremos un enlace para crear una nueva.
-            </p>
+            <h1 className="text-h1 text-fg mt-4 font-bold">{t('iam.recover.title')}</h1>
+            <p className="text-body text-fg-secondary mt-2">{t('iam.recover.subtitle')}</p>
 
             <div className="mt-6">
                 <FieldGroup>
                     <Alert>
-                        <AlertTitle>Todavía no disponible</AlertTitle>
-                        <AlertDescription>
-                            El servicio de identidad aún no tiene recuperación de contraseña. Escríbenos y te
-                            ayudamos a entrar.
-                        </AlertDescription>
+                        <AlertTitle>{t('iam.recover.unavailableTitle')}</AlertTitle>
+                        <AlertDescription>{t('iam.recover.unavailableBody')}</AlertDescription>
                     </Alert>
 
                     <Field>
-                        <FieldLabel htmlFor={emailId}>Correo</FieldLabel>
+                        <FieldLabel htmlFor={emailId}>{t('iam.fields.email')}</FieldLabel>
                         <Input
                             id={emailId}
                             type="email"
@@ -57,7 +54,7 @@ export function RecoverPassword() {
                     </Field>
 
                     <Button type="button" size="lg" className="w-full" disabled>
-                        Enviar enlace
+                        {t('iam.recover.submit')}
                     </Button>
                 </FieldGroup>
             </div>

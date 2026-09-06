@@ -1,4 +1,5 @@
 import type {ReactNode} from 'react';
+import {useTranslation} from 'react-i18next';
 import {BrandPanel} from './BrandPanel';
 import {DotField} from './DotField';
 
@@ -23,6 +24,8 @@ interface AuthLayoutProps {
  * ends up behind the text.
  */
 export function AuthLayout({children}: AuthLayoutProps) {
+    const {t} = useTranslation();
+
     return (
         // A proportion, not a fixed 560px: the mockup is drawn at 1440, where the panel
         // takes 39% of the width. Pinning the pixel value instead of the ratio leaves it
@@ -48,11 +51,11 @@ export function AuthLayout({children}: AuthLayoutProps) {
                 </div>
 
                 <footer className="text-caption text-fg-muted relative mt-8 flex items-center justify-center gap-2">
-                    <a className="hover:text-fg-secondary" href="#">Términos</a>
+                    <a className="hover:text-fg-secondary" href="#">{t('common.legal.terms')}</a>
                     <span aria-hidden>·</span>
-                    <a className="hover:text-fg-secondary" href="#">Privacidad</a>
+                    <a className="hover:text-fg-secondary" href="#">{t('common.legal.privacy')}</a>
                     <span aria-hidden>·</span>
-                    <a className="text-fg-link hover:underline" href="#">¿Necesitas ayuda?</a>
+                    <a className="text-fg-link hover:underline" href="#">{t('common.legal.help')}</a>
                 </footer>
             </main>
         </div>

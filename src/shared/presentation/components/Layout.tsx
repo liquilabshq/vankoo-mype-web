@@ -1,4 +1,5 @@
 import {LogOut} from 'lucide-react';
+import {useTranslation} from 'react-i18next';
 import {Outlet, useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {useIamStore} from '../../../iam/application/iam.store';
@@ -13,6 +14,7 @@ import {Wordmark} from './Wordmark';
  * coupling available.
  */
 export function Layout() {
+    const {t} = useTranslation();
     const navigate = useNavigate();
     const session = useIamStore(state => state.session);
     const signOut = useIamStore(state => state.signOut);
@@ -31,7 +33,7 @@ export function Layout() {
                         <span className="text-caption text-fg-secondary hidden sm:inline">{session.user.email}</span>
                         <Button type="button" variant="ghost" size="sm" onClick={handleSignOut}>
                             <LogOut data-icon="inline-start" />
-                            Cerrar sesión
+                            {t('common.signOut')}
                         </Button>
                     </div>
                 )}

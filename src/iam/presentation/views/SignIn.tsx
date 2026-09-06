@@ -1,6 +1,6 @@
 import {useId, useState, type FormEvent} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Link, useNavigate} from 'react-router';
-import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
 import {Field, FieldGroup, FieldLabel} from '@/components/ui/field';
 import {Input} from '@/components/ui/input';
@@ -8,11 +8,13 @@ import {Spinner} from '@/components/ui/spinner';
 import {useIamStore} from '../../application/iam.store';
 import {SignInCommand} from '../../domain/model/sign-in.command';
 import {AuthLayout} from '../components/AuthLayout';
+import {IamErrorAlert} from '../components/IamErrorAlert';
 import {PasswordField} from '../components/PasswordField';
 import {iamPaths} from '../iam-paths';
 
 /** Routed view that opens a session. */
 export function SignIn() {
+    const {t} = useTranslation();
     const navigate = useNavigate();
     const emailId = useId();
     const errors = useIamStore(state => state.errors);
@@ -37,19 +39,15 @@ export function SignIn() {
 
     return (
         <AuthLayout>
-            <h1 className="text-h1 text-fg font-bold">Bienvenido de vuelta</h1>
-            <p className="text-body text-fg-secondary mt-2">Ingresa para gestionar tus facturas.</p>
+            <h1 className="text-h1 text-fg font-bold">{t('iam.signIn.title')}</h1>
+            <p className="text-body text-fg-secondary mt-2">{t('iam.signIn.subtitle')}</p>
 
             <form className="mt-6" onSubmit={handleSubmit}>
                 <FieldGroup>
-                    {errors.length > 0 && (
-                        <Alert variant="destructive" role="alert">
-                            <AlertDescription>{errors.map(error => error.message).join(' ')}</AlertDescription>
-                        </Alert>
-                    )}
+                    <IamErrorAlert errors={errors} fallback="iam.errors.signInFailed" />
 
                     <Field>
-                        <FieldLabel htmlFor={emailId}>Correo</FieldLabel>
+                        <FieldLabel htmlFor={emailId}>{t('iam.fields.email')}</FieldLabel>
                         <Input
                             id={emailId}
                             type="email"
@@ -62,7 +60,7 @@ export function SignIn() {
                     </Field>
 
                     <PasswordField
-                        label="Contraseña"
+                        label={t('iam.fields.password')}
                         value={password}
                         onValueChange={setPassword}
                         disabled={submitting}
@@ -70,19 +68,19 @@ export function SignIn() {
 
                     <div className="flex justify-end">
                         <Link className="text-caption text-fg-link font-semibold hover:underline" to={iamPaths.recoverPassword()}>
-                            ¿Olvidaste tu contraseña?
+                            {t('iam.signIn.forgotPassword')}
                         </Link>
                     </div>
 
                     <Button type="submit" size="lg" className="w-full" disabled={!canSubmit}>
                         {submitting && <Spinner data-icon="inline-start" />}
-                        {submitting ? 'Ingresando…' : 'Ingresar'}
+                        {submitting ? t('iam.signIn.submitting') : t('iam.signIn.submit')}
                     </Button>
 
                     <p className="text-caption text-fg-secondary text-center">
-                        ¿No tienes cuenta?{' '}
+                        {t('iam.signIn.noAccount')}{' '}
                         <Link className="text-fg-link font-semibold hover:underline" to={iamPaths.signUp()}>
-                            Crea una
+                            {t('iam.signIn.createOne')}
                         </Link>
                     </p>
                 </FieldGroup>
