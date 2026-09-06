@@ -1,8 +1,12 @@
 import type {AxiosResponse} from 'axios';
 import {BaseApi, type BaseApiOptions} from '../../shared/infrastructure/base-api';
 import {BaseEndpoint} from '../../shared/infrastructure/base-endpoint';
+import {RequestPasswordResetAssembler} from './request-password-reset.assembler';
+import {ResetPasswordAssembler} from './reset-password.assembler';
 import {SignInAssembler} from './sign-in.assembler';
 import {SignUpAssembler} from './sign-up.assembler';
+import type {RequestPasswordResetCommand} from '../domain/model/request-password-reset.command';
+import type {ResetPasswordCommand} from '../domain/model/reset-password.command';
 import type {SignInCommand} from '../domain/model/sign-in.command';
 import type {SignUpCommand} from '../domain/model/sign-up.command';
 import type {AuthenticatedUserResource} from './authenticated-user.resource';
@@ -10,6 +14,8 @@ import type {UserResource} from './user.resource';
 
 const signUpEndpointPath = import.meta.env.VITE_SIGN_UP_ENDPOINT_PATH;
 const signInEndpointPath = import.meta.env.VITE_SIGN_IN_ENDPOINT_PATH;
+const forgotPasswordEndpointPath = import.meta.env.VITE_FORGOT_PASSWORD_ENDPOINT_PATH;
+const resetPasswordEndpointPath = import.meta.env.VITE_RESET_PASSWORD_ENDPOINT_PATH;
 const usersEndpointPath = import.meta.env.VITE_USERS_ENDPOINT_PATH;
 
 /**
@@ -37,6 +43,21 @@ export class IamApi extends BaseApi {
 
     signUp(command: SignUpCommand): Promise<AxiosResponse<UserResource>> {
         return this.http.post(signUpEndpointPath, SignUpAssembler.toRequestFromCommand(command));
+    }
+
+    /**
+     * Asks for a recovery link.
+     *
+     * Typed as `void` because that is what comes back: a 202 with no body, the same
+     * for an address with an account and one without.
+     */
+    requestPasswordReset(command: RequestPasswordResetCommand): Promise<AxiosResponse<void>> {
+        return this.http.post(forgotPasswordEndpointPath, RequestPasswordResetAssembler.toRequestFromCommand(command));
+    }
+
+    /** Spends a recovery link on a new password. Answers 204, or 400 with a code. */
+    resetPassword(command: ResetPasswordCommand): Promise<AxiosResponse<void>> {
+        return this.http.post(resetPasswordEndpointPath, ResetPasswordAssembler.toRequestFromCommand(command));
     }
 
     /**

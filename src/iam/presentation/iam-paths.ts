@@ -9,5 +9,7 @@ export const iamPaths = {
     signIn: () => '/iam/sign-in',
     signUp: () => '/iam/sign-up',
     recoverPassword: () => '/iam/recover',
-    recoverPasswordSent: () => '/iam/recover/sent'
+    recoverPasswordSent: () => '/iam/recover/sent',
+    /** Where the link in the recovery email lands. The token rides in `?token=`. */
+    resetPassword: () => '/iam/reset'
 } as const;
