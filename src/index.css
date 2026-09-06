@@ -111,6 +111,7 @@
     --color-fg-link: var(--vk-text-link);
 
     --color-border-subtle: var(--vk-border-subtle);
+    --color-border-default: var(--vk-border-default);
     --color-border-strong: var(--vk-border-strong);
 
     --color-success: var(--vk-state-success-fg);
@@ -238,5 +239,14 @@
     }
     html {
         @apply font-sans;
+    }
+    /* What the browser paints for itself: scrollbars, the autofill wash over an
+       input, a date picker. Without this they stay light over the dark palette,
+       and no token can reach them. */
+    :root {
+        color-scheme: light;
+    }
+    :root.dark {
+        color-scheme: dark;
     }
 }

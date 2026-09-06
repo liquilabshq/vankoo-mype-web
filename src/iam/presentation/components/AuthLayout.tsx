@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
+import {PreferencesBar} from '../../../shared/presentation/components/PreferencesBar';
 import {BrandPanel} from './BrandPanel';
 import {DotField} from './DotField';
 
@@ -36,6 +37,18 @@ export function AuthLayout({children}: AuthLayoutProps) {
 
             <main className="relative flex flex-1 flex-col px-4 py-8 lg:px-16">
                 <DotField />
+
+                {/*
+                  Out of the flow on desktop and in it on narrow screens, which is what
+                  the mockups draw. On 1440 the card is centred in the column and a row
+                  above it would push that centre down by half its height; on 390 there
+                  is nothing to centre, so the row simply sits under the brand band.
+
+                  The z-index is not ornament: the card's container is positioned and
+                  comes later in the DOM, so without it that container paints over the
+                  buttons and eats the clicks — visible, and dead.
+                */}
+                <PreferencesBar className="relative z-10 mb-4 self-end lg:absolute lg:top-8 lg:right-16 lg:mb-0" />
 
                 <div className="relative flex flex-1 items-start justify-center lg:items-center">
                     {/*

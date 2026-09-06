@@ -2,6 +2,11 @@
     "common": {
         "tagline": "Your liquidity, today.",
         "signOut": "Sign out",
+        "preferences": {
+            "switchLanguage": "Switch to Spanish",
+            "switchToDark": "Switch to the dark theme",
+            "switchToLight": "Switch to the light theme"
+        },
         "legal": {
             "terms": "Terms",
             "privacy": "Privacy",
