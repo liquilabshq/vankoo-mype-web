@@ -35,12 +35,22 @@ export function PreferencesBar({className}: PreferencesBarProps) {
         <div className={cn('flex items-center gap-2', className)}>
             {/* The outline is not decoration: the design system's Ghost button is an
                 outlined tertiary button, and these two are its only use on this screen.
-                It also keeps them visible over the dot field. */}
+
+                It uses border/strong rather than the Ghost variant's border/default for
+                the same reason `--input` does — a control's boundary needs 3:1, and
+                border/default measures 1.6:1 on the light surface and 1.91:1 on the
+                dark one. On the sign-in screen it is also, exactly, the colour of the
+                dots it sits on. border/strong clears 3:1 on both surfaces and both
+                themes.
+
+                Still no fill: which one is right depends on what the bar sits on, and
+                on the app shell — surface/raised — a raised fill would be invisible.
+                That waits for the dashboard. */}
             <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="border-border-default"
+                className="border-border-strong"
                 aria-label={t('common.preferences.switchLanguage')}
                 onClick={() => void i18n.changeLanguage(language === 'es' ? 'en' : 'es')}
             >
@@ -52,7 +62,7 @@ export function PreferencesBar({className}: PreferencesBarProps) {
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                className="border-border-default"
+                className="border-border-strong"
                 aria-label={t(isDark ? 'common.preferences.switchToLight' : 'common.preferences.switchToDark')}
                 onClick={toggleTheme}
             >
