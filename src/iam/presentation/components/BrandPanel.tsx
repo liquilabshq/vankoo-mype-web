@@ -17,6 +17,11 @@ import {Wordmark} from '../../../shared/presentation/components/Wordmark';
  *
  * The lights sit deliberately away from the wordmark, at the bottom-left and off the
  * top-right corner. Contrast must not depend on where a glow happens to fall.
+ *
+ * They shrink below `lg`, and that is not a tweak: the band is 200px tall there, so a
+ * 620px light covers all of it and the navy reads green. The mockup's mobile band is a
+ * crop of this panel from a region between the two lights, and these sizes are what
+ * makes the browser land in the same place.
  */
 export function BrandPanel() {
     return (
@@ -29,12 +34,12 @@ export function BrandPanel() {
         >
             <div
                 aria-hidden
-                className="absolute -bottom-40 -left-40 size-155 rounded-full opacity-16 blur-[240px]"
+                className="absolute -bottom-20 -left-20 size-70 rounded-full opacity-8 blur-[110px] lg:-bottom-40 lg:-left-40 lg:size-155 lg:opacity-16 lg:blur-[240px]"
                 style={{backgroundColor: 'var(--vk-decor-light-primary)'}}
             />
             <div
                 aria-hidden
-                className="absolute -top-30 -right-20 size-105 rounded-full opacity-10 blur-[200px]"
+                className="absolute -top-16 -right-10 size-50 rounded-full opacity-5 blur-[95px] lg:-top-30 lg:-right-20 lg:size-105 lg:opacity-10 lg:blur-[200px]"
                 style={{backgroundColor: 'var(--vk-decor-light-secondary)'}}
             />
 
