@@ -8,16 +8,20 @@ import {Wordmark} from '../../../shared/presentation/components/Wordmark';
  * `decor/panel-fg` and not `text/inverse`: the latter flips with the theme and would
  * resolve to navy on navy in dark, at 1.92:1.
  *
+ * The blur radii are 240px and 200px because that is what the design system says, and
+ * the number matters more than it looks: at half that the lights stop being
+ * atmosphere and start tinting the whole panel teal. Their opacity ceiling — under
+ * 20% — is the other half of the same rule, and both exist so the decorative green
+ * never competes with the primary button, which is the one place green is supposed to
+ * mean "press here".
+ *
  * The lights sit deliberately away from the wordmark, at the bottom-left and off the
  * top-right corner. Contrast must not depend on where a glow happens to fall.
- * Their ceiling is written down: under 20% opacity, with a wide blur — any stronger
- * and the decorative green starts competing with the primary button, which is the
- * one place green is supposed to mean "press here".
  */
 export function BrandPanel() {
     return (
         <aside
-            className="relative isolate flex h-50 flex-col justify-center overflow-hidden px-4 lg:h-auto lg:px-16"
+            className="relative isolate flex h-50 flex-col items-center justify-center overflow-hidden px-4 text-center lg:h-auto lg:px-16"
             style={{
                 backgroundImage:
                     'radial-gradient(120% 90% at 50% 50%, var(--vk-decor-panel-from), var(--vk-decor-panel-to))'
@@ -25,18 +29,18 @@ export function BrandPanel() {
         >
             <div
                 aria-hidden
-                className="absolute -bottom-40 -left-40 size-155 rounded-full opacity-16 blur-[120px]"
+                className="absolute -bottom-40 -left-40 size-155 rounded-full opacity-16 blur-[240px]"
                 style={{backgroundColor: 'var(--vk-decor-light-primary)'}}
             />
             <div
                 aria-hidden
-                className="absolute -top-30 -right-20 size-105 rounded-full opacity-10 blur-[100px]"
+                className="absolute -top-30 -right-20 size-105 rounded-full opacity-10 blur-[200px]"
                 style={{backgroundColor: 'var(--vk-decor-light-secondary)'}}
             />
 
-            <div className="relative flex flex-col items-center gap-2 text-center lg:items-start lg:text-left">
-                <Wordmark className="text-4xl lg:text-6xl" />
-                <p className="text-h2 text-decor-panel-fg font-bold">Tu liquidez, hoy.</p>
+            <div className="text-decor-panel-fg relative flex flex-col items-center gap-3">
+                <Wordmark className="w-45 lg:w-60" />
+                <p className="text-h2 font-bold">Tu liquidez, hoy.</p>
             </div>
         </aside>
     );

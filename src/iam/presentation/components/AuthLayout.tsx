@@ -20,7 +20,11 @@ interface AuthLayoutProps {
  */
 export function AuthLayout({children}: AuthLayoutProps) {
     return (
-        <div className="bg-surface min-h-dvh lg:grid lg:grid-cols-[560px_1fr]">
+        // A proportion, not a fixed 560px: the mockup is drawn at 1440, where the panel
+        // takes 39% of the width. Pinning the pixel value instead of the ratio leaves it
+        // a thin stripe on a 27" screen. The floor stops it squeezing the brand on a
+        // small laptop.
+        <div className="bg-surface min-h-dvh lg:grid lg:grid-cols-[minmax(30rem,39%)_1fr]">
             <BrandPanel />
 
             <main className="relative flex flex-col items-center justify-center px-4 py-10 lg:px-16">
