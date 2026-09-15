@@ -15,8 +15,14 @@ export interface InvoicingState {
     /** The id the backend answered with, so the view can confirm the upload succeeded. */
     uploadedInvoiceId: string | null;
     uploadInvoice: (command: UploadInvoiceCommand) => Promise<boolean>;
-    /** Where that invoice's PDF can be downloaded from — a plain URL, not a fetch. */
-    invoiceFileUrl: (invoiceId: string) => string;
+    /**
+     * Opens that invoice's PDF in a new tab.
+     *
+     * Fetches it through the authenticated client rather than handing the browser a
+     * plain URL: the gateway requires a bearer token on this route, which only a
+     * `fetch`/`axios` request can carry, not a bare `<a href>`.
+     */
+    openInvoiceFile: (invoiceId: string) => Promise<void>;
     clearErrors: () => void;
     /** Forgets the last upload, so the dropzone can be used again. */
     reset: () => void;
@@ -68,7 +74,22 @@ export const useInvoicingStore = create<InvoicingState>()(set => ({
         }
     },
 
-    invoiceFileUrl: (invoiceId: string) => invoicingApi.invoiceFileUrl(invoiceId),
+    openInvoiceFile: async invoiceId => {
+        // Opened before the request resolves — a browser only allows `window.open` to
+        // create a real tab synchronously from the click; doing it after the `await`
+        // makes most browsers treat it as an unrequested popup and block it.
+        const fileTab = window.open('', '_blank');
+        try {
+            const response = await invoicingApi.downloadInvoiceFile(invoiceId);
+            const blobUrl = URL.createObjectURL(response.data);
+            if (fileTab) fileTab.location.href = blobUrl;
+            else set({errors: [new Error('Pop-up blocked')]});
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+        } catch (error) {
+            fileTab?.close();
+            set({errors: [error as Error]});
+        }
+    },
 
     clearErrors: () => set({errors: []}),
     reset: () => set({uploadedInvoiceId: null, errors: [], submitting: false}),

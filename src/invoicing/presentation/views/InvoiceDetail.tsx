@@ -48,7 +48,7 @@ export function InvoiceDetail() {
     const loaded = useInvoicingStore(state => state.invoiceDetailLoaded);
     const fetchInvoiceDetail = useInvoicingStore(state => state.fetchInvoiceDetail);
     const clearInvoiceDetail = useInvoicingStore(state => state.clearInvoiceDetail);
-    const invoiceFileUrl = useInvoicingStore(state => state.invoiceFileUrl);
+    const openInvoiceFile = useInvoicingStore(state => state.openInvoiceFile);
 
     useEffect(() => {
         if (id) void fetchInvoiceDetail(id);
@@ -85,8 +85,8 @@ export function InvoiceDetail() {
 
             {!loading && invoice && (
                 <>
-                    <div className="flex items-center justify-between">
-                        <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex min-w-0 flex-col gap-1">
                             <h1 className="text-h1 text-fg font-bold">{invoice.number}</h1>
                             <p className="text-body text-fg-muted">
                                 {t('invoicing.detail.subtitle', {
@@ -95,16 +95,15 @@ export function InvoiceDetail() {
                                 })}
                             </p>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                             <StatusPill status={invoice.status} />
-                            <a
-                                href={invoiceFileUrl(invoice.id)}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                            <button
+                                type="button"
+                                onClick={() => void openInvoiceFile(invoice.id)}
                                 className={buttonVariants({variant: 'secondary'})}
                             >
                                 {t('invoicing.detail.viewPdf')}
-                            </a>
+                            </button>
                         </div>
                     </div>
 
@@ -138,15 +137,15 @@ export function InvoiceDetail() {
                     <div className="flex flex-col items-start gap-6 lg:flex-row">
                         <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex w-full flex-1 flex-col gap-4 rounded-xl border p-6">
                             <p className="text-body text-fg font-semibold">{t('invoicing.detail.facts.title')}</p>
-                            <div className="flex gap-6">
+                            <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                                 <FactField label={t('invoicing.detail.facts.issuer')} value={invoice.issuerName} />
                                 <FactField label={t('invoicing.detail.facts.issuerRuc')} value={invoice.issuerRuc} />
                             </div>
-                            <div className="flex gap-6">
+                            <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                                 <FactField label={t('invoicing.detail.facts.payer')} value={invoice.payerName} />
                                 <FactField label={t('invoicing.detail.facts.payerRuc')} value={invoice.payerRuc} />
                             </div>
-                            <div className="flex gap-6">
+                            <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                                 <FactField
                                     label={t('invoicing.detail.facts.issuedAt')}
                                     value={new Intl.DateTimeFormat(i18n.language, {dateStyle: 'long'}).format(invoice.issuedAt)}
@@ -156,7 +155,7 @@ export function InvoiceDetail() {
                                     value={new Intl.DateTimeFormat(i18n.language, {dateStyle: 'long'}).format(invoice.dueDate)}
                                 />
                             </div>
-                            <div className="flex gap-6">
+                            <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                                 <FactField label={t('invoicing.detail.facts.currency')} value={invoice.currency} />
                                 <FactField label={t('invoicing.detail.facts.fiscalNumber')} value={invoice.fiscalNumber} />
                             </div>

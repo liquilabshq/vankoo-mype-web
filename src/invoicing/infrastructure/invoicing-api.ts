@@ -54,9 +54,15 @@ export class InvoicingApi extends BaseApi {
         return this.http.get(invoicesEndpointPath, {params: query});
     }
 
-    /** Where the uploaded PDF can be downloaded from directly — `GET .../{id}/file`. */
-    invoiceFileUrl(invoiceId: string): string {
-        return `${import.meta.env.VITE_PLATFORM_API_URL}${invoicesEndpointPath}/${invoiceId}/file`;
+    /**
+     * Fetches the uploaded PDF's bytes — `GET .../{id}/file`.
+     *
+     * A plain `<a href>` to this URL cannot carry the bearer token the gateway now
+     * requires on this route, so the caller has to go through `this.http` (which does,
+     * via the request interceptor) and hand the browser the bytes itself.
+     */
+    downloadInvoiceFile(invoiceId: string): Promise<AxiosResponse<Blob>> {
+        return this.http.get(`${invoicesEndpointPath}/${invoiceId}/file`, {responseType: 'blob'});
     }
 
     /**

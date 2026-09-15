@@ -33,7 +33,7 @@ export function UploadInvoice() {
     const errors = useInvoicingStore(state => state.errors);
     const uploadedInvoiceId = useInvoicingStore(state => state.uploadedInvoiceId);
     const uploadInvoice = useInvoicingStore(state => state.uploadInvoice);
-    const invoiceFileUrl = useInvoicingStore(state => state.invoiceFileUrl);
+    const openInvoiceFile = useInvoicingStore(state => state.openInvoiceFile);
     const reset = useInvoicingStore(state => state.reset);
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -88,15 +88,14 @@ export function UploadInvoice() {
                         />
                         <InvoiceRail steps={steps} currentIndex={stepIndex} />
                         <p className="text-caption text-fg-muted">{t('invoicing.upload.processingHelper')}</p>
-                        <div className="flex items-start gap-4">
-                            <a
-                                href={invoiceFileUrl(uploadedInvoiceId)}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                        <div className="flex flex-wrap items-start gap-4">
+                            <button
+                                type="button"
+                                onClick={() => void openInvoiceFile(uploadedInvoiceId)}
                                 className={buttonVariants({variant: 'secondary'})}
                             >
                                 {t('invoicing.upload.viewInvoice')}
-                            </a>
+                            </button>
                             <button
                                 type="button"
                                 onClick={handleReset}
