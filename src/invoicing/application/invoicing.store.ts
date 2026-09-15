@@ -6,12 +6,7 @@ import {InvoiceAssembler} from '../infrastructure/invoice.assembler';
 import {InvoicingApi, type InvoiceListQuery} from '../infrastructure/invoicing-api';
 import type {UploadInvoiceCommand} from '../domain/model/upload-invoice.command';
 
-// Its own base URL, not `VITE_PLATFORM_API_URL`: the gateway does not route invoicing
-// yet, so this talks to the service directly — see `.env.example`'s own note.
-const invoicingApi = new InvoicingApi({
-    baseUrl: import.meta.env.VITE_INVOICING_API_URL,
-    requestInterceptors: [iamInterceptor]
-});
+const invoicingApi = new InvoicingApi({requestInterceptors: [iamInterceptor]});
 
 /** State and use cases of the invoicing bounded context. */
 export interface InvoicingState {

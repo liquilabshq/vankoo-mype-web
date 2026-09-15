@@ -56,7 +56,7 @@ export class InvoicingApi extends BaseApi {
 
     /** Where the uploaded PDF can be downloaded from directly — `GET .../{id}/file`. */
     invoiceFileUrl(invoiceId: string): string {
-        return `${import.meta.env.VITE_INVOICING_API_URL}${invoicesEndpointPath}/${invoiceId}/file`;
+        return `${import.meta.env.VITE_PLATFORM_API_URL}${invoicesEndpointPath}/${invoiceId}/file`;
     }
 
     /**

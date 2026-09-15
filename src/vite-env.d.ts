@@ -7,7 +7,6 @@ interface ImportMetaEnv {
     readonly VITE_FORGOT_PASSWORD_ENDPOINT_PATH: string;
     readonly VITE_RESET_PASSWORD_ENDPOINT_PATH: string;
     readonly VITE_USERS_ENDPOINT_PATH: string;
-    readonly VITE_INVOICING_API_URL: string;
     readonly VITE_INVOICES_ENDPOINT_PATH: string;
 }
 
