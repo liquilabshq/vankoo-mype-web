@@ -80,7 +80,9 @@ export function InvoiceRail({steps, currentIndex, currentState = 'automatic'}: I
                                 className={cn('h-0.5 flex-1', index === steps.length - 1 ? 'bg-transparent' : LINE_CLASS[state])}
                             />
                         </div>
-                        <p className="text-caption text-fg w-full text-center">{step.label}</p>
+                        <p className="text-fg w-full px-1 text-center text-[11px] leading-4 break-words sm:text-caption">
+                            {step.label}
+                        </p>
                     </li>
                 );
             })}

@@ -13,25 +13,27 @@ export function InvoiceLineItemsTable({lineItems, totals}: InvoiceLineItemsTable
 
     return (
         <div className="flex w-full flex-col gap-4">
-            <div className="border-border-subtle flex w-full flex-col rounded-lg border">
-                <div className="text-caption text-fg-muted flex gap-4 px-4 py-3 font-semibold">
-                    <p className="min-w-0 flex-1">{t('invoicing.detail.lineItems.description')}</p>
-                    <p className="w-[110px] shrink-0 text-right">{t('invoicing.detail.lineItems.quantity')}</p>
-                    <p className="w-[150px] shrink-0 text-right">{t('invoicing.detail.lineItems.unitPrice')}</p>
-                    <p className="w-[150px] shrink-0 text-right">{t('invoicing.detail.lineItems.subtotal')}</p>
-                </div>
-                {lineItems.map((item, index) => (
-                    <div key={index} className="border-border-subtle flex gap-4 border-t p-4">
-                        <p className="text-body text-fg min-w-0 flex-1">{item.description}</p>
-                        <p className="text-body text-fg w-[110px] shrink-0 text-right font-semibold">{item.quantity}</p>
-                        <p className="text-body text-fg w-[150px] shrink-0 text-right font-semibold">
-                            {formatInvoiceAmount(item.unitPrice)}
-                        </p>
-                        <p className="text-body text-fg w-[150px] shrink-0 text-right font-semibold">
-                            {formatInvoiceAmount(item.subtotal)}
-                        </p>
+            <div className="border-border-subtle w-full overflow-x-auto rounded-lg border">
+                <div className="min-w-[560px]">
+                    <div className="text-caption text-fg-muted flex gap-4 px-4 py-3 font-semibold">
+                        <p className="min-w-0 flex-1">{t('invoicing.detail.lineItems.description')}</p>
+                        <p className="w-[110px] shrink-0 text-right">{t('invoicing.detail.lineItems.quantity')}</p>
+                        <p className="w-[150px] shrink-0 text-right">{t('invoicing.detail.lineItems.unitPrice')}</p>
+                        <p className="w-[150px] shrink-0 text-right">{t('invoicing.detail.lineItems.subtotal')}</p>
                     </div>
-                ))}
+                    {lineItems.map((item, index) => (
+                        <div key={index} className="border-border-subtle flex gap-4 border-t p-4">
+                            <p className="text-body text-fg min-w-0 flex-1">{item.description}</p>
+                            <p className="text-body text-fg w-[110px] shrink-0 text-right font-semibold">{item.quantity}</p>
+                            <p className="text-body text-fg w-[150px] shrink-0 text-right font-semibold">
+                                {formatInvoiceAmount(item.unitPrice)}
+                            </p>
+                            <p className="text-body text-fg w-[150px] shrink-0 text-right font-semibold">
+                                {formatInvoiceAmount(item.subtotal)}
+                            </p>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             <div className="flex w-full flex-col gap-2">

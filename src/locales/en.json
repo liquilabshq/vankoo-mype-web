@@ -19,7 +19,8 @@
             "profile": "Profile"
         },
         "topBar": {
-            "searchPlaceholder": "Search Vankoo…"
+            "searchPlaceholder": "Search Vankoo…",
+            "openMenu": "Open menu"
         }
     },
     "iam": {

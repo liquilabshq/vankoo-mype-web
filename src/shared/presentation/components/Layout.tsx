@@ -1,7 +1,9 @@
 import {FileText, House, LogOut, User, Wallet} from 'lucide-react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Outlet, useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
+import {cn} from '@/lib/utils';
 import {useIamStore} from '../../../iam/application/iam.store';
 import {iamPaths} from '../../../iam/presentation/iam-paths';
 import {invoicingPaths} from '../../../invoicing/presentation/invoicing-paths';
@@ -23,6 +25,7 @@ export function Layout() {
     const navigate = useNavigate();
     const session = useIamStore(state => state.session);
     const signOut = useIamStore(state => state.signOut);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     function handleSignOut() {
         signOut();
@@ -31,7 +34,20 @@ export function Layout() {
 
     return (
         <div className="flex min-h-dvh">
-            <aside className="bg-sidebar border-sidebar-border flex w-60 shrink-0 flex-col gap-6 border-r p-6">
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                    aria-hidden="true"
+                />
+            )}
+
+            <aside
+                className={cn(
+                    'bg-sidebar border-sidebar-border fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 -translate-x-full flex-col gap-6 border-r p-6 transition-transform duration-200 lg:static lg:translate-x-0',
+                    sidebarOpen && 'translate-x-0'
+                )}
+            >
                 <Wordmark className="text-sidebar-foreground h-8 w-auto" />
 
                 <nav className="flex flex-col gap-1">
@@ -68,8 +84,8 @@ export function Layout() {
             </aside>
 
             <div className="flex min-w-0 flex-1 flex-col">
-                <TopBar />
-                <main className="flex-1 p-8">
+                <TopBar onMenuClick={() => setSidebarOpen(true)} />
+                <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
                     <Outlet />
                 </main>
             </div>

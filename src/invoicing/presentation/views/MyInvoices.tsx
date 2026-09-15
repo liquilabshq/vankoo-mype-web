@@ -53,9 +53,9 @@ export function MyInvoices() {
 
     return (
         <div className="flex w-full flex-col gap-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h1 className="text-h1 text-fg font-bold">{t('invoicing.myInvoices.title')}</h1>
-                <Button type="button" onClick={() => navigate(invoicingPaths.uploadInvoice())}>
+                <Button type="button" onClick={() => navigate(invoicingPaths.uploadInvoice())} className="w-full sm:w-auto">
                     <FileUp data-icon="inline-start" />
                     {t('invoicing.myInvoices.uploadInvoice')}
                 </Button>
@@ -79,7 +79,7 @@ export function MyInvoices() {
                 </div>
             ) : (
                 <>
-                    <div className="bg-surface-raised border-border-subtle flex items-end gap-4 rounded-xl border p-4">
+                    <div className="bg-surface-raised border-border-subtle flex flex-col gap-4 rounded-xl border p-4 sm:flex-row sm:items-end">
                         <div className="flex flex-1 flex-col gap-1">
                             <label className="text-caption text-fg-secondary font-semibold">
                                 {t('invoicing.myInvoices.filters.search')}
@@ -123,19 +123,30 @@ export function MyInvoices() {
                             <Input type="date" value={from} onChange={event => setFrom(event.target.value)} />
                         </div>
 
-                        <Button type="button" variant="secondary" onClick={handleFilter}>
+                        <Button type="button" variant="secondary" onClick={handleFilter} className="w-full sm:w-auto">
                             {t('invoicing.myInvoices.filters.submit')}
                         </Button>
                     </div>
 
                     <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col overflow-hidden rounded-xl border">
-                        <div className="bg-surface-sunken border-border-subtle text-caption text-fg-secondary flex gap-4 border-b px-4 py-3 font-semibold">
-                            <p className="w-[140px] shrink-0">{t('invoicing.myInvoices.columns.number')}</p>
-                            <p className="min-w-0 flex-1">{t('invoicing.myInvoices.columns.payer')}</p>
-                            <p className="w-[150px] shrink-0">{t('invoicing.myInvoices.columns.payerRuc')}</p>
-                            <p className="w-[130px] shrink-0">{t('invoicing.myInvoices.columns.dueDate')}</p>
-                            <p className="w-[170px] shrink-0">{t('invoicing.myInvoices.columns.status')}</p>
-                            <p className="w-[150px] shrink-0 text-right">{t('invoicing.myInvoices.columns.amount')}</p>
+                        {/* Below `sm` each row stacks as its own card (see InvoiceRow) and needs no
+                            min-width; from `sm` up the fixed-width columns need more room than a
+                            tablet screen has, so this scrolls horizontally rather than squeezing the
+                            payer name column into overlapping its neighbor. */}
+                        <div className="overflow-x-auto">
+                            <div className="sm:min-w-[1000px]">
+                                <div className="bg-surface-sunken border-border-subtle text-caption text-fg-secondary hidden gap-4 border-b px-4 py-3 font-semibold sm:flex">
+                                    <p className="w-[140px] shrink-0">{t('invoicing.myInvoices.columns.number')}</p>
+                                    <p className="min-w-0 flex-1">{t('invoicing.myInvoices.columns.payer')}</p>
+                                    <p className="w-[150px] shrink-0">{t('invoicing.myInvoices.columns.payerRuc')}</p>
+                                    <p className="w-[130px] shrink-0">{t('invoicing.myInvoices.columns.dueDate')}</p>
+                                    <p className="w-[170px] shrink-0">{t('invoicing.myInvoices.columns.status')}</p>
+                                    <p className="w-[150px] shrink-0 text-right">{t('invoicing.myInvoices.columns.amount')}</p>
+                                </div>
+
+                                {!invoicesLoading &&
+                                    invoices.map(invoice => <InvoiceRow key={invoice.id} invoice={invoice} />)}
+                            </div>
                         </div>
 
                         {invoicesLoading && (
@@ -145,8 +156,6 @@ export function MyInvoices() {
                         {!invoicesLoading && invoicesLoaded && invoices.length === 0 && (
                             <p className="text-caption text-fg-muted px-4 py-8 text-center">{t('invoicing.myInvoices.noMatches')}</p>
                         )}
-
-                        {!invoicesLoading && invoices.map(invoice => <InvoiceRow key={invoice.id} invoice={invoice} />)}
 
                         {invoices.length > 0 && (
                             <div className="p-4">

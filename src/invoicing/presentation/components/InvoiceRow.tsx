@@ -8,9 +8,16 @@ interface InvoiceRowProps {
     invoice: Invoice;
 }
 
-/** One row of the invoice table. The whole row links to the detail screen — no actions column. */
+/**
+ * One row of the invoice table. The whole row links to the detail screen — no actions
+ * column.
+ *
+ * Below `sm` there is no room for six columns, so each field stacks as its own
+ * label/value pair instead — the table header (which carries those labels at `sm` and
+ * up) hides itself on that breakpoint, see `MyInvoices`.
+ */
 export function InvoiceRow({invoice}: InvoiceRowProps) {
-    const {i18n} = useTranslation();
+    const {t, i18n} = useTranslation();
     const dueDate = new Intl.DateTimeFormat(i18n.language, {day: '2-digit', month: 'short', year: 'numeric'}).format(
         invoice.dueDate
     );
@@ -18,16 +25,27 @@ export function InvoiceRow({invoice}: InvoiceRowProps) {
     return (
         <Link
             to={invoicingPaths.invoiceDetail(invoice.id)}
-            className="border-border-subtle hover:bg-surface-sunken flex items-center gap-4 border-b px-4 py-3"
+            className="border-border-subtle hover:bg-surface-sunken flex flex-col gap-2 border-b p-4 sm:flex-row sm:items-center sm:gap-4 sm:py-3"
         >
-            <p className="text-body text-fg-secondary w-[140px] shrink-0 font-medium">{invoice.number}</p>
-            <p className="text-body text-fg min-w-0 flex-1 truncate">{invoice.payerName}</p>
-            <p className="text-body text-fg-secondary w-[150px] shrink-0 font-medium">{invoice.payerRuc}</p>
-            <p className="text-body text-fg-secondary w-[130px] shrink-0">{dueDate}</p>
-            <div className="flex w-[170px] shrink-0 items-center">
+            <div className="flex items-center justify-between gap-4 sm:w-[140px] sm:shrink-0">
+                <p className="text-body text-fg-secondary font-medium">{invoice.number}</p>
+                <div className="sm:hidden">
+                    <StatusPill status={invoice.status} />
+                </div>
+            </div>
+            <p className="text-body text-fg min-w-0 sm:flex-1 sm:truncate">{invoice.payerName}</p>
+            <p className="text-caption text-fg-secondary sm:w-[150px] sm:shrink-0 sm:text-body sm:font-medium">
+                <span className="text-fg-muted sm:hidden">{t('invoicing.myInvoices.columns.payerRuc')}: </span>
+                {invoice.payerRuc}
+            </p>
+            <p className="text-caption text-fg-secondary sm:w-[130px] sm:shrink-0 sm:text-body">
+                <span className="text-fg-muted sm:hidden">{t('invoicing.myInvoices.columns.dueDate')}: </span>
+                {dueDate}
+            </p>
+            <div className="hidden sm:flex sm:w-[170px] sm:shrink-0 sm:items-center">
                 <StatusPill status={invoice.status} />
             </div>
-            <p className="text-body text-fg-secondary w-[150px] shrink-0 text-right font-medium">
+            <p className="text-body text-fg-secondary font-medium sm:w-[150px] sm:shrink-0 sm:text-right">
                 {invoice.formattedAmount()}
             </p>
         </Link>

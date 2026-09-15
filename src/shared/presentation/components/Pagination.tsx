@@ -18,14 +18,14 @@ export function Pagination({page, totalPages, onPageChange, summary}: Pagination
     const pages = Array.from({length: totalPages}, (_, index) => index + 1);
 
     return (
-        <div className="flex w-full items-center justify-between">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-caption text-fg-muted">{summary}</p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 overflow-x-auto">
                 <button
                     type="button"
                     disabled={page <= 1}
                     onClick={() => onPageChange(page - 1)}
-                    className="border-border-strong flex size-9 items-center justify-center rounded-md border disabled:opacity-40"
+                    className="border-border-strong flex size-9 shrink-0 items-center justify-center rounded-md border disabled:opacity-40"
                 >
                     <ChevronLeft className="size-4" />
                 </button>
@@ -35,7 +35,7 @@ export function Pagination({page, totalPages, onPageChange, summary}: Pagination
                         type="button"
                         onClick={() => onPageChange(pageNumber)}
                         className={cn(
-                            'text-caption flex size-9 items-center justify-center rounded-md border',
+                            'text-caption flex size-9 shrink-0 items-center justify-center rounded-md border',
                             pageNumber === page
                                 ? 'bg-surface-inverse text-fg-inverse border-transparent font-semibold'
                                 : 'border-border-strong text-fg'
@@ -48,7 +48,7 @@ export function Pagination({page, totalPages, onPageChange, summary}: Pagination
                     type="button"
                     disabled={page >= totalPages}
                     onClick={() => onPageChange(page + 1)}
-                    className="border-border-strong flex size-9 items-center justify-center rounded-md border disabled:opacity-40"
+                    className="border-border-strong flex size-9 shrink-0 items-center justify-center rounded-md border disabled:opacity-40"
                 >
                     <ChevronRight className="size-4" />
                 </button>
