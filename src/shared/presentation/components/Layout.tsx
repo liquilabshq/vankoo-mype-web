@@ -1,18 +1,22 @@
-import {LogOut} from 'lucide-react';
+import {FileText, House, LogOut, User, Wallet} from 'lucide-react';
 import {useTranslation} from 'react-i18next';
 import {Outlet, useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {useIamStore} from '../../../iam/application/iam.store';
 import {iamPaths} from '../../../iam/presentation/iam-paths';
-import {PreferencesBar} from './PreferencesBar';
+import {invoicingPaths} from '../../../invoicing/presentation/invoicing-paths';
+import {SidebarItem} from './SidebarItem';
+import {TopBar} from './TopBar';
 import {Wordmark} from './Wordmark';
 
 /**
- * The app shell around whatever the router puts in the outlet.
+ * The app shell: a navy sidebar for navigation, a top bar, and whatever the router
+ * puts in the outlet.
  *
  * The layout is the one place allowed to reach into a bounded context from outside,
  * and it does so through that context's store and its paths, which is the loosest
- * coupling available.
+ * coupling available. Wallet and profile have no screens yet, so their sidebar
+ * entries render inert instead of linking somewhere that would 404.
  */
 export function Layout() {
     const {t} = useTranslation();
@@ -26,31 +30,48 @@ export function Layout() {
     }
 
     return (
-        <div className="bg-surface min-h-dvh">
-            <header className="border-subtle flex items-center justify-between border-b px-6 py-4">
-                <Wordmark className="text-fg text-2xl" />
-                {/*
-                  The switcher lives here too, and not only on the IAM screens: once a
-                  session is open those screens are gone, and losing the way to change
-                  language or theme with them would be a strange kind of reward for
-                  signing in. This shell is not in Figma yet — see Home.
-                */}
-                <div className="flex items-center gap-4">
-                    <PreferencesBar />
-                    {session && (
-                        <>
-                            <span className="text-caption text-fg-secondary hidden sm:inline">
-                                {session.user.email}
-                            </span>
-                            <Button type="button" variant="ghost" size="sm" onClick={handleSignOut}>
-                                <LogOut data-icon="inline-start" />
-                                {t('common.signOut')}
-                            </Button>
-                        </>
-                    )}
-                </div>
-            </header>
-            <Outlet />
+        <div className="flex min-h-dvh">
+            <aside className="bg-sidebar border-sidebar-border flex w-60 shrink-0 flex-col gap-6 border-r p-6">
+                <Wordmark className="text-sidebar-foreground h-8 w-auto" />
+
+                <nav className="flex flex-col gap-1">
+                    <SidebarItem icon={House} label={t('common.nav.home')} to="/" />
+                    <SidebarItem
+                        icon={FileText}
+                        label={t('common.nav.invoices')}
+                        to={invoicingPaths.uploadInvoice()}
+                    />
+                    <SidebarItem icon={Wallet} label={t('common.nav.wallet')} />
+                    <SidebarItem icon={User} label={t('common.nav.profile')} />
+                </nav>
+
+                <div className="flex-1" />
+
+                {session && (
+                    <div className="flex flex-col gap-4">
+                        <p className="text-caption text-sidebar-foreground truncate font-semibold">
+                            {session.user.email}
+                        </p>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="border-border-strong text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full"
+                            onClick={handleSignOut}
+                        >
+                            <LogOut data-icon="inline-start" />
+                            {t('common.signOut')}
+                        </Button>
+                    </div>
+                )}
+            </aside>
+
+            <div className="flex min-w-0 flex-1 flex-col">
+                <TopBar />
+                <main className="flex-1 p-8">
+                    <Outlet />
+                </main>
+            </div>
         </div>
     );
 }

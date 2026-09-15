@@ -11,6 +11,15 @@
             "terms": "Términos",
             "privacy": "Privacidad",
             "help": "¿Necesitas ayuda?"
+        },
+        "nav": {
+            "home": "Inicio",
+            "invoices": "Facturas",
+            "wallet": "Billetera",
+            "profile": "Perfil"
+        },
+        "topBar": {
+            "searchPlaceholder": "Buscar en Vankoo…"
         }
     },
     "iam": {
@@ -76,6 +85,34 @@
             "signInFailed": "Correo o contraseña incorrectos.",
             "signUpFailed": "No pudimos crear tu cuenta. Inténtalo de nuevo.",
             "invalid-password-reset-token": "Ese enlace ya no sirve: puede haber caducado o haberse usado. Pide uno nuevo."
+        }
+    },
+    "invoicing": {
+        "upload": {
+            "title": "Subir factura",
+            "dropzone": {
+                "cta": "Arrastra el archivo o haz clic para elegirlo",
+                "hint": "PDF de factura electrónica"
+            },
+            "helper": "PDF de una factura electrónica emitida en SUNAT. Nosotros extraemos los datos: no tienes que escribir nada.",
+            "submitting": "Subiendo…",
+            "afterTitle": "Qué pasa después de subirla",
+            "afterBody": "Leemos los datos, comprobamos que cuadren y validamos la factura con SUNAT. Si todo va bien, la publicamos para que los inversionistas la financien.",
+            "steps": {
+                "received": "Recibida",
+                "reading": "Leyendo datos",
+                "validating": "Validando con SUNAT",
+                "approved": "Aprobada",
+                "inAuction": "En subasta"
+            },
+            "success": {
+                "title": "Factura recibida",
+                "body": "La estamos procesando. Id: {{id}}."
+            },
+            "uploadAnother": "Subir otra"
+        },
+        "errors": {
+            "uploadFailed": "No pudimos subir la factura. Inténtalo de nuevo."
         }
     },
     "home": {

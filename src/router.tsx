@@ -1,6 +1,7 @@
 import {createBrowserRouter} from 'react-router';
 import {authenticationLoader} from './iam/infrastructure/authentication.loader';
 import {iamRoutes} from './iam/presentation/iam-routes';
+import {invoicingRoutes} from './invoicing/presentation/invoicing-routes';
 import {Layout} from './shared/presentation/components/Layout';
 import {Home} from './shared/presentation/views/Home';
 import {NotFound} from './shared/presentation/views/NotFound';
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
         Component: Layout,
         children: [
             {index: true, Component: Home, loader: authenticationLoader},
+            {path: 'invoicing', children: invoicingRoutes, loader: authenticationLoader},
             {path: '*', Component: NotFound}
         ]
     }

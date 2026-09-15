@@ -11,6 +11,15 @@
             "terms": "Terms",
             "privacy": "Privacy",
             "help": "Need help?"
+        },
+        "nav": {
+            "home": "Home",
+            "invoices": "Invoices",
+            "wallet": "Wallet",
+            "profile": "Profile"
+        },
+        "topBar": {
+            "searchPlaceholder": "Search Vankoo…"
         }
     },
     "iam": {
@@ -76,6 +85,34 @@
             "signInFailed": "Incorrect email or password.",
             "signUpFailed": "We could not create your account. Please try again.",
             "invalid-password-reset-token": "That link no longer works: it may have expired or already been used. Ask for a new one."
+        }
+    },
+    "invoicing": {
+        "upload": {
+            "title": "Upload invoice",
+            "dropzone": {
+                "cta": "Drag a file here or click to choose one",
+                "hint": "PDF of an electronic invoice"
+            },
+            "helper": "PDF of an electronic invoice issued through SUNAT. We extract the data: you do not have to type anything.",
+            "submitting": "Uploading…",
+            "afterTitle": "What happens after you upload it",
+            "afterBody": "We read the data, check that it adds up, and validate the invoice with SUNAT. If everything checks out, we publish it so investors can fund it.",
+            "steps": {
+                "received": "Received",
+                "reading": "Reading data",
+                "validating": "Validating with SUNAT",
+                "approved": "Approved",
+                "inAuction": "In auction"
+            },
+            "success": {
+                "title": "Invoice received",
+                "body": "We are processing it. Id: {{id}}."
+            },
+            "uploadAnother": "Upload another"
+        },
+        "errors": {
+            "uploadFailed": "We could not upload the invoice. Please try again."
         }
     },
     "home": {
