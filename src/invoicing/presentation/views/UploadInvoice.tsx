@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {buttonVariants} from '@/components/ui/button';
 import {Spinner} from '@/components/ui/spinner';
@@ -17,6 +17,15 @@ function formatFileSize(bytes: number): string {
     return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
+/**
+ * Delay (ms) before advancing to each step past "received": reading, SUNAT validation,
+ * approval, auction. SUNAT validation and approval aren't implemented in the backend
+ * yet — only the OCR read is real — so once an upload succeeds this timeline fakes the
+ * rest of the target flow, purely client-side, so the screen previews what it will look
+ * like once that backend work lands.
+ */
+const SIMULATED_STEP_DELAYS_MS = [800, 1200, 900, 800];
+
 /** Routed view where a MYPE submits an invoice for the platform to read and validate. */
 export function UploadInvoice() {
     const {t} = useTranslation();
@@ -28,6 +37,20 @@ export function UploadInvoice() {
     const reset = useInvoicingStore(state => state.reset);
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [stepIndex, setStepIndex] = useState(0);
+
+    useEffect(() => {
+        if (!uploadedInvoiceId) {
+            setStepIndex(0);
+            return;
+        }
+        let elapsed = 0;
+        const timers = SIMULATED_STEP_DELAYS_MS.map((delay, index) => {
+            elapsed += delay;
+            return setTimeout(() => setStepIndex(index + 1), elapsed);
+        });
+        return () => timers.forEach(clearTimeout);
+    }, [uploadedInvoiceId]);
 
     const steps = [
         {label: t('invoicing.upload.steps.received')},
@@ -63,7 +86,7 @@ export function UploadInvoice() {
                             onRemove={handleReset}
                             removeLabel={t('invoicing.upload.removeFile')}
                         />
-                        <InvoiceRail steps={steps} currentIndex={1} />
+                        <InvoiceRail steps={steps} currentIndex={stepIndex} />
                         <p className="text-caption text-fg-muted">{t('invoicing.upload.processingHelper')}</p>
                         <div className="flex items-start gap-4">
                             <a

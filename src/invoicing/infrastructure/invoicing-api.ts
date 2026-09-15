@@ -28,15 +28,18 @@ export class InvoicingApi extends BaseApi {
     }
 
     /**
-     * Uploads the PDF. No explicit `Content-Type` is set on purpose: axios detects a
-     * `FormData` body and lets the browser generate the multipart boundary itself —
-     * setting the header by hand here would omit that boundary and the backend would
-     * fail to parse it.
+     * Uploads the PDF.
+     *
+     * `Content-Type` is explicitly cleared rather than left alone: `BaseApi` sets
+     * `application/json` as an instance-wide default, and axios does not drop that
+     * default just because this call's body is `FormData` — confirmed against the
+     * real backend, which answered 415 until this line was added. Clearing it here
+     * is what lets the browser generate the multipart boundary itself.
      */
     uploadInvoice(file: File): Promise<AxiosResponse<InvoiceResource>> {
         const body = new FormData();
         body.append('File', file);
-        return this.http.post<InvoiceResource>(invoicesEndpointPath, body);
+        return this.http.post<InvoiceResource>(invoicesEndpointPath, body, {headers: {'Content-Type': null}});
     }
 
     /**
@@ -53,7 +56,7 @@ export class InvoicingApi extends BaseApi {
 
     /** Where the uploaded PDF can be downloaded from directly — `GET .../{id}/file`. */
     invoiceFileUrl(invoiceId: string): string {
-        return `${import.meta.env.VITE_PLATFORM_API_URL}${invoicesEndpointPath}/${invoiceId}/file`;
+        return `${import.meta.env.VITE_INVOICING_API_URL}${invoicesEndpointPath}/${invoiceId}/file`;
     }
 
     /**
