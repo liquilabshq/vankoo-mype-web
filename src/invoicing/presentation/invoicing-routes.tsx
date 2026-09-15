@@ -1,4 +1,5 @@
 import type {RouteObject} from 'react-router';
+import {MyInvoices} from './views/MyInvoices';
 import {UploadInvoice} from './views/UploadInvoice';
 
 /**
@@ -6,5 +7,6 @@ import {UploadInvoice} from './views/UploadInvoice';
  * `/invoicing`. Paths stay relative here; `invoicing-paths.ts` owns the absolute ones.
  */
 export const invoicingRoutes: RouteObject[] = [
+    {index: true, Component: MyInvoices},
     {path: 'upload', Component: UploadInvoice}
 ];

@@ -1,7 +1,8 @@
 import {create} from 'zustand';
 import {iamInterceptor} from '../../iam/infrastructure/iam.interceptor';
+import type {Invoice} from '../domain/model/invoice.entity';
 import {InvoiceAssembler} from '../infrastructure/invoice.assembler';
-import {InvoicingApi} from '../infrastructure/invoicing-api';
+import {InvoicingApi, type InvoiceListQuery} from '../infrastructure/invoicing-api';
 import type {UploadInvoiceCommand} from '../domain/model/upload-invoice.command';
 
 const invoicingApi = new InvoicingApi({requestInterceptors: [iamInterceptor]});
@@ -13,9 +14,16 @@ export interface InvoicingState {
     /** The id the backend answered with, so the view can confirm the upload succeeded. */
     uploadedInvoiceId: string | null;
     uploadInvoice: (command: UploadInvoiceCommand) => Promise<boolean>;
+    /** Where that invoice's PDF can be downloaded from — a plain URL, not a fetch. */
+    invoiceFileUrl: (invoiceId: string) => string;
     clearErrors: () => void;
     /** Forgets the last upload, so the dropzone can be used again. */
     reset: () => void;
+
+    invoices: Invoice[];
+    invoicesLoading: boolean;
+    invoicesLoaded: boolean;
+    fetchInvoices: (query?: InvoiceListQuery) => Promise<void>;
 }
 
 /**
@@ -28,6 +36,9 @@ export const useInvoicingStore = create<InvoicingState>()(set => ({
     submitting: false,
     errors: [],
     uploadedInvoiceId: null,
+    invoices: [],
+    invoicesLoading: false,
+    invoicesLoaded: false,
 
     uploadInvoice: async command => {
         set({submitting: true, errors: []});
@@ -46,6 +57,19 @@ export const useInvoicingStore = create<InvoicingState>()(set => ({
         }
     },
 
+    invoiceFileUrl: (invoiceId: string) => invoicingApi.invoiceFileUrl(invoiceId),
+
     clearErrors: () => set({errors: []}),
-    reset: () => set({uploadedInvoiceId: null, errors: [], submitting: false})
+    reset: () => set({uploadedInvoiceId: null, errors: [], submitting: false}),
+
+    fetchInvoices: async (query = {}) => {
+        set({invoicesLoading: true, errors: []});
+        try {
+            const response = await invoicingApi.getInvoices(query);
+            const invoices = InvoiceAssembler.toInvoicesFromResponse(response);
+            set({invoices, invoicesLoading: false, invoicesLoaded: true});
+        } catch (error) {
+            set({errors: [error as Error], invoices: [], invoicesLoading: false, invoicesLoaded: true});
+        }
+    }
 }));

@@ -7,6 +7,12 @@ interface SidebarItemProps {
     label: string;
     /** Omitted for a screen that has not been built yet — renders inert rather than link to a 404. */
     to?: string;
+    /**
+     * Whether the link only lights up on an exact match. Off for a section with
+     * sub-routes (e.g. Facturas), so uploading or any other invoicing screen keeps it
+     * highlighted; on for `/`, which would otherwise prefix-match every route.
+     */
+    end?: boolean;
 }
 
 const baseClassName = 'relative flex h-10 items-center gap-3 rounded-md px-3';
@@ -19,7 +25,7 @@ const baseClassName = 'relative flex h-10 items-center gap-3 rounded-md px-3';
  * to the fill change, because color alone would not carry the state for someone who
  * cannot distinguish it.
  */
-export function SidebarItem({icon: Icon, label, to}: SidebarItemProps) {
+export function SidebarItem({icon: Icon, label, to, end = true}: SidebarItemProps) {
     if (!to) {
         return (
             <span className={cn(baseClassName, 'text-fg-on-inverse cursor-default opacity-60')} aria-disabled="true">
@@ -32,7 +38,7 @@ export function SidebarItem({icon: Icon, label, to}: SidebarItemProps) {
     return (
         <NavLink
             to={to}
-            end
+            end={end}
             className={({isActive}) =>
                 cn(
                     baseClassName,

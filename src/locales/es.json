@@ -96,6 +96,9 @@
             },
             "helper": "PDF de una factura electrónica emitida en SUNAT. Nosotros extraemos los datos: no tienes que escribir nada.",
             "submitting": "Subiendo…",
+            "uploadComplete": "subida completa",
+            "removeFile": "Quitar",
+            "processingHelper": "Estamos leyendo los datos de tu factura. Puedes cerrar esta página: te avisamos por correo cuando termine.",
             "afterTitle": "Qué pasa después de subirla",
             "afterBody": "Leemos los datos, comprobamos que cuadren y validamos la factura con SUNAT. Si todo va bien, la publicamos para que los inversionistas la financien.",
             "steps": {
@@ -105,11 +108,42 @@
                 "approved": "Aprobada",
                 "inAuction": "En subasta"
             },
-            "success": {
-                "title": "Factura recibida",
-                "body": "La estamos procesando. Id: {{id}}."
-            },
+            "viewInvoice": "Ver la factura",
             "uploadAnother": "Subir otra"
+        },
+        "myInvoices": {
+            "title": "Facturas",
+            "uploadInvoice": "Subir factura",
+            "filters": {
+                "search": "Buscar",
+                "searchPlaceholder": "RUC o N° de factura",
+                "status": "Estado",
+                "allStatuses": "Todos los estados",
+                "dateRange": "Rango de fecha",
+                "submit": "Filtrar"
+            },
+            "columns": {
+                "number": "Factura",
+                "payer": "Pagador",
+                "payerRuc": "RUC del pagador",
+                "dueDate": "Vence",
+                "status": "Estado",
+                "amount": "Importe"
+            },
+            "loading": "Cargando facturas…",
+            "empty": "Todavía no subiste ninguna factura.",
+            "resultsSummary_one": "{{count}} resultado",
+            "resultsSummary_other": "{{count}} resultados"
+        },
+        "status": {
+            "UPLOADED": "Subida",
+            "OCR_PROCESSING": "Leyendo datos",
+            "DATA_EXTRACTED": "Leyendo datos",
+            "SUNAT_VALIDATING": "Validando con SUNAT",
+            "SUNAT_VALIDATED": "Validando con SUNAT",
+            "APPROVED": "Aprobada",
+            "PUBLISHED": "En subasta",
+            "REJECTED": "Rechazada"
         },
         "errors": {
             "uploadFailed": "No pudimos subir la factura. Inténtalo de nuevo."

@@ -39,7 +39,8 @@ export function Layout() {
                     <SidebarItem
                         icon={FileText}
                         label={t('common.nav.invoices')}
-                        to={invoicingPaths.uploadInvoice()}
+                        to={invoicingPaths.myInvoices()}
+                        end={false}
                     />
                     <SidebarItem icon={Wallet} label={t('common.nav.wallet')} />
                     <SidebarItem icon={User} label={t('common.nav.profile')} />

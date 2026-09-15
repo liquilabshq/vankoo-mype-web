@@ -96,6 +96,9 @@
             },
             "helper": "PDF of an electronic invoice issued through SUNAT. We extract the data: you do not have to type anything.",
             "submitting": "Uploading…",
+            "uploadComplete": "upload complete",
+            "removeFile": "Remove",
+            "processingHelper": "We are reading your invoice's data. You can close this page: we will email you when it is done.",
             "afterTitle": "What happens after you upload it",
             "afterBody": "We read the data, check that it adds up, and validate the invoice with SUNAT. If everything checks out, we publish it so investors can fund it.",
             "steps": {
@@ -105,11 +108,42 @@
                 "approved": "Approved",
                 "inAuction": "In auction"
             },
-            "success": {
-                "title": "Invoice received",
-                "body": "We are processing it. Id: {{id}}."
-            },
+            "viewInvoice": "View invoice",
             "uploadAnother": "Upload another"
+        },
+        "myInvoices": {
+            "title": "Invoices",
+            "uploadInvoice": "Upload invoice",
+            "filters": {
+                "search": "Search",
+                "searchPlaceholder": "RUC or invoice number",
+                "status": "Status",
+                "allStatuses": "All statuses",
+                "dateRange": "Date range",
+                "submit": "Filter"
+            },
+            "columns": {
+                "number": "Invoice",
+                "payer": "Payer",
+                "payerRuc": "Payer RUC",
+                "dueDate": "Due",
+                "status": "Status",
+                "amount": "Amount"
+            },
+            "loading": "Loading invoices…",
+            "empty": "You have not uploaded any invoices yet.",
+            "resultsSummary_one": "{{count}} result",
+            "resultsSummary_other": "{{count}} results"
+        },
+        "status": {
+            "UPLOADED": "Uploaded",
+            "OCR_PROCESSING": "Reading data",
+            "DATA_EXTRACTED": "Reading data",
+            "SUNAT_VALIDATING": "Validating with SUNAT",
+            "SUNAT_VALIDATED": "Validating with SUNAT",
+            "APPROVED": "Approved",
+            "PUBLISHED": "In auction",
+            "REJECTED": "Rejected"
         },
         "errors": {
             "uploadFailed": "We could not upload the invoice. Please try again."

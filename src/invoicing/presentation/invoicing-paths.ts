@@ -5,5 +5,6 @@
  * link waiting for someone to rename a segment.
  */
 export const invoicingPaths = {
+    myInvoices: () => '/invoicing',
     uploadInvoice: () => '/invoicing/upload'
 } as const;
