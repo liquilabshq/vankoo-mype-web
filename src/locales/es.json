@@ -131,7 +131,11 @@
                 "amount": "Importe"
             },
             "loading": "Cargando facturas…",
-            "empty": "Todavía no subiste ninguna factura.",
+            "empty": {
+                "title": "Aún no tienes facturas",
+                "description": "Sube tu primera factura y nuestro sistema extraerá los datos automáticamente."
+            },
+            "noMatches": "Ninguna factura coincide con estos filtros.",
             "resultsSummary_one": "{{count}} resultado",
             "resultsSummary_other": "{{count}} resultados"
         },
@@ -143,7 +147,73 @@
             "SUNAT_VALIDATED": "Validando con SUNAT",
             "APPROVED": "Aprobada",
             "PUBLISHED": "En subasta",
+            "REQUIRES_REVIEW": "Requiere revisión",
             "REJECTED": "Rechazada"
+        },
+        "detail": {
+            "back": "Facturas",
+            "loading": "Cargando factura…",
+            "loadFailed": "No pudimos cargar esta factura. Puede que no exista o que haya un problema de conexión.",
+            "viewPdf": "Ver el PDF",
+            "subtitle": "{{payer}} · vence el {{date}}",
+            "reviewAlert": {
+                "title": "Necesitamos que revises esta factura",
+                "fallbackMessage": "Hay algo que corregir antes de continuar."
+            },
+            "railCaption": {
+                "received": {
+                    "automatic": "Paso 1 de 5 · registramos que la factura llegó."
+                },
+                "reading": {
+                    "automatic": "Paso 2 de 5 · estamos leyendo los datos de la factura. Es automático.",
+                    "attention": "Parada en el paso 2 de 5 · esto no avanza solo: hace falta que alguien lo corrija."
+                },
+                "validating": {
+                    "automatic": "Paso 3 de 5 · consultando SUNAT para verificar que la factura es legítima. Es automático.",
+                    "attention": "Parada en el paso 3 de 5 · esto no avanza solo: hace falta que alguien lo corrija."
+                },
+                "approved": {
+                    "automatic": "Paso 4 de 5 · la factura fue aprobada y está lista para salir a subasta.",
+                    "attention": "Parada en el paso 4 de 5 · esto no avanza solo: hace falta que alguien lo corrija."
+                },
+                "inAuction": {
+                    "automatic": "Paso 5 de 5 · la factura está publicada en la subasta.",
+                    "attention": "Parada en el paso 5 de 5 · esto no avanza solo: hace falta que alguien lo corrija."
+                }
+            },
+            "facts": {
+                "title": "Datos que leímos de la factura",
+                "issuer": "Emisor",
+                "issuerRuc": "RUC del emisor",
+                "payer": "Pagador",
+                "payerRuc": "RUC del pagador",
+                "issuedAt": "Emitida",
+                "dueDate": "Vence",
+                "currency": "Moneda",
+                "fiscalNumber": "Número fiscal"
+            },
+            "settlement": {
+                "grossAmount": "Importe de la factura",
+                "discount": "Descuento ({{percentage}} %)",
+                "net": "Neto",
+                "fee": "Comisión Vankoo ({{percentage}} %)",
+                "receivable": "Recibes",
+                "footnote": "El descuento y la comisión los fija Vankoo al crear la subasta.",
+                "pendingFootnote": "Sabrás cuánto recibes cuando la factura esté aprobada y salga a subasta: el descuento y la comisión se fijan ahí."
+            },
+            "lineItems": {
+                "title": "Detalle de la factura",
+                "description": "Descripción",
+                "quantity": "Cantidad",
+                "unitPrice": "Precio unitario",
+                "subtotal": "Subtotal"
+            },
+            "totals": {
+                "subtotal": "Subtotal",
+                "igv": "IGV (18 %)",
+                "commercialDiscount": "Descuento comercial",
+                "total": "Total"
+            }
         },
         "errors": {
             "uploadFailed": "No pudimos subir la factura. Inténtalo de nuevo."

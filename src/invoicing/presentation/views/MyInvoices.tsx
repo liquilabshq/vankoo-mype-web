@@ -1,10 +1,11 @@
-import {FileUp} from 'lucide-react';
+import {FileText, FileUp} from 'lucide-react';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {EmptyState} from '../../../shared/presentation/components/EmptyState';
 import {Pagination} from '../../../shared/presentation/components/Pagination';
 import {useInvoicingStore} from '../../application/invoicing.store';
 import {ALL_INVOICE_STATUSES, presentationForStatus, type InvoiceStatus} from '../../domain/model/invoice-status';
@@ -28,6 +29,7 @@ export function MyInvoices() {
     const [status, setStatus] = useState<InvoiceStatus | 'all'>('all');
     const [from, setFrom] = useState('');
     const [page, setPage] = useState(1);
+    const [hasFiltered, setHasFiltered] = useState(false);
 
     useEffect(() => {
         void fetchInvoices({page});
@@ -38,6 +40,7 @@ export function MyInvoices() {
 
     function handleFilter() {
         setPage(1);
+        setHasFiltered(true);
         void fetchInvoices({
             search: search.trim() || undefined,
             status: status === 'all' ? undefined : status,
@@ -58,86 +61,106 @@ export function MyInvoices() {
                 </Button>
             </div>
 
-            <div className="bg-surface-raised border-border-subtle flex items-end gap-4 rounded-xl border p-4">
-                <div className="flex flex-1 flex-col gap-1">
-                    <label className="text-caption text-fg-secondary font-semibold">
-                        {t('invoicing.myInvoices.filters.search')}
-                    </label>
-                    <Input
-                        value={search}
-                        onChange={event => setSearch(event.target.value)}
-                        placeholder={t('invoicing.myInvoices.filters.searchPlaceholder')}
-                    />
-                </div>
-
-                <div className="flex flex-1 flex-col gap-1">
-                    <label className="text-caption text-fg-secondary font-semibold">
-                        {t('invoicing.myInvoices.filters.status')}
-                    </label>
-                    <Select value={status} onValueChange={value => setStatus(value as InvoiceStatus | 'all')}>
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder={t('invoicing.myInvoices.filters.allStatuses')}>
-                                {(value: InvoiceStatus | 'all') =>
-                                    value === 'all'
-                                        ? t('invoicing.myInvoices.filters.allStatuses')
-                                        : t(presentationForStatus(value).labelKey)
-                                }
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">{t('invoicing.myInvoices.filters.allStatuses')}</SelectItem>
-                            {ALL_INVOICE_STATUSES.map(candidate => (
-                                <SelectItem key={candidate} value={candidate}>
-                                    {t(presentationForStatus(candidate).labelKey)}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                <div className="flex flex-1 flex-col gap-1">
-                    <label className="text-caption text-fg-secondary font-semibold">
-                        {t('invoicing.myInvoices.filters.dateRange')}
-                    </label>
-                    <Input type="date" value={from} onChange={event => setFrom(event.target.value)} />
-                </div>
-
-                <Button type="button" variant="secondary" onClick={handleFilter}>
-                    {t('invoicing.myInvoices.filters.submit')}
-                </Button>
-            </div>
-
             <InvoicingErrorAlert errors={errors} />
 
-            <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col overflow-hidden rounded-xl border">
-                <div className="bg-surface-sunken border-border-subtle text-caption text-fg-secondary flex gap-4 border-b px-4 py-3 font-semibold">
-                    <p className="w-[140px] shrink-0">{t('invoicing.myInvoices.columns.number')}</p>
-                    <p className="min-w-0 flex-1">{t('invoicing.myInvoices.columns.payer')}</p>
-                    <p className="w-[150px] shrink-0">{t('invoicing.myInvoices.columns.payerRuc')}</p>
-                    <p className="w-[130px] shrink-0">{t('invoicing.myInvoices.columns.dueDate')}</p>
-                    <p className="w-[170px] shrink-0">{t('invoicing.myInvoices.columns.status')}</p>
-                    <p className="w-[150px] shrink-0 text-right">{t('invoicing.myInvoices.columns.amount')}</p>
+            {!invoicesLoading && invoicesLoaded && invoices.length === 0 && !hasFiltered ? (
+                <div className="bg-surface-raised border-border-subtle shadow-elevation-1 rounded-xl border">
+                    <EmptyState
+                        icon={FileText}
+                        title={t('invoicing.myInvoices.empty.title')}
+                        description={t('invoicing.myInvoices.empty.description')}
+                        action={
+                            <Button type="button" onClick={() => navigate(invoicingPaths.uploadInvoice())}>
+                                <FileUp data-icon="inline-start" />
+                                {t('invoicing.myInvoices.uploadInvoice')}
+                            </Button>
+                        }
+                    />
                 </div>
+            ) : (
+                <>
+                    <div className="bg-surface-raised border-border-subtle flex items-end gap-4 rounded-xl border p-4">
+                        <div className="flex flex-1 flex-col gap-1">
+                            <label className="text-caption text-fg-secondary font-semibold">
+                                {t('invoicing.myInvoices.filters.search')}
+                            </label>
+                            <Input
+                                value={search}
+                                onChange={event => setSearch(event.target.value)}
+                                placeholder={t('invoicing.myInvoices.filters.searchPlaceholder')}
+                            />
+                        </div>
 
-                {invoicesLoading && <p className="text-caption text-fg-muted px-4 py-8 text-center">{t('invoicing.myInvoices.loading')}</p>}
+                        <div className="flex flex-1 flex-col gap-1">
+                            <label className="text-caption text-fg-secondary font-semibold">
+                                {t('invoicing.myInvoices.filters.status')}
+                            </label>
+                            <Select value={status} onValueChange={value => setStatus(value as InvoiceStatus | 'all')}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder={t('invoicing.myInvoices.filters.allStatuses')}>
+                                        {(value: InvoiceStatus | 'all') =>
+                                            value === 'all'
+                                                ? t('invoicing.myInvoices.filters.allStatuses')
+                                                : t(presentationForStatus(value).labelKey)
+                                        }
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('invoicing.myInvoices.filters.allStatuses')}</SelectItem>
+                                    {ALL_INVOICE_STATUSES.map(candidate => (
+                                        <SelectItem key={candidate} value={candidate}>
+                                            {t(presentationForStatus(candidate).labelKey)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                {!invoicesLoading && invoicesLoaded && invoices.length === 0 && (
-                    <p className="text-caption text-fg-muted px-4 py-8 text-center">{t('invoicing.myInvoices.empty')}</p>
-                )}
+                        <div className="flex flex-1 flex-col gap-1">
+                            <label className="text-caption text-fg-secondary font-semibold">
+                                {t('invoicing.myInvoices.filters.dateRange')}
+                            </label>
+                            <Input type="date" value={from} onChange={event => setFrom(event.target.value)} />
+                        </div>
 
-                {!invoicesLoading && invoices.map(invoice => <InvoiceRow key={invoice.id} invoice={invoice} />)}
-
-                {invoices.length > 0 && (
-                    <div className="p-4">
-                        <Pagination
-                            page={page}
-                            totalPages={totalPages}
-                            onPageChange={setPage}
-                            summary={t('invoicing.myInvoices.resultsSummary', {count: invoices.length})}
-                        />
+                        <Button type="button" variant="secondary" onClick={handleFilter}>
+                            {t('invoicing.myInvoices.filters.submit')}
+                        </Button>
                     </div>
-                )}
-            </div>
+
+                    <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col overflow-hidden rounded-xl border">
+                        <div className="bg-surface-sunken border-border-subtle text-caption text-fg-secondary flex gap-4 border-b px-4 py-3 font-semibold">
+                            <p className="w-[140px] shrink-0">{t('invoicing.myInvoices.columns.number')}</p>
+                            <p className="min-w-0 flex-1">{t('invoicing.myInvoices.columns.payer')}</p>
+                            <p className="w-[150px] shrink-0">{t('invoicing.myInvoices.columns.payerRuc')}</p>
+                            <p className="w-[130px] shrink-0">{t('invoicing.myInvoices.columns.dueDate')}</p>
+                            <p className="w-[170px] shrink-0">{t('invoicing.myInvoices.columns.status')}</p>
+                            <p className="w-[150px] shrink-0 text-right">{t('invoicing.myInvoices.columns.amount')}</p>
+                        </div>
+
+                        {invoicesLoading && (
+                            <p className="text-caption text-fg-muted px-4 py-8 text-center">{t('invoicing.myInvoices.loading')}</p>
+                        )}
+
+                        {!invoicesLoading && invoicesLoaded && invoices.length === 0 && (
+                            <p className="text-caption text-fg-muted px-4 py-8 text-center">{t('invoicing.myInvoices.noMatches')}</p>
+                        )}
+
+                        {!invoicesLoading && invoices.map(invoice => <InvoiceRow key={invoice.id} invoice={invoice} />)}
+
+                        {invoices.length > 0 && (
+                            <div className="p-4">
+                                <Pagination
+                                    page={page}
+                                    totalPages={totalPages}
+                                    onPageChange={setPage}
+                                    summary={t('invoicing.myInvoices.resultsSummary', {count: invoices.length})}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import type {AxiosResponse} from 'axios';
 import {BaseApi, type BaseApiOptions} from '../../shared/infrastructure/base-api';
 import type {InvoiceStatus} from '../domain/model/invoice-status';
+import type {InvoiceDetailResource} from './invoice-detail.resource';
 import type {InvoiceListItemResource} from './invoice-list.resource';
 import type {InvoiceResource} from './invoice.resource';
 
@@ -53,5 +54,15 @@ export class InvoicingApi extends BaseApi {
     /** Where the uploaded PDF can be downloaded from directly — `GET .../{id}/file`. */
     invoiceFileUrl(invoiceId: string): string {
         return `${import.meta.env.VITE_PLATFORM_API_URL}${invoicesEndpointPath}/${invoiceId}/file`;
+    }
+
+    /**
+     * Reads one invoice in full.
+     *
+     * Provisional, like `InvoiceDetailResource`: this endpoint is not implemented on
+     * the backend yet, so a call here fails until it is.
+     */
+    getInvoiceById(invoiceId: string): Promise<AxiosResponse<InvoiceDetailResource>> {
+        return this.http.get(`${invoicesEndpointPath}/${invoiceId}`);
     }
 }

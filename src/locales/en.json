@@ -131,7 +131,11 @@
                 "amount": "Amount"
             },
             "loading": "Loading invoices…",
-            "empty": "You have not uploaded any invoices yet.",
+            "empty": {
+                "title": "You do not have any invoices yet",
+                "description": "Upload your first invoice and our system will extract the data automatically."
+            },
+            "noMatches": "No invoice matches these filters.",
             "resultsSummary_one": "{{count}} result",
             "resultsSummary_other": "{{count}} results"
         },
@@ -143,7 +147,73 @@
             "SUNAT_VALIDATED": "Validating with SUNAT",
             "APPROVED": "Approved",
             "PUBLISHED": "In auction",
+            "REQUIRES_REVIEW": "Requires review",
             "REJECTED": "Rejected"
+        },
+        "detail": {
+            "back": "Invoices",
+            "loading": "Loading invoice…",
+            "loadFailed": "We could not load this invoice. It may not exist, or there may be a connection problem.",
+            "viewPdf": "View the PDF",
+            "subtitle": "{{payer}} · due {{date}}",
+            "reviewAlert": {
+                "title": "We need you to review this invoice",
+                "fallbackMessage": "There is something to fix before this can continue."
+            },
+            "railCaption": {
+                "received": {
+                    "automatic": "Step 1 of 5 · we recorded that the invoice arrived."
+                },
+                "reading": {
+                    "automatic": "Step 2 of 5 · we are reading the invoice's data. This is automatic.",
+                    "attention": "Stopped at step 2 of 5 · this does not move on its own: someone has to fix it."
+                },
+                "validating": {
+                    "automatic": "Step 3 of 5 · checking with SUNAT that the invoice is legitimate. This is automatic.",
+                    "attention": "Stopped at step 3 of 5 · this does not move on its own: someone has to fix it."
+                },
+                "approved": {
+                    "automatic": "Step 4 of 5 · the invoice was approved and is ready to go to auction.",
+                    "attention": "Stopped at step 4 of 5 · this does not move on its own: someone has to fix it."
+                },
+                "inAuction": {
+                    "automatic": "Step 5 of 5 · the invoice is published in the auction.",
+                    "attention": "Stopped at step 5 of 5 · this does not move on its own: someone has to fix it."
+                }
+            },
+            "facts": {
+                "title": "Data we read from the invoice",
+                "issuer": "Issuer",
+                "issuerRuc": "Issuer RUC",
+                "payer": "Payer",
+                "payerRuc": "Payer RUC",
+                "issuedAt": "Issued",
+                "dueDate": "Due",
+                "currency": "Currency",
+                "fiscalNumber": "Fiscal number"
+            },
+            "settlement": {
+                "grossAmount": "Invoice amount",
+                "discount": "Discount ({{percentage}}%)",
+                "net": "Net",
+                "fee": "Vankoo fee ({{percentage}}%)",
+                "receivable": "You receive",
+                "footnote": "Vankoo sets the discount and the fee when it creates the auction.",
+                "pendingFootnote": "You will know how much you receive once the invoice is approved and goes to auction: the discount and the fee are set there."
+            },
+            "lineItems": {
+                "title": "Invoice detail",
+                "description": "Description",
+                "quantity": "Quantity",
+                "unitPrice": "Unit price",
+                "subtotal": "Subtotal"
+            },
+            "totals": {
+                "subtotal": "Subtotal",
+                "igv": "VAT (18%)",
+                "commercialDiscount": "Commercial discount",
+                "total": "Total"
+            }
         },
         "errors": {
             "uploadFailed": "We could not upload the invoice. Please try again."

@@ -6,5 +6,6 @@
  */
 export const invoicingPaths = {
     myInvoices: () => '/invoicing',
-    uploadInvoice: () => '/invoicing/upload'
+    uploadInvoice: () => '/invoicing/upload',
+    invoiceDetail: (id: string) => `/invoicing/${id}`
 } as const;

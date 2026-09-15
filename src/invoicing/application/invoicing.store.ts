@@ -1,5 +1,6 @@
 import {create} from 'zustand';
 import {iamInterceptor} from '../../iam/infrastructure/iam.interceptor';
+import type {InvoiceDetail} from '../domain/model/invoice-detail.entity';
 import type {Invoice} from '../domain/model/invoice.entity';
 import {InvoiceAssembler} from '../infrastructure/invoice.assembler';
 import {InvoicingApi, type InvoiceListQuery} from '../infrastructure/invoicing-api';
@@ -24,6 +25,13 @@ export interface InvoicingState {
     invoicesLoading: boolean;
     invoicesLoaded: boolean;
     fetchInvoices: (query?: InvoiceListQuery) => Promise<void>;
+
+    invoiceDetail: InvoiceDetail | null;
+    invoiceDetailLoading: boolean;
+    invoiceDetailLoaded: boolean;
+    fetchInvoiceDetail: (invoiceId: string) => Promise<void>;
+    /** Forgets the last detail read, so leaving the screen does not flash stale data on the next visit. */
+    clearInvoiceDetail: () => void;
 }
 
 /**
@@ -39,6 +47,9 @@ export const useInvoicingStore = create<InvoicingState>()(set => ({
     invoices: [],
     invoicesLoading: false,
     invoicesLoaded: false,
+    invoiceDetail: null,
+    invoiceDetailLoading: false,
+    invoiceDetailLoaded: false,
 
     uploadInvoice: async command => {
         set({submitting: true, errors: []});
@@ -71,5 +82,18 @@ export const useInvoicingStore = create<InvoicingState>()(set => ({
         } catch (error) {
             set({errors: [error as Error], invoices: [], invoicesLoading: false, invoicesLoaded: true});
         }
-    }
+    },
+
+    fetchInvoiceDetail: async invoiceId => {
+        set({invoiceDetailLoading: true, errors: []});
+        try {
+            const response = await invoicingApi.getInvoiceById(invoiceId);
+            const invoiceDetail = InvoiceAssembler.toInvoiceDetailFromResponse(response);
+            set({invoiceDetail, invoiceDetailLoading: false, invoiceDetailLoaded: true});
+        } catch (error) {
+            set({errors: [error as Error], invoiceDetail: null, invoiceDetailLoading: false, invoiceDetailLoaded: true});
+        }
+    },
+
+    clearInvoiceDetail: () => set({invoiceDetail: null, invoiceDetailLoaded: false})
 }));

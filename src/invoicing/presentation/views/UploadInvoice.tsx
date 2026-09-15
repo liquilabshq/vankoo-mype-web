@@ -6,9 +6,9 @@ import {cn} from '@/lib/utils';
 import {useInvoicingStore} from '../../application/invoicing.store';
 import {UploadInvoiceCommand} from '../../domain/model/upload-invoice.command';
 import {InvoiceDropzone} from '../components/InvoiceDropzone';
+import {InvoiceRail} from '../components/InvoiceRail';
 import {InvoicingErrorAlert} from '../components/InvoicingErrorAlert';
 import {UploadedFileCard} from '../components/UploadedFileCard';
-import {UploadStepsRail} from '../components/UploadStepsRail';
 
 /** How big a `File.size` (in bytes) reads to a person. */
 function formatFileSize(bytes: number): string {
@@ -63,7 +63,7 @@ export function UploadInvoice() {
                             onRemove={handleReset}
                             removeLabel={t('invoicing.upload.removeFile')}
                         />
-                        <UploadStepsRail steps={steps} currentIndex={1} />
+                        <InvoiceRail steps={steps} currentIndex={1} />
                         <p className="text-caption text-fg-muted">{t('invoicing.upload.processingHelper')}</p>
                         <div className="flex items-start gap-4">
                             <a
@@ -103,7 +103,7 @@ export function UploadInvoice() {
             {!uploadedInvoiceId && (
                 <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-6 rounded-xl border p-8">
                     <p className="text-body text-fg font-semibold">{t('invoicing.upload.afterTitle')}</p>
-                    <UploadStepsRail steps={steps} />
+                    <InvoiceRail steps={steps} />
                     <p className="text-caption text-fg-muted">{t('invoicing.upload.afterBody')}</p>
                 </div>
             )}
