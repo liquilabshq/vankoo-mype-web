@@ -12,16 +12,27 @@ interface InvoiceRailProps {
      * progress to report and every dot reads the same neutral "not yet".
      */
     currentIndex?: number;
-    /** Automatic (indigo) — the system is working it. Attention (amber) — a person has to. */
-    currentState?: 'automatic' | 'attention';
+    /**
+     * Automatic (indigo) — the system is working it. Attention (amber) — a person has
+     * to. Blocked (solid red) — a dead end.
+     */
+    currentState?: 'automatic' | 'attention' | 'blocked';
 }
 
-type StepState = 'done' | 'current-automatic' | 'current-attention' | 'pending';
+type StepState = 'done' | 'current-automatic' | 'current-attention' | 'current-blocked' | 'pending';
 
-function stateFor(index: number, currentIndex: number | undefined, currentState: 'automatic' | 'attention'): StepState {
+function stateFor(
+    index: number,
+    currentIndex: number | undefined,
+    currentState: 'automatic' | 'attention' | 'blocked'
+): StepState {
     if (currentIndex === undefined) return 'pending';
     if (index < currentIndex) return 'done';
-    if (index === currentIndex) return currentState === 'attention' ? 'current-attention' : 'current-automatic';
+    if (index === currentIndex) {
+        if (currentState === 'attention') return 'current-attention';
+        if (currentState === 'blocked') return 'current-blocked';
+        return 'current-automatic';
+    }
     return 'pending';
 }
 
@@ -29,6 +40,9 @@ const LINE_CLASS: Record<StepState, string> = {
     done: 'bg-fg',
     'current-automatic': 'bg-status-ocr-processing',
     'current-attention': 'bg-status-requires-review',
+    // A dead end is a solid punctuation mark, not something actively moving through —
+    // its segments stay the neutral "not yet" gray rather than taking its color.
+    'current-blocked': 'bg-border-strong',
     pending: 'bg-border-strong'
 };
 
@@ -37,10 +51,11 @@ const LINE_CLASS: Record<StepState, string> = {
  *
  * Each dot draws its own two half-segments in its own color — the design's rule is
  * that a segment belongs to the dot it leaves, not the one it enters, so the color
- * change between two different states falls at the segment's midpoint. Done is navy,
- * automatic progress is indigo with a hollow ring, attention (a person has to act) is
- * amber with a hollow ring, and not-yet is gray. A rejected invoice's "sin salida"
- * (red) state is not modeled yet — no screen has confirmed its exact look.
+ * change between two different states falls at the segment's midpoint. That rule has
+ * one exception: a blocked (dead-end) dot's segments stay gray, per `LINE_CLASS`'s own
+ * note. Done is navy, automatic progress is indigo with a hollow ring, attention (a
+ * person has to act) is amber with a hollow ring, blocked is solid red with no ring,
+ * and not-yet is gray.
  */
 export function InvoiceRail({steps, currentIndex, currentState = 'automatic'}: InvoiceRailProps) {
     return (
@@ -57,6 +72,7 @@ export function InvoiceRail({steps, currentIndex, currentState = 'automatic'}: I
                                     state === 'done' && 'bg-fg',
                                     state === 'current-automatic' && 'bg-surface-raised border-2 border-status-ocr-processing',
                                     state === 'current-attention' && 'bg-surface-raised border-2 border-status-requires-review',
+                                    state === 'current-blocked' && 'bg-status-rejected',
                                     state === 'pending' && 'bg-border-strong'
                                 )}
                             />

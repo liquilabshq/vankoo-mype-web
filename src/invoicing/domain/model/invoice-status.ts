@@ -6,11 +6,12 @@ type InvoiceStatusKey = `invoicing.status.${keyof typeof es.invoicing.status & s
 /**
  * The values `InvoiceStatus` can hold.
  *
- * `REQUIRES_REVIEW` is the exception: the service's own enum does not define it yet
- * (only the other eight), but the design has a whole screen for it — `MK · Detalle ·
- * Requiere revisión` — so it is modeled here as what the frontend needs to render,
- * ahead of the backend. Treat it as provisional the same way `InvoiceListItemResource`
- * and `InvoiceDetailResource` are.
+ * `REQUIRES_REVIEW` and `NOT_ELIGIBLE` are the exceptions: the service's own enum
+ * does not define either yet (only the other seven), but the design has a whole
+ * screen for each — `MK · Detalle · Requiere revisión` and `MK · Detalle · Sin
+ * salida` — so both are modeled here as what the frontend needs to render, ahead of
+ * the backend. Treat them as provisional the same way `InvoiceListItemResource` and
+ * `InvoiceDetailResource` are.
  */
 export type InvoiceStatus =
     | 'UPLOADED'
@@ -21,6 +22,7 @@ export type InvoiceStatus =
     | 'APPROVED'
     | 'PUBLISHED'
     | 'REQUIRES_REVIEW'
+    | 'NOT_ELIGIBLE'
     | 'REJECTED';
 
 const KNOWN_STATUSES: readonly InvoiceStatus[] = [
@@ -32,6 +34,7 @@ const KNOWN_STATUSES: readonly InvoiceStatus[] = [
     'APPROVED',
     'PUBLISHED',
     'REQUIRES_REVIEW',
+    'NOT_ELIGIBLE',
     'REJECTED'
 ];
 
@@ -50,10 +53,10 @@ interface StatusPresentation {
  * Copy and color for each status, for the `StatusPill`.
  *
  * The design documents eleven `InvoiceStatus` values grouped into five rail
- * milestones, including `CONSISTENCY_PASSED`, `REQUIRES_REVIEW` and `NOT_ELIGIBLE`.
- * The service's own enum only defines the eight below today, so only those are
- * mapped — though `index.css` already carries the color tokens for the other three,
- * ready for when the backend adds them.
+ * milestones. The service's own enum only defines seven of them today
+ * (`CONSISTENCY_PASSED` is the one still missing) — `REQUIRES_REVIEW` and
+ * `NOT_ELIGIBLE` are mapped anyway because the design has a screen for each; see
+ * `InvoiceStatus`'s own note.
  */
 const PRESENTATION_BY_STATUS: Record<InvoiceStatus, StatusPresentation> = {
     UPLOADED: {labelKey: 'invoicing.status.UPLOADED', fgClass: 'text-status-uploaded', bgClass: 'bg-status-uploaded-bg'},
@@ -84,6 +87,11 @@ const PRESENTATION_BY_STATUS: Record<InvoiceStatus, StatusPresentation> = {
         fgClass: 'text-status-requires-review',
         bgClass: 'bg-status-requires-review-bg'
     },
+    NOT_ELIGIBLE: {
+        labelKey: 'invoicing.status.NOT_ELIGIBLE',
+        fgClass: 'text-status-not-eligible',
+        bgClass: 'bg-status-not-eligible-bg'
+    },
     REJECTED: {labelKey: 'invoicing.status.REJECTED', fgClass: 'text-status-rejected', bgClass: 'bg-status-rejected-bg'}
 };
 
@@ -103,9 +111,12 @@ const MILESTONE_ORDER: readonly InvoiceMilestone[] = ['received', 'reading', 'va
 /**
  * Which milestone each status belongs to.
  *
- * Three statuses have no entry: `REJECTED` has no place on this rail — the design's
- * "sin salida" (red, dead-end) treatment is not modeled yet — and `CONSISTENCY_PASSED`
- * / `NOT_ELIGIBLE` are not real statuses (see `InvoiceStatus`'s own note).
+ * `REJECTED` has no entry: the backend can reject an invoice from any of five
+ * different statuses (see `Invoice.CanBeRejected()`) and does not carry which one it
+ * came from, so there is no honest single milestone to place it at. `NOT_ELIGIBLE`
+ * does have one — the one confirmed screen for it (a due date too close to fund)
+ * always stops at "Validando con SUNAT", since eligibility is only knowable once the
+ * due date has been read.
  */
 const MILESTONE_BY_STATUS: Partial<Record<InvoiceStatus, InvoiceMilestone>> = {
     UPLOADED: 'received',
@@ -114,6 +125,7 @@ const MILESTONE_BY_STATUS: Partial<Record<InvoiceStatus, InvoiceMilestone>> = {
     REQUIRES_REVIEW: 'reading',
     SUNAT_VALIDATING: 'validating',
     SUNAT_VALIDATED: 'validating',
+    NOT_ELIGIBLE: 'validating',
     APPROVED: 'approved',
     PUBLISHED: 'inAuction'
 };
@@ -121,13 +133,18 @@ const MILESTONE_BY_STATUS: Partial<Record<InvoiceStatus, InvoiceMilestone>> = {
 /** Where a status places the rail: which milestone, and how it reads. */
 export interface RailState {
     currentIndex: number;
-    /** Automatic (indigo) — the system is working it. Attention (amber) — a person has to. */
-    currentState: 'automatic' | 'attention';
+    /**
+     * Automatic (indigo) — the system is working it. Attention (amber) — a person has
+     * to. Blocked (solid red, no ring) — a dead end; unlike the other two, its
+     * connecting segments stay neutral gray rather than taking its color, since
+     * nothing is actively moving through it.
+     */
+    currentState: 'automatic' | 'attention' | 'blocked';
 }
 
 /**
  * Computes the rail state for a status, or null when the status has no place on it
- * (`REJECTED` today).
+ * (`REJECTED` today — see `MILESTONE_BY_STATUS`'s own note).
  *
  * `REQUIRES_REVIEW` always lands on "Leyendo datos": the backend does not carry which
  * stage triggered the review, and the frontend has no other signal to place it more
@@ -138,6 +155,6 @@ export function railStateFor(status: InvoiceStatus): RailState | null {
     if (!milestone) return null;
     return {
         currentIndex: MILESTONE_ORDER.indexOf(milestone),
-        currentState: status === 'REQUIRES_REVIEW' ? 'attention' : 'automatic'
+        currentState: status === 'REQUIRES_REVIEW' ? 'attention' : status === 'NOT_ELIGIBLE' ? 'blocked' : 'automatic'
     };
 }

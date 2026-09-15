@@ -49,8 +49,12 @@ export interface InvoiceDetailAttributes {
     lineItems: readonly InvoiceLineItem[];
     totals: InvoiceTotals;
     settlement: InvoiceSettlement | null;
-    /** Set only while `status` is `REQUIRES_REVIEW`; null otherwise. */
-    reviewReason: string | null;
+    /**
+     * The backend's own explanation of why this invoice needs a person, worded for
+     * `InlineAlert`. Set while `status` is `REQUIRES_REVIEW` or `NOT_ELIGIBLE`; null
+     * otherwise.
+     */
+    alertMessage: string | null;
 }
 
 /**
@@ -76,7 +80,7 @@ export class InvoiceDetail {
     readonly lineItems: readonly InvoiceLineItem[];
     readonly totals: InvoiceTotals;
     readonly settlement: InvoiceSettlement | null;
-    readonly reviewReason: string | null;
+    readonly alertMessage: string | null;
 
     constructor({
         id,
@@ -93,7 +97,7 @@ export class InvoiceDetail {
         lineItems,
         totals,
         settlement,
-        reviewReason
+        alertMessage
     }: InvoiceDetailAttributes) {
         this.id = id;
         this.number = number;
@@ -109,7 +113,7 @@ export class InvoiceDetail {
         this.lineItems = lineItems;
         this.totals = totals;
         this.settlement = settlement;
-        this.reviewReason = reviewReason;
+        this.alertMessage = alertMessage;
     }
 
     /** Where `status` places this invoice on the rail, or null off it (`REJECTED`). */

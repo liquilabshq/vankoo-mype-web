@@ -148,6 +148,7 @@
             "APPROVED": "Aprobada",
             "PUBLISHED": "En subasta",
             "REQUIRES_REVIEW": "Requiere revisión",
+            "NOT_ELIGIBLE": "No elegible",
             "REJECTED": "Rechazada"
         },
         "detail": {
@@ -160,6 +161,10 @@
                 "title": "Necesitamos que revises esta factura",
                 "fallbackMessage": "Hay algo que corregir antes de continuar."
             },
+            "notEligibleAlert": {
+                "title": "No podemos financiar esta factura",
+                "fallbackMessage": "Esta factura no califica para financiamiento."
+            },
             "railCaption": {
                 "received": {
                     "automatic": "Paso 1 de 5 · registramos que la factura llegó."
@@ -170,7 +175,8 @@
                 },
                 "validating": {
                     "automatic": "Paso 3 de 5 · consultando SUNAT para verificar que la factura es legítima. Es automático.",
-                    "attention": "Parada en el paso 3 de 5 · esto no avanza solo: hace falta que alguien lo corrija."
+                    "attention": "Parada en el paso 3 de 5 · esto no avanza solo: hace falta que alguien lo corrija.",
+                    "blocked": "Sin salida · la factura es legible y sus datos cuadran, pero no es apta para financiamiento."
                 },
                 "approved": {
                     "automatic": "Paso 4 de 5 · la factura fue aprobada y está lista para salir a subasta.",

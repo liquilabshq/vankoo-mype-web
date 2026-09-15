@@ -21,7 +21,9 @@ const MILESTONES: readonly InvoiceMilestone[] = ['received', 'reading', 'validat
 /**
  * Every key under `invoicing.detail.railCaption` — see `IamErrorAlert` for the same
  * dynamic-key-cast pattern. Written out rather than templated from `InvoiceMilestone`:
- * "received" has no "attention" entry, since `REQUIRES_REVIEW` never lands there.
+ * only the combinations a real status can actually produce (per `MILESTONE_BY_STATUS`)
+ * have copy — "received" has no "attention" or "blocked" entry, and "blocked" only
+ * exists on "validating", since `NOT_ELIGIBLE` is the only status mapped to it today.
  */
 type RailCaptionKey =
     | 'invoicing.detail.railCaption.received.automatic'
@@ -29,6 +31,7 @@ type RailCaptionKey =
     | 'invoicing.detail.railCaption.reading.attention'
     | 'invoicing.detail.railCaption.validating.automatic'
     | 'invoicing.detail.railCaption.validating.attention'
+    | 'invoicing.detail.railCaption.validating.blocked'
     | 'invoicing.detail.railCaption.approved.automatic'
     | 'invoicing.detail.railCaption.approved.attention'
     | 'invoicing.detail.railCaption.inAuction.automatic'
@@ -109,7 +112,15 @@ export function InvoiceDetail() {
                         <InlineAlert
                             variant="warning"
                             title={t('invoicing.detail.reviewAlert.title')}
-                            message={invoice.reviewReason ?? t('invoicing.detail.reviewAlert.fallbackMessage')}
+                            message={invoice.alertMessage ?? t('invoicing.detail.reviewAlert.fallbackMessage')}
+                        />
+                    )}
+
+                    {invoice.status === 'NOT_ELIGIBLE' && (
+                        <InlineAlert
+                            variant="error"
+                            title={t('invoicing.detail.notEligibleAlert.title')}
+                            message={invoice.alertMessage ?? t('invoicing.detail.notEligibleAlert.fallbackMessage')}
                         />
                     )}
 

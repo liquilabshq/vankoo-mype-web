@@ -148,6 +148,7 @@
             "APPROVED": "Approved",
             "PUBLISHED": "In auction",
             "REQUIRES_REVIEW": "Requires review",
+            "NOT_ELIGIBLE": "Not eligible",
             "REJECTED": "Rejected"
         },
         "detail": {
@@ -160,6 +161,10 @@
                 "title": "We need you to review this invoice",
                 "fallbackMessage": "There is something to fix before this can continue."
             },
+            "notEligibleAlert": {
+                "title": "We cannot fund this invoice",
+                "fallbackMessage": "This invoice does not qualify for funding."
+            },
             "railCaption": {
                 "received": {
                     "automatic": "Step 1 of 5 · we recorded that the invoice arrived."
@@ -170,7 +175,8 @@
                 },
                 "validating": {
                     "automatic": "Step 3 of 5 · checking with SUNAT that the invoice is legitimate. This is automatic.",
-                    "attention": "Stopped at step 3 of 5 · this does not move on its own: someone has to fix it."
+                    "attention": "Stopped at step 3 of 5 · this does not move on its own: someone has to fix it.",
+                    "blocked": "Dead end · the invoice is readable and its numbers add up, but it is not eligible for funding."
                 },
                 "approved": {
                     "automatic": "Step 4 of 5 · the invoice was approved and is ready to go to auction.",

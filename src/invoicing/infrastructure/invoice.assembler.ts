@@ -64,7 +64,7 @@ export class InvoiceAssembler {
             lineItems: resource.lineItems,
             totals: resource.totals,
             settlement: resource.settlement,
-            reviewReason: resource.reviewReason
+            alertMessage: resource.alertMessage
         });
     }
 }

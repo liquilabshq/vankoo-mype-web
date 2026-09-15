@@ -36,5 +36,5 @@ export interface InvoiceDetailResource {
         feeAmount: {value: number; currency: string};
         receivableAmount: {value: number; currency: string};
     } | null;
-    reviewReason: string | null;
+    alertMessage: string | null;
 }
