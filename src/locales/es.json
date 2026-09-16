@@ -99,7 +99,6 @@
             "submitting": "Subiendo…",
             "uploadComplete": "subida completa",
             "removeFile": "Quitar",
-            "processingHelper": "Estamos leyendo los datos de tu factura. Puedes cerrar esta página: te avisamos por correo cuando termine.",
             "afterTitle": "Qué pasa después de subirla",
             "afterBody": "Leemos los datos, comprobamos que cuadren y validamos la factura con SUNAT. Si todo va bien, la publicamos para que los inversionistas la financien.",
             "steps": {
@@ -144,6 +143,7 @@
             "UPLOADED": "Subida",
             "OCR_PROCESSING": "Leyendo datos",
             "DATA_EXTRACTED": "Leyendo datos",
+            "CONSISTENCY_PASSED": "Validando con SUNAT",
             "SUNAT_VALIDATING": "Validando con SUNAT",
             "SUNAT_VALIDATED": "Validando con SUNAT",
             "APPROVED": "Aprobada",

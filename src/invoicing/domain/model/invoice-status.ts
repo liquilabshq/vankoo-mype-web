@@ -4,19 +4,18 @@ import type es from '@/locales/es.json';
 type InvoiceStatusKey = `invoicing.status.${keyof typeof es.invoicing.status & string}`;
 
 /**
- * The values `InvoiceStatus` can hold.
+ * The values `InvoiceStatus` can hold — the service's `InvoiceStatus`, all eleven.
  *
- * `REQUIRES_REVIEW` and `NOT_ELIGIBLE` are the exceptions: the service's own enum
- * does not define either yet (only the other seven), but the design has a whole
- * screen for each — `MK · Detalle · Requiere revisión` and `MK · Detalle · Sin
- * salida` — so both are modeled here as what the frontend needs to render, ahead of
- * the backend. Treat them as provisional the same way `InvoiceListItemResource` and
- * `InvoiceDetailResource` are.
+ * `CONSISTENCY_PASSED` is the one to keep in mind: it is where a successful read
+ * ends, not `DATA_EXTRACTED`, which the service only falls back to when the
+ * consistency check returns nothing it recognises. A client that did not know it
+ * could not show a single invoice that had been read correctly.
  */
 export type InvoiceStatus =
     | 'UPLOADED'
     | 'OCR_PROCESSING'
     | 'DATA_EXTRACTED'
+    | 'CONSISTENCY_PASSED'
     | 'SUNAT_VALIDATING'
     | 'SUNAT_VALIDATED'
     | 'APPROVED'
@@ -29,6 +28,7 @@ const KNOWN_STATUSES: readonly InvoiceStatus[] = [
     'UPLOADED',
     'OCR_PROCESSING',
     'DATA_EXTRACTED',
+    'CONSISTENCY_PASSED',
     'SUNAT_VALIDATING',
     'SUNAT_VALIDATED',
     'APPROVED',
@@ -53,10 +53,7 @@ interface StatusPresentation {
  * Copy and color for each status, for the `StatusPill`.
  *
  * The design documents eleven `InvoiceStatus` values grouped into five rail
- * milestones. The service's own enum only defines seven of them today
- * (`CONSISTENCY_PASSED` is the one still missing) — `REQUIRES_REVIEW` and
- * `NOT_ELIGIBLE` are mapped anyway because the design has a screen for each; see
- * `InvoiceStatus`'s own note.
+ * milestones, and the service defines the same eleven.
  */
 const PRESENTATION_BY_STATUS: Record<InvoiceStatus, StatusPresentation> = {
     UPLOADED: {labelKey: 'invoicing.status.UPLOADED', fgClass: 'text-status-uploaded', bgClass: 'bg-status-uploaded-bg'},
@@ -69,6 +66,11 @@ const PRESENTATION_BY_STATUS: Record<InvoiceStatus, StatusPresentation> = {
         labelKey: 'invoicing.status.DATA_EXTRACTED',
         fgClass: 'text-status-data-extracted',
         bgClass: 'bg-status-data-extracted-bg'
+    },
+    CONSISTENCY_PASSED: {
+        labelKey: 'invoicing.status.CONSISTENCY_PASSED',
+        fgClass: 'text-status-consistency-passed',
+        bgClass: 'bg-status-consistency-passed-bg'
     },
     SUNAT_VALIDATING: {
         labelKey: 'invoicing.status.SUNAT_VALIDATING',
@@ -123,6 +125,9 @@ const MILESTONE_BY_STATUS: Partial<Record<InvoiceStatus, InvoiceMilestone>> = {
     OCR_PROCESSING: 'reading',
     DATA_EXTRACTED: 'reading',
     REQUIRES_REVIEW: 'reading',
+    // Read and checked: reading is behind it, and the next thing that happens to it
+    // is the validation step.
+    CONSISTENCY_PASSED: 'validating',
     SUNAT_VALIDATING: 'validating',
     SUNAT_VALIDATED: 'validating',
     NOT_ELIGIBLE: 'validating',
@@ -157,4 +162,17 @@ export function railStateFor(status: InvoiceStatus): RailState | null {
         currentIndex: MILESTONE_ORDER.indexOf(milestone),
         currentState: status === 'REQUIRES_REVIEW' ? 'attention' : status === 'NOT_ELIGIBLE' ? 'blocked' : 'automatic'
     };
+}
+
+/**
+ * Whether the platform is still working on an invoice in this status, so a screen
+ * should keep asking.
+ *
+ * Every status the rail draws as automatic, except `PUBLISHED`, which is where the
+ * work ends. The rest — a review, a dead end, a rejection — wait on a person or on
+ * nothing, and polling them only spends requests.
+ */
+export function isInvoiceInProgress(status: InvoiceStatus): boolean {
+    if (status === 'PUBLISHED') return false;
+    return railStateFor(status)?.currentState === 'automatic';
 }

@@ -99,7 +99,6 @@
             "submitting": "Uploading…",
             "uploadComplete": "upload complete",
             "removeFile": "Remove",
-            "processingHelper": "We are reading your invoice's data. You can close this page: we will email you when it is done.",
             "afterTitle": "What happens after you upload it",
             "afterBody": "We read the data, check that it adds up, and validate the invoice with SUNAT. If everything checks out, we publish it so investors can fund it.",
             "steps": {
@@ -144,6 +143,7 @@
             "UPLOADED": "Uploaded",
             "OCR_PROCESSING": "Reading data",
             "DATA_EXTRACTED": "Reading data",
+            "CONSISTENCY_PASSED": "Validating with SUNAT",
             "SUNAT_VALIDATING": "Validating with SUNAT",
             "SUNAT_VALIDATED": "Validating with SUNAT",
             "APPROVED": "Approved",

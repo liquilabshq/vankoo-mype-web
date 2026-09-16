@@ -1,6 +1,7 @@
 import {create} from 'zustand';
 import {iamInterceptor} from '../../iam/infrastructure/iam.interceptor';
 import type {InvoiceDetail} from '../domain/model/invoice-detail.entity';
+import type {InvoiceStatus} from '../domain/model/invoice-status';
 import type {Invoice} from '../domain/model/invoice.entity';
 import {InvoiceAssembler} from '../infrastructure/invoice.assembler';
 import {InvoicingApi, type InvoiceListQuery} from '../infrastructure/invoicing-api';
@@ -14,7 +15,17 @@ export interface InvoicingState {
     errors: Error[];
     /** The id the backend answered with, so the view can confirm the upload succeeded. */
     uploadedInvoiceId: string | null;
+    /** Where that invoice actually is, as the service last reported it. */
+    uploadedInvoiceStatus: InvoiceStatus | null;
     uploadInvoice: (command: UploadInvoiceCommand) => Promise<boolean>;
+    /**
+     * Asks the service where the uploaded invoice is now, and answers with it.
+     *
+     * A failed read keeps the last known status rather than reporting an error: this
+     * runs on a timer, and one dropped request is not something to put in front of
+     * the person while the next one is two seconds away.
+     */
+    refreshUploadedInvoice: () => Promise<InvoiceStatus | null>;
     /**
      * Opens that invoice's PDF in a new tab.
      *
@@ -46,10 +57,11 @@ export interface InvoicingState {
  * The only thing that talks to `InvoicingApi`, and the only place `InvoiceAssembler`
  * is called.
  */
-export const useInvoicingStore = create<InvoicingState>()(set => ({
+export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
     submitting: false,
     errors: [],
     uploadedInvoiceId: null,
+    uploadedInvoiceStatus: null,
     invoices: [],
     invoicesLoading: false,
     invoicesLoaded: false,
@@ -66,7 +78,8 @@ export const useInvoicingStore = create<InvoicingState>()(set => ({
                 set({errors: [new Error('Upload answered without an invoice id')], submitting: false});
                 return false;
             }
-            set({uploadedInvoiceId: invoiceId, submitting: false});
+            // UPLOADED is what a successful POST means; the next read replaces it.
+            set({uploadedInvoiceId: invoiceId, uploadedInvoiceStatus: 'UPLOADED', submitting: false});
             return true;
         } catch (error) {
             set({errors: [error as Error], submitting: false});
@@ -91,8 +104,23 @@ export const useInvoicingStore = create<InvoicingState>()(set => ({
         }
     },
 
+    refreshUploadedInvoice: async () => {
+        const invoiceId = get().uploadedInvoiceId;
+        if (!invoiceId) return null;
+        try {
+            const response = await invoicingApi.getInvoiceById(invoiceId);
+            const detail = InvoiceAssembler.toInvoiceDetailFromResponse(response);
+            // The upload may have been reset while this was in flight.
+            if (!detail || get().uploadedInvoiceId !== invoiceId) return get().uploadedInvoiceStatus;
+            set({uploadedInvoiceStatus: detail.status});
+            return detail.status;
+        } catch {
+            return get().uploadedInvoiceStatus;
+        }
+    },
+
     clearErrors: () => set({errors: []}),
-    reset: () => set({uploadedInvoiceId: null, errors: [], submitting: false}),
+    reset: () => set({uploadedInvoiceId: null, uploadedInvoiceStatus: null, errors: [], submitting: false}),
 
     fetchInvoices: async (query = {}) => {
         set({invoicesLoading: true, errors: []});

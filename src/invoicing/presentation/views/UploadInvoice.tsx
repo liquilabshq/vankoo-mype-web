@@ -4,11 +4,14 @@ import {buttonVariants} from '@/components/ui/button';
 import {Spinner} from '@/components/ui/spinner';
 import {cn} from '@/lib/utils';
 import {useInvoicingStore} from '../../application/invoicing.store';
+import {isInvoiceInProgress, railStateFor} from '../../domain/model/invoice-status';
 import {UploadInvoiceCommand} from '../../domain/model/upload-invoice.command';
 import {InvoiceDropzone} from '../components/InvoiceDropzone';
 import {InvoiceRail} from '../components/InvoiceRail';
 import {InvoicingErrorAlert} from '../components/InvoicingErrorAlert';
+import {StatusPill} from '../components/StatusPill';
 import {UploadedFileCard} from '../components/UploadedFileCard';
+import {railCaptionKey} from '../rail-caption';
 
 /** How big a `File.size` (in bytes) reads to a person. */
 function formatFileSize(bytes: number): string {
@@ -18,13 +21,16 @@ function formatFileSize(bytes: number): string {
 }
 
 /**
- * Delay (ms) before advancing to each step past "received": reading, SUNAT validation,
- * approval, auction. SUNAT validation and approval aren't implemented in the backend
- * yet — only the OCR read is real — so once an upload succeeds this timeline fakes the
- * rest of the target flow, purely client-side, so the screen previews what it will look
- * like once that backend work lands.
+ * How often, and for how long, the screen asks where the uploaded invoice is.
+ *
+ * The OCR takes seconds, so two is often enough to feel live without hammering the
+ * service. The cap is there because, today, nothing moves an invoice past
+ * `DATA_EXTRACTED`: SUNAT validation does not exist yet, and without a limit the
+ * screen would ask forever about a status that will not change. A minute covers the
+ * read with room to spare; after that, reopening the page asks again.
  */
-const SIMULATED_STEP_DELAYS_MS = [800, 1200, 900, 800];
+const STATUS_POLL_INTERVAL_MS = 2000;
+const STATUS_POLL_MAX_ATTEMPTS = 30;
 
 /** Routed view where a MYPE submits an invoice for the platform to read and validate. */
 export function UploadInvoice() {
@@ -32,25 +38,40 @@ export function UploadInvoice() {
     const submitting = useInvoicingStore(state => state.submitting);
     const errors = useInvoicingStore(state => state.errors);
     const uploadedInvoiceId = useInvoicingStore(state => state.uploadedInvoiceId);
+    const uploadedInvoiceStatus = useInvoicingStore(state => state.uploadedInvoiceStatus);
     const uploadInvoice = useInvoicingStore(state => state.uploadInvoice);
+    const refreshUploadedInvoice = useInvoicingStore(state => state.refreshUploadedInvoice);
     const openInvoiceFile = useInvoicingStore(state => state.openInvoiceFile);
     const reset = useInvoicingStore(state => state.reset);
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [stepIndex, setStepIndex] = useState(0);
 
+    // The rail follows the service, not a clock. Each read schedules the next only
+    // once it has answered, so a slow response never stacks a second one behind it.
     useEffect(() => {
-        if (!uploadedInvoiceId) {
-            setStepIndex(0);
-            return;
-        }
-        let elapsed = 0;
-        const timers = SIMULATED_STEP_DELAYS_MS.map((delay, index) => {
-            elapsed += delay;
-            return setTimeout(() => setStepIndex(index + 1), elapsed);
-        });
-        return () => timers.forEach(clearTimeout);
-    }, [uploadedInvoiceId]);
+        if (!uploadedInvoiceId) return;
+        let cancelled = false;
+        let attempts = 0;
+        let timer: ReturnType<typeof setTimeout>;
+
+        const poll = async () => {
+            const status = await refreshUploadedInvoice();
+            attempts += 1;
+            if (cancelled) return;
+            if (status && isInvoiceInProgress(status) && attempts < STATUS_POLL_MAX_ATTEMPTS) {
+                timer = setTimeout(() => void poll(), STATUS_POLL_INTERVAL_MS);
+            }
+        };
+
+        timer = setTimeout(() => void poll(), STATUS_POLL_INTERVAL_MS);
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [uploadedInvoiceId, refreshUploadedInvoice]);
+
+    // REJECTED has no place on the rail; the pill beside it still says what happened.
+    const rail = uploadedInvoiceStatus ? railStateFor(uploadedInvoiceStatus) : null;
 
     const steps = [
         {label: t('invoicing.upload.steps.received')},
@@ -86,8 +107,13 @@ export function UploadInvoice() {
                             onRemove={handleReset}
                             removeLabel={t('invoicing.upload.removeFile')}
                         />
-                        <InvoiceRail steps={steps} currentIndex={stepIndex} />
-                        <p className="text-caption text-fg-muted">{t('invoicing.upload.processingHelper')}</p>
+                        {uploadedInvoiceStatus && <StatusPill status={uploadedInvoiceStatus} />}
+                        <InvoiceRail
+                            steps={steps}
+                            currentIndex={rail?.currentIndex}
+                            currentState={rail?.currentState}
+                        />
+                        {rail && <p className="text-caption text-fg-muted">{t(railCaptionKey(rail))}</p>}
                         <div className="flex flex-wrap items-start gap-4">
                             <button
                                 type="button"

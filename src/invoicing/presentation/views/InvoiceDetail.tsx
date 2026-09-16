@@ -8,34 +8,13 @@ import {Spinner} from '@/components/ui/spinner';
 import {cn} from '@/lib/utils';
 import {InlineAlert} from '../../../shared/presentation/components/InlineAlert';
 import {useInvoicingStore} from '../../application/invoicing.store';
-import type {InvoiceMilestone} from '../../domain/model/invoice-status';
 import {FactField} from '../components/FactField';
 import {InvoiceLineItemsTable} from '../components/InvoiceLineItemsTable';
 import {InvoiceRail} from '../components/InvoiceRail';
 import {SettlementPanel} from '../components/SettlementPanel';
 import {StatusPill} from '../components/StatusPill';
 import {invoicingPaths} from '../invoicing-paths';
-
-const MILESTONES: readonly InvoiceMilestone[] = ['received', 'reading', 'validating', 'approved', 'inAuction'];
-
-/**
- * Every key under `invoicing.detail.railCaption` — see `IamErrorAlert` for the same
- * dynamic-key-cast pattern. Written out rather than templated from `InvoiceMilestone`:
- * only the combinations a real status can actually produce (per `MILESTONE_BY_STATUS`)
- * have copy — "received" has no "attention" or "blocked" entry, and "blocked" only
- * exists on "validating", since `NOT_ELIGIBLE` is the only status mapped to it today.
- */
-type RailCaptionKey =
-    | 'invoicing.detail.railCaption.received.automatic'
-    | 'invoicing.detail.railCaption.reading.automatic'
-    | 'invoicing.detail.railCaption.reading.attention'
-    | 'invoicing.detail.railCaption.validating.automatic'
-    | 'invoicing.detail.railCaption.validating.attention'
-    | 'invoicing.detail.railCaption.validating.blocked'
-    | 'invoicing.detail.railCaption.approved.automatic'
-    | 'invoicing.detail.railCaption.approved.attention'
-    | 'invoicing.detail.railCaption.inAuction.automatic'
-    | 'invoicing.detail.railCaption.inAuction.attention';
+import {RAIL_MILESTONES, railCaptionKey} from '../rail-caption';
 
 /**
  * A calendar date in the reader's language, or null when there is none to show.
@@ -66,7 +45,7 @@ export function InvoiceDetail() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
-    const steps = MILESTONES.map(milestone => ({label: t(`invoicing.upload.steps.${milestone}`)}));
+    const steps = RAIL_MILESTONES.map(milestone => ({label: t(`invoicing.upload.steps.${milestone}`)}));
     const rail = invoice?.railState() ?? null;
 
     return (
@@ -142,9 +121,7 @@ export function InvoiceDetail() {
                         <InvoiceRail steps={steps} currentIndex={rail?.currentIndex} currentState={rail?.currentState} />
                         {rail && (
                             <p className="text-caption text-fg-muted">
-                                {t(
-                                    `invoicing.detail.railCaption.${MILESTONES[rail.currentIndex]}.${rail.currentState}` as RailCaptionKey
-                                )}
+                                {t(railCaptionKey(rail))}
                             </p>
                         )}
                     </div>
