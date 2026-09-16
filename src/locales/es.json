@@ -108,6 +108,7 @@
                 "approved": "Aprobada",
                 "inAuction": "En subasta"
             },
+            "viewDetail": "Ver detalle",
             "viewInvoice": "Ver la factura",
             "uploadAnother": "Subir otra"
         },

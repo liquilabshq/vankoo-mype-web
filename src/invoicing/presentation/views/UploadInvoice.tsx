@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router';
 import {buttonVariants} from '@/components/ui/button';
 import {Spinner} from '@/components/ui/spinner';
 import {cn} from '@/lib/utils';
@@ -11,7 +12,8 @@ import {InvoiceRail} from '../components/InvoiceRail';
 import {InvoicingErrorAlert} from '../components/InvoicingErrorAlert';
 import {StatusPill} from '../components/StatusPill';
 import {UploadedFileCard} from '../components/UploadedFileCard';
-import {railCaptionKey} from '../rail-caption';
+import {invoicingPaths} from '../invoicing-paths';
+import {RAIL_MILESTONES, railCaptionKey} from '../rail-caption';
 
 /** How big a `File.size` (in bytes) reads to a person. */
 function formatFileSize(bytes: number): string {
@@ -35,6 +37,7 @@ const STATUS_POLL_MAX_ATTEMPTS = 30;
 /** Routed view where a MYPE submits an invoice for the platform to read and validate. */
 export function UploadInvoice() {
     const {t} = useTranslation();
+    const navigate = useNavigate();
     const submitting = useInvoicingStore(state => state.submitting);
     const errors = useInvoicingStore(state => state.errors);
     const uploadedInvoiceId = useInvoicingStore(state => state.uploadedInvoiceId);
@@ -72,6 +75,9 @@ export function UploadInvoice() {
 
     // REJECTED has no place on the rail; the pill beside it still says what happened.
     const rail = uploadedInvoiceStatus ? railStateFor(uploadedInvoiceStatus) : null;
+    // Once the read is behind it, the detail is where the offer will appear — and,
+    // with no invoice list yet, this button is the only way there.
+    const readComplete = rail !== null && rail.currentIndex >= RAIL_MILESTONES.indexOf('validating');
 
     const steps = [
         {label: t('invoicing.upload.steps.received')},
@@ -115,6 +121,15 @@ export function UploadInvoice() {
                         />
                         {rail && <p className="text-caption text-fg-muted">{t(railCaptionKey(rail))}</p>}
                         <div className="flex flex-wrap items-start gap-4">
+                            {readComplete && (
+                                <button
+                                    type="button"
+                                    onClick={() => navigate(invoicingPaths.invoiceDetail(uploadedInvoiceId))}
+                                    className={buttonVariants({variant: 'default'})}
+                                >
+                                    {t('invoicing.upload.viewDetail')}
+                                </button>
+                            )}
                             <button
                                 type="button"
                                 onClick={() => void openInvoiceFile(uploadedInvoiceId)}

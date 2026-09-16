@@ -108,6 +108,7 @@
                 "approved": "Approved",
                 "inAuction": "In auction"
             },
+            "viewDetail": "View detail",
             "viewInvoice": "View invoice",
             "uploadAnother": "Upload another"
         },
