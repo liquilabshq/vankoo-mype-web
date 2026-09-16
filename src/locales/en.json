@@ -240,5 +240,12 @@
         "title": "This page does not exist",
         "body": "The link may be misspelled, or the page may have moved.",
         "back": "Back to home"
+    },
+    "investment": {
+        "errors": {
+            "quoteNotActive": "This offer is no longer valid. Here is the current one.",
+            "tooCloseToDueDate": "The invoice is due too soon to open an auction.",
+            "unknown": "We could not complete the operation. Please try again."
+        }
     }
 }
