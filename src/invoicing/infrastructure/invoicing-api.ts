@@ -66,10 +66,11 @@ export class InvoicingApi extends BaseApi {
     }
 
     /**
-     * Reads one invoice in full.
+     * Reads one invoice in full — `GET .../{id}`.
      *
-     * Provisional, like `InvoiceDetailResource`: this endpoint is not implemented on
-     * the backend yet, so a call here fails until it is.
+     * Answers for any invoice id: the service does not check that the caller owns it,
+     * so any MYPE with a token can read another's by guessing an id. That is
+     * invoicing-service's to fix, not something a client can guard against.
      */
     getInvoiceById(invoiceId: string): Promise<AxiosResponse<InvoiceDetailResource>> {
         return this.http.get(`${invoicesEndpointPath}/${invoiceId}`);

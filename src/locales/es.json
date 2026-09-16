@@ -158,6 +158,7 @@
             "loadFailed": "No pudimos cargar esta factura. Puede que no exista o que haya un problema de conexión.",
             "viewPdf": "Ver el PDF",
             "subtitle": "{{payer}} · vence el {{date}}",
+            "untitled": "Factura sin leer",
             "reviewAlert": {
                 "title": "Necesitamos que revises esta factura",
                 "fallbackMessage": "Hay algo que corregir antes de continuar."
@@ -190,6 +191,7 @@
             },
             "facts": {
                 "title": "Datos que leímos de la factura",
+                "unread": "—",
                 "issuer": "Emisor",
                 "issuerRuc": "RUC del emisor",
                 "payer": "Pagador",

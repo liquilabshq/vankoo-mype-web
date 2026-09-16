@@ -1,40 +1,40 @@
 /**
- * Wire shape of `GET /invoices/{id}`.
+ * Wire shape of `GET /invoices/{id}`, mirroring the service's `InvoiceDetailsResponse`.
  *
- * Provisional — see `InvoiceDetail`'s own note: this endpoint does not exist on the
- * backend yet.
+ * Everything the OCR fills in is nullable: an invoice that has only been uploaded, or
+ * whose read failed, answers with the identity fields and nothing else. Amounts are
+ * plain decimals in the invoice's currency, not `{value, currency}` pairs.
  */
 export interface InvoiceDetailResource {
-    id: string;
-    number: string;
+    invoiceId: string;
+    mypeId: string;
     status: string;
-    issuerName: string;
-    issuerRuc: string;
-    payerName: string;
-    payerRuc: string;
-    issuedAt: string;
-    dueDate: string;
-    currency: string;
-    fiscalNumber: string;
-    lineItems: readonly {
+    sunatVerificationStatus: string;
+    consistencyStatus: string;
+    eligibleForFunding: boolean;
+    integrationEventStatus: string;
+    fiscalInvoiceNumber: string | null;
+    issuerRuc: string | null;
+    issuerName: string | null;
+    issuerTradeName: string | null;
+    payerRuc: string | null;
+    payerName: string | null;
+    issueDate: string | null;
+    dueDate: string | null;
+    currency: string | null;
+    subtotal: number | null;
+    tax: number | null;
+    discount: number | null;
+    total: number | null;
+    items: readonly {
         description: string;
         quantity: number;
-        unitPrice: {value: number; currency: string};
-        subtotal: {value: number; currency: string};
+        unitPrice: number;
+        subtotal: number;
     }[];
-    totals: {
-        subtotal: {value: number; currency: string};
-        igv: {value: number; currency: string};
-        commercialDiscount: {value: number; currency: string};
-        total: {value: number; currency: string};
-    };
-    settlement: {
-        discountPercentage: number;
-        discountAmount: {value: number; currency: string};
-        netAmount: {value: number; currency: string};
-        feePercentage: number;
-        feeAmount: {value: number; currency: string};
-        receivableAmount: {value: number; currency: string};
-    } | null;
-    alertMessage: string | null;
+    validationIssues: readonly {
+        code: string;
+        message: string;
+        severity: string;
+    }[];
 }

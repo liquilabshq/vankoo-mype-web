@@ -36,18 +36,21 @@ export interface InvoiceSettlement {
 /** Attributes an invoice detail is built from. */
 export interface InvoiceDetailAttributes {
     id: string;
-    number: string;
+    /** The fiscal number, e.g. F001-1283. Null until the OCR has read it. */
+    number: string | null;
     status: InvoiceStatus;
-    issuerName: string;
-    issuerRuc: string;
-    payerName: string;
-    payerRuc: string;
-    issuedAt: Date;
-    dueDate: Date;
-    currency: string;
-    fiscalNumber: string;
+    issuerName: string | null;
+    issuerRuc: string | null;
+    payerName: string | null;
+    payerRuc: string | null;
+    issuedAt: Date | null;
+    dueDate: Date | null;
+    /** Null until the OCR has read it: a currency nobody read is not PEN by default. */
+    currency: string | null;
+    fiscalNumber: string | null;
     lineItems: readonly InvoiceLineItem[];
-    totals: InvoiceTotals;
+    /** Null until the service has an amount. S/ 0.00 would be a figure nobody measured. */
+    totals: InvoiceTotals | null;
     settlement: InvoiceSettlement | null;
     /**
      * The backend's own explanation of why this invoice needs a person, worded for
@@ -59,26 +62,26 @@ export interface InvoiceDetailAttributes {
 
 /**
  * The full record behind one invoice — `MK · Detalle de factura` and its
- * `Requiere revisión` variant.
+ * `Requiere revisión` variant, as `GET /invoices/{id}` answers it.
  *
- * Provisional, like `Invoice`: `GET /invoices/{id}` does not exist on the backend
- * yet, so this shape is inferred from the two detail screens rather than a real
- * response DTO.
+ * Every field the OCR fills in is optional: an invoice that was only uploaded, or
+ * whose read failed, has an id and a status and nothing else, and the screen has to
+ * render that without inventing a date.
  */
 export class InvoiceDetail {
     readonly id: string;
-    readonly number: string;
+    readonly number: string | null;
     readonly status: InvoiceStatus;
-    readonly issuerName: string;
-    readonly issuerRuc: string;
-    readonly payerName: string;
-    readonly payerRuc: string;
-    readonly issuedAt: Date;
-    readonly dueDate: Date;
-    readonly currency: string;
-    readonly fiscalNumber: string;
+    readonly issuerName: string | null;
+    readonly issuerRuc: string | null;
+    readonly payerName: string | null;
+    readonly payerRuc: string | null;
+    readonly issuedAt: Date | null;
+    readonly dueDate: Date | null;
+    readonly currency: string | null;
+    readonly fiscalNumber: string | null;
     readonly lineItems: readonly InvoiceLineItem[];
-    readonly totals: InvoiceTotals;
+    readonly totals: InvoiceTotals | null;
     readonly settlement: InvoiceSettlement | null;
     readonly alertMessage: string | null;
 

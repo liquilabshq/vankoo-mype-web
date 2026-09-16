@@ -37,6 +37,16 @@ type RailCaptionKey =
     | 'invoicing.detail.railCaption.inAuction.automatic'
     | 'invoicing.detail.railCaption.inAuction.attention';
 
+/**
+ * A calendar date in the reader's language, or null when there is none to show.
+ *
+ * `Intl.DateTimeFormat.format` throws on an invalid date, and an invoice the OCR has
+ * not read yet has no dates at all — so the null has to stop here, not in the view.
+ */
+function formatLongDate(date: Date | null, language: string): string | null {
+    return date ? new Intl.DateTimeFormat(language, {dateStyle: 'long'}).format(date) : null;
+}
+
 /** Routed view with everything the platform knows about one invoice. */
 export function InvoiceDetail() {
     const {t, i18n} = useTranslation();
@@ -87,13 +97,18 @@ export function InvoiceDetail() {
                 <>
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex min-w-0 flex-col gap-1">
-                            <h1 className="text-h1 text-fg font-bold">{invoice.number}</h1>
-                            <p className="text-body text-fg-muted">
-                                {t('invoicing.detail.subtitle', {
-                                    payer: invoice.payerName,
-                                    date: new Intl.DateTimeFormat(i18n.language, {dateStyle: 'long'}).format(invoice.dueDate)
-                                })}
-                            </p>
+                            <h1 className="text-h1 text-fg font-bold">
+                                {invoice.number ?? t('invoicing.detail.untitled')}
+                            </h1>
+                            {/* Only once both halves exist: «null · vence el —» reads like a bug. */}
+                            {invoice.payerName && invoice.dueDate && (
+                                <p className="text-body text-fg-muted">
+                                    {t('invoicing.detail.subtitle', {
+                                        payer: invoice.payerName,
+                                        date: formatLongDate(invoice.dueDate, i18n.language)
+                                    })}
+                                </p>
+                            )}
                         </div>
                         <div className="flex flex-wrap items-center gap-3">
                             <StatusPill status={invoice.status} />
@@ -148,11 +163,11 @@ export function InvoiceDetail() {
                             <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
                                 <FactField
                                     label={t('invoicing.detail.facts.issuedAt')}
-                                    value={new Intl.DateTimeFormat(i18n.language, {dateStyle: 'long'}).format(invoice.issuedAt)}
+                                    value={formatLongDate(invoice.issuedAt, i18n.language)}
                                 />
                                 <FactField
                                     label={t('invoicing.detail.facts.dueDate')}
-                                    value={new Intl.DateTimeFormat(i18n.language, {dateStyle: 'long'}).format(invoice.dueDate)}
+                                    value={formatLongDate(invoice.dueDate, i18n.language)}
                                 />
                             </div>
                             <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
@@ -161,13 +176,19 @@ export function InvoiceDetail() {
                             </div>
                         </div>
 
-                        <SettlementPanel totalAmount={invoice.totals.total} settlement={invoice.settlement} />
+                        {/* An unread invoice has no amount: the panel and the table wait for one
+                            rather than print S/ 0.00, which would be a figure nobody measured. */}
+                        {invoice.totals && (
+                            <SettlementPanel totalAmount={invoice.totals.total} settlement={invoice.settlement} />
+                        )}
                     </div>
 
-                    <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-4 rounded-xl border p-6">
-                        <p className="text-body text-fg font-semibold">{t('invoicing.detail.lineItems.title')}</p>
-                        <InvoiceLineItemsTable lineItems={invoice.lineItems} totals={invoice.totals} />
-                    </div>
+                    {invoice.totals && (
+                        <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-4 rounded-xl border p-6">
+                            <p className="text-body text-fg font-semibold">{t('invoicing.detail.lineItems.title')}</p>
+                            <InvoiceLineItemsTable lineItems={invoice.lineItems} totals={invoice.totals} />
+                        </div>
+                    )}
                 </>
             )}
         </div>
