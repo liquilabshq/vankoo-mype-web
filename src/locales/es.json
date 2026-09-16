@@ -247,7 +247,13 @@
             "accept": "Aceptar y publicar",
             "accepting": "Publicando…",
             "publishedOn": "Publicada el {{date}}",
-            "funded": "Financiado {{current}} de {{target}}"
+            "funded": "Financiado {{current}} de {{target}}",
+            "dialog": {
+                "title": "¿Aceptar la oferta y publicar la factura?",
+                "body": "Recibirás {{amount}} en tu billetera cuando la subasta se financie. Al aceptar, la factura se publica para los inversionistas y ya no se puede retirar desde aquí.",
+                "confirm": "Sí, publicar",
+                "cancel": "Cancelar"
+            }
         },
         "errors": {
             "quoteNotActive": "Esta oferta ya no está vigente. Te mostramos la actual.",

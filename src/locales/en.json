@@ -247,7 +247,13 @@
             "accept": "Accept and publish",
             "accepting": "Publishing…",
             "publishedOn": "Published on {{date}}",
-            "funded": "Funded {{current}} of {{target}}"
+            "funded": "Funded {{current}} of {{target}}",
+            "dialog": {
+                "title": "Accept the offer and publish the invoice?",
+                "body": "You will receive {{amount}} in your wallet once the auction is funded. Accepting publishes the invoice to the investors, and it cannot be withdrawn from here.",
+                "confirm": "Yes, publish",
+                "cancel": "Cancel"
+            }
         },
         "errors": {
             "quoteNotActive": "This offer is no longer valid. Here is the current one.",

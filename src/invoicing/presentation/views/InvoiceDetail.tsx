@@ -1,5 +1,5 @@
 import {ChevronLeft} from 'lucide-react';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useParams} from 'react-router';
 import {Alert, AlertDescription} from '@/components/ui/alert';
@@ -7,6 +7,8 @@ import {buttonVariants} from '@/components/ui/button';
 import {Spinner} from '@/components/ui/spinner';
 import {cn} from '@/lib/utils';
 import {useInvestmentStore} from '../../../investment/application/investment.store';
+import {AcceptQuoteDialog} from '../../../investment/presentation/components/AcceptQuoteDialog';
+import {InvestmentErrorAlert} from '../../../investment/presentation/components/InvestmentErrorAlert';
 import {InlineAlert} from '../../../shared/presentation/components/InlineAlert';
 import {useInvoicingStore} from '../../application/invoicing.store';
 import {FactField} from '../components/FactField';
@@ -53,7 +55,19 @@ export function InvoiceDetail() {
     const offerLoaded = useInvestmentStore(state => state.offerLoaded);
     const loadOffer = useInvestmentStore(state => state.loadOffer);
     const refreshAuction = useInvestmentStore(state => state.refreshAuction);
+    const acceptQuote = useInvestmentStore(state => state.acceptQuote);
+    const accepting = useInvestmentStore(state => state.accepting);
+    const offerErrors = useInvestmentStore(state => state.errors);
     const clearOffer = useInvestmentStore(state => state.clearOffer);
+
+    const [confirmingAccept, setConfirmingAccept] = useState(false);
+
+    async function handleConfirmAccept() {
+        // Closed either way: on success the panel moves on to "published", and on a
+        // refusal the alert under the header says why, next to the reloaded offer.
+        await acceptQuote();
+        setConfirmingAccept(false);
+    }
 
     useEffect(() => {
         if (id) {
@@ -160,6 +174,8 @@ export function InvoiceDetail() {
                         />
                     )}
 
+                    <InvestmentErrorAlert errors={offerErrors} />
+
                     {invoice.status === 'NOT_ELIGIBLE' && (
                         <InlineAlert
                             variant="error"
@@ -207,7 +223,13 @@ export function InvoiceDetail() {
                         {/* An unread invoice has no amount: the panel and the table wait for one
                             rather than print S/ 0.00, which would be a figure nobody measured. */}
                         {invoice.totals && (
-                            <SettlementPanel totalAmount={invoice.totals.total} auction={auction} quote={quote} />
+                            <SettlementPanel
+                                totalAmount={invoice.totals.total}
+                                auction={auction}
+                                quote={quote}
+                                onAccept={() => setConfirmingAccept(true)}
+                                accepting={accepting}
+                            />
                         )}
                     </div>
 
@@ -216,6 +238,16 @@ export function InvoiceDetail() {
                             <p className="text-body text-fg font-semibold">{t('invoicing.detail.lineItems.title')}</p>
                             <InvoiceLineItemsTable lineItems={invoice.lineItems} totals={invoice.totals} />
                         </div>
+                    )}
+
+                    {quote && (
+                        <AcceptQuoteDialog
+                            open={confirmingAccept}
+                            onOpenChange={setConfirmingAccept}
+                            quote={quote}
+                            onConfirm={() => void handleConfirmAccept()}
+                            confirming={accepting}
+                        />
                     )}
                 </>
             )}
