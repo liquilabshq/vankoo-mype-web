@@ -182,7 +182,7 @@
                 },
                 "approved": {
                     "automatic": "Step 4 of 5 · the invoice was approved and is ready to go to auction.",
-                    "attention": "Stopped at step 4 of 5 · this does not move on its own: someone has to fix it."
+                    "attention": "Step 4 of 5 · review the offer and accept it to publish the invoice."
                 },
                 "inAuction": {
                     "automatic": "Step 5 of 5 · the invoice is published in the auction.",
@@ -203,11 +203,6 @@
             },
             "settlement": {
                 "grossAmount": "Invoice amount",
-                "discount": "Discount ({{percentage}}%)",
-                "net": "Net",
-                "fee": "Vankoo fee ({{percentage}}%)",
-                "receivable": "You receive",
-                "footnote": "Vankoo sets the discount and the fee when it creates the auction.",
                 "pendingFootnote": "You will know how much you receive once the invoice is approved and goes to auction: the discount and the fee are set there."
             },
             "lineItems": {
@@ -242,6 +237,18 @@
         "back": "Back to home"
     },
     "investment": {
+        "offer": {
+            "invoiceAmount": "Invoice amount",
+            "discount": "Discount ({{percentage}}%)",
+            "net": "Net",
+            "fee": "Vankoo fee (incl. IGV)",
+            "receivable": "You receive",
+            "terms": "TCEA {{tcea}}% · {{days}} days · valid until {{validUntil}}",
+            "accept": "Accept and publish",
+            "accepting": "Publishing…",
+            "publishedOn": "Published on {{date}}",
+            "funded": "Funded {{current}} of {{target}}"
+        },
         "errors": {
             "quoteNotActive": "This offer is no longer valid. Here is the current one.",
             "tooCloseToDueDate": "The invoice is due too soon to open an auction.",

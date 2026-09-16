@@ -52,8 +52,8 @@ export class InvoiceAssembler {
      * OCR-filled field null until the read succeeds; this is where both become the
      * `{value, currency}` pairs and the optional fields the entity carries.
      *
-     * `settlement` is always null here: the discount, fee and amount receivable are
-     * the auction's quote, which lives in Investment, not in this response.
+     * What the MYPE would receive is not here on purpose: that is the auction's
+     * quote, which lives in Investment and is read through its own store.
      */
     static toInvoiceDetailFromResponse(response: AxiosResponse<InvoiceDetailResource>): InvoiceDetail | null {
         const resource = response.data;
@@ -88,7 +88,6 @@ export class InvoiceAssembler {
                       commercialDiscount: amount(resource.discount),
                       total: amount(resource.total)
                   },
-            settlement: null,
             // The service explains a review in its own words; the first issue is the
             // one worth a banner, and the view has copy of its own when there is none.
             alertMessage: resource.validationIssues[0]?.message ?? null
