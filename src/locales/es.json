@@ -108,6 +108,7 @@
                 "approved": "Aprobada",
                 "inAuction": "En subasta"
             },
+            "viewDetail": "Ver detalle",
             "viewInvoice": "Ver la factura",
             "uploadAnother": "Subir otra"
         },
@@ -182,7 +183,7 @@
                 },
                 "approved": {
                     "automatic": "Paso 4 de 5 · la factura fue aprobada y está lista para salir a subasta.",
-                    "attention": "Parada en el paso 4 de 5 · esto no avanza solo: hace falta que alguien lo corrija."
+                    "attention": "Paso 4 de 5 · revisa la oferta y acéptala para publicar la factura."
                 },
                 "inAuction": {
                     "automatic": "Paso 5 de 5 · la factura está publicada en la subasta.",
@@ -203,11 +204,6 @@
             },
             "settlement": {
                 "grossAmount": "Importe de la factura",
-                "discount": "Descuento ({{percentage}} %)",
-                "net": "Neto",
-                "fee": "Comisión Vankoo ({{percentage}} %)",
-                "receivable": "Recibes",
-                "footnote": "El descuento y la comisión los fija Vankoo al crear la subasta.",
                 "pendingFootnote": "Sabrás cuánto recibes cuando la factura esté aprobada y salga a subasta: el descuento y la comisión se fijan ahí."
             },
             "lineItems": {
@@ -240,5 +236,30 @@
         "title": "Esta página no existe",
         "body": "Puede que el enlace esté mal escrito o que la página se haya movido.",
         "back": "Volver al inicio"
+    },
+    "investment": {
+        "offer": {
+            "invoiceAmount": "Importe de la factura",
+            "discount": "Descuento ({{percentage}} %)",
+            "net": "Neto",
+            "fee": "Comisión Vankoo (incl. IGV)",
+            "receivable": "Recibes",
+            "terms": "TCEA {{tcea}} % · {{days}} días · válida hasta el {{validUntil}}",
+            "accept": "Aceptar y publicar",
+            "accepting": "Publicando…",
+            "publishedOn": "Publicada el {{date}}",
+            "funded": "Financiado {{current}} de {{target}}",
+            "dialog": {
+                "title": "¿Aceptar la oferta y publicar la factura?",
+                "body": "Recibirás {{amount}} en tu billetera cuando la subasta se financie. Al aceptar, la factura se publica para los inversionistas y ya no se puede retirar desde aquí.",
+                "confirm": "Sí, publicar",
+                "cancel": "Cancelar"
+            }
+        },
+        "errors": {
+            "quoteNotActive": "Esta oferta ya no está vigente. Te mostramos la actual.",
+            "tooCloseToDueDate": "La factura vence demasiado pronto para abrir una subasta.",
+            "unknown": "No pudimos completar la operación. Inténtalo de nuevo."
+        }
     }
 }

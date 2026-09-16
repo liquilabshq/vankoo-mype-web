@@ -1,11 +1,14 @@
 import {ChevronLeft} from 'lucide-react';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useParams} from 'react-router';
 import {Alert, AlertDescription} from '@/components/ui/alert';
 import {buttonVariants} from '@/components/ui/button';
 import {Spinner} from '@/components/ui/spinner';
 import {cn} from '@/lib/utils';
+import {useInvestmentStore} from '../../../investment/application/investment.store';
+import {AcceptQuoteDialog} from '../../../investment/presentation/components/AcceptQuoteDialog';
+import {InvestmentErrorAlert} from '../../../investment/presentation/components/InvestmentErrorAlert';
 import {InlineAlert} from '../../../shared/presentation/components/InlineAlert';
 import {useInvoicingStore} from '../../application/invoicing.store';
 import {FactField} from '../components/FactField';
@@ -14,7 +17,7 @@ import {InvoiceRail} from '../components/InvoiceRail';
 import {SettlementPanel} from '../components/SettlementPanel';
 import {StatusPill} from '../components/StatusPill';
 import {invoicingPaths} from '../invoicing-paths';
-import {RAIL_MILESTONES, railCaptionKey} from '../rail-caption';
+import {isAwaitingAuction, progressFor, RAIL_MILESTONES, railCaptionKey} from '../rail-caption';
 
 /**
  * A calendar date in the reader's language, or null when there is none to show.
@@ -25,6 +28,14 @@ import {RAIL_MILESTONES, railCaptionKey} from '../rail-caption';
 function formatLongDate(date: Date | null, language: string): string | null {
     return date ? new Intl.DateTimeFormat(language, {dateStyle: 'long'}).format(date) : null;
 }
+
+/**
+ * How often, and for how long, the detail asks Investment whether the auction is
+ * ready. Same numbers as the upload screen's status poll: the event and the risk
+ * evaluation take seconds, and a minute covers them with room to spare.
+ */
+const AUCTION_POLL_INTERVAL_MS = 2000;
+const AUCTION_POLL_MAX_ATTEMPTS = 30;
 
 /** Routed view with everything the platform knows about one invoice. */
 export function InvoiceDetail() {
@@ -39,14 +50,68 @@ export function InvoiceDetail() {
     const clearInvoiceDetail = useInvoicingStore(state => state.clearInvoiceDetail);
     const openInvoiceFile = useInvoicingStore(state => state.openInvoiceFile);
 
+    const auction = useInvestmentStore(state => state.auction);
+    const quote = useInvestmentStore(state => state.quote);
+    const offerLoaded = useInvestmentStore(state => state.offerLoaded);
+    const loadOffer = useInvestmentStore(state => state.loadOffer);
+    const refreshAuction = useInvestmentStore(state => state.refreshAuction);
+    const acceptQuote = useInvestmentStore(state => state.acceptQuote);
+    const accepting = useInvestmentStore(state => state.accepting);
+    const offerErrors = useInvestmentStore(state => state.errors);
+    const clearOffer = useInvestmentStore(state => state.clearOffer);
+
+    const [confirmingAccept, setConfirmingAccept] = useState(false);
+
+    async function handleConfirmAccept() {
+        // Closed either way: on success the panel moves on to "published", and on a
+        // refusal the alert under the header says why, next to the reloaded offer.
+        await acceptQuote();
+        setConfirmingAccept(false);
+    }
+
     useEffect(() => {
-        if (id) void fetchInvoiceDetail(id);
-        return () => clearInvoiceDetail();
+        if (id) {
+            void fetchInvoiceDetail(id);
+            void loadOffer(id);
+        }
+        return () => {
+            clearInvoiceDetail();
+            clearOffer();
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
+    // Only while the auction is on its way: created by an event once the invoice
+    // passes its checks, evaluated by another. Each read schedules the next only once
+    // it has answered, so a slow response never stacks a second one behind it.
+    const awaitingAuction = invoice !== null && offerLoaded && isAwaitingAuction(invoice, auction);
+    useEffect(() => {
+        if (!awaitingAuction || !id) return;
+        let cancelled = false;
+        let attempts = 0;
+        let timer: ReturnType<typeof setTimeout>;
+
+        const poll = async () => {
+            const refreshed = await refreshAuction(id);
+            attempts += 1;
+            if (cancelled) return;
+            const stillWaiting = refreshed === null || refreshed.isAwaitingEvaluation();
+            if (stillWaiting && attempts < AUCTION_POLL_MAX_ATTEMPTS) {
+                timer = setTimeout(() => void poll(), AUCTION_POLL_INTERVAL_MS);
+            }
+        };
+
+        timer = setTimeout(() => void poll(), AUCTION_POLL_INTERVAL_MS);
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [awaitingAuction, id, refreshAuction]);
+
     const steps = RAIL_MILESTONES.map(milestone => ({label: t(`invoicing.upload.steps.${milestone}`)}));
-    const rail = invoice?.railState() ?? null;
+    // The rail and the pill follow the auction once there is one; see `progressFor`.
+    const progress = invoice ? progressFor(invoice, auction) : null;
+    const rail = progress?.rail ?? null;
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -90,7 +155,7 @@ export function InvoiceDetail() {
                             )}
                         </div>
                         <div className="flex flex-wrap items-center gap-3">
-                            <StatusPill status={invoice.status} />
+                            <StatusPill status={progress?.status ?? invoice.status} />
                             <button
                                 type="button"
                                 onClick={() => void openInvoiceFile(invoice.id)}
@@ -108,6 +173,8 @@ export function InvoiceDetail() {
                             message={invoice.alertMessage ?? t('invoicing.detail.reviewAlert.fallbackMessage')}
                         />
                     )}
+
+                    <InvestmentErrorAlert errors={offerErrors} />
 
                     {invoice.status === 'NOT_ELIGIBLE' && (
                         <InlineAlert
@@ -156,7 +223,13 @@ export function InvoiceDetail() {
                         {/* An unread invoice has no amount: the panel and the table wait for one
                             rather than print S/ 0.00, which would be a figure nobody measured. */}
                         {invoice.totals && (
-                            <SettlementPanel totalAmount={invoice.totals.total} settlement={invoice.settlement} />
+                            <SettlementPanel
+                                totalAmount={invoice.totals.total}
+                                auction={auction}
+                                quote={quote}
+                                onAccept={() => setConfirmingAccept(true)}
+                                accepting={accepting}
+                            />
                         )}
                     </div>
 
@@ -165,6 +238,16 @@ export function InvoiceDetail() {
                             <p className="text-body text-fg font-semibold">{t('invoicing.detail.lineItems.title')}</p>
                             <InvoiceLineItemsTable lineItems={invoice.lineItems} totals={invoice.totals} />
                         </div>
+                    )}
+
+                    {quote && (
+                        <AcceptQuoteDialog
+                            open={confirmingAccept}
+                            onOpenChange={setConfirmingAccept}
+                            quote={quote}
+                            onConfirm={() => void handleConfirmAccept()}
+                            confirming={accepting}
+                        />
                     )}
                 </>
             )}
