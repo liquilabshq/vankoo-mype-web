@@ -16,6 +16,10 @@ export interface AuctionAttributes {
     expiresAt: Date | null;
     /** The quote the MYPE accepted, which is the only one this response carries. */
     acceptedQuote: FinancialQuote | null;
+    /** Why the risk evaluation found the invoice not eligible, as a stable code. Null unless rejected. */
+    rejectionReasonCode: string | null;
+    /** The same reason in the risk service's words, for a code this build has no copy for. */
+    rejectionReason: string | null;
 }
 
 /**
@@ -24,8 +28,9 @@ export interface AuctionAttributes {
  *
  * The auction is Investment's aggregate, not this app's: it is created by an event
  * when the invoice passes validation, evaluated by the risk service, and only then
- * does the MYPE get a say. The three predicates below are the three things the
- * detail screen has to know about it, and nothing more is modelled yet.
+ * does the MYPE get a say — unless the evaluation rejects it. The four predicates
+ * below are the four things the detail screen has to know about it, and nothing
+ * more is modelled yet.
  */
 export class Auction {
     readonly id: string;
@@ -37,6 +42,8 @@ export class Auction {
     readonly publishedAt: Date | null;
     readonly expiresAt: Date | null;
     readonly acceptedQuote: FinancialQuote | null;
+    readonly rejectionReasonCode: string | null;
+    readonly rejectionReason: string | null;
 
     constructor({
         id,
@@ -47,7 +54,9 @@ export class Auction {
         currentFunding,
         publishedAt,
         expiresAt,
-        acceptedQuote
+        acceptedQuote,
+        rejectionReasonCode,
+        rejectionReason
     }: AuctionAttributes) {
         this.id = id;
         this.invoiceId = invoiceId;
@@ -58,6 +67,8 @@ export class Auction {
         this.publishedAt = publishedAt;
         this.expiresAt = expiresAt;
         this.acceptedQuote = acceptedQuote;
+        this.rejectionReasonCode = rejectionReasonCode;
+        this.rejectionReason = rejectionReason;
     }
 
     /** Whether the risk evaluation is still pending, so there is nothing to offer yet. */
@@ -68,6 +79,11 @@ export class Auction {
     /** Whether the MYPE can ask for, see and accept a quote: only while `DRAFT`. */
     canBeQuoted(): boolean {
         return this.status === 'DRAFT';
+    }
+
+    /** Whether the risk evaluation found the invoice not eligible, so it will never be offered. */
+    isRejected(): boolean {
+        return this.status === 'REJECTED';
     }
 
     /** Whether a quote was accepted and the invoice is out with the investors. */

@@ -32,5 +32,8 @@ export interface AuctionResource {
     closedAt: string | null;
     cancelledAt: string | null;
     cancellationReason: string | null;
+    rejectedAt: string | null;
+    rejectionReasonCode: string | null;
+    rejectionReason: string | null;
     acceptedQuote: FinancialQuoteResource | null;
 }

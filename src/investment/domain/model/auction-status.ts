@@ -1,9 +1,10 @@
 /**
- * The values `AuctionStatus` can hold — Investment's `AuctionStatus`, all eight.
+ * The values `AuctionStatus` can hold — Investment's `AuctionStatus`, all nine.
  *
  * Only the first three matter to a MYPE reading her own invoice: the auction waits
  * for the risk evaluation, then sits in `DRAFT` until she accepts a quote, and from
- * `PUBLISHED` on it is the investors' turn. The rest are what happens to it there.
+ * `PUBLISHED` on it is the investors' turn. `REJECTED` is the other way out of the
+ * risk evaluation: the invoice cannot be funded, and the auction says why.
  */
 export type AuctionStatus =
     | 'PENDING_VERIFICATION_RISK'
@@ -13,7 +14,8 @@ export type AuctionStatus =
     | 'FULLY_FUNDED'
     | 'CLOSED'
     | 'EXPIRED'
-    | 'CANCELLED';
+    | 'CANCELLED'
+    | 'REJECTED';
 
 const KNOWN_STATUSES: readonly AuctionStatus[] = [
     'PENDING_VERIFICATION_RISK',
@@ -23,7 +25,8 @@ const KNOWN_STATUSES: readonly AuctionStatus[] = [
     'FULLY_FUNDED',
     'CLOSED',
     'EXPIRED',
-    'CANCELLED'
+    'CANCELLED',
+    'REJECTED'
 ];
 
 /** Narrows a string from the wire into a status this build understands. */
