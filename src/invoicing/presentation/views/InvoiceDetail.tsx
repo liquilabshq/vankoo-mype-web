@@ -8,6 +8,7 @@ import {Spinner} from '@/components/ui/spinner';
 import {cn} from '@/lib/utils';
 import {useInvestmentStore} from '../../../investment/application/investment.store';
 import {AcceptQuoteDialog} from '../../../investment/presentation/components/AcceptQuoteDialog';
+import {AuctionRejectionAlert} from '../../../investment/presentation/components/AuctionRejectionAlert';
 import {InvestmentErrorAlert} from '../../../investment/presentation/components/InvestmentErrorAlert';
 import {InlineAlert} from '../../../shared/presentation/components/InlineAlert';
 import {useInvoicingStore} from '../../application/invoicing.store';
@@ -184,6 +185,8 @@ export function InvoiceDetail() {
                         />
                     )}
 
+                    <AuctionRejectionAlert auction={auction} />
+
                     <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-4 rounded-xl border p-6">
                         <InvoiceRail steps={steps} currentIndex={rail?.currentIndex} currentState={rail?.currentState} />
                         {rail && (
@@ -221,8 +224,10 @@ export function InvoiceDetail() {
                         </div>
 
                         {/* An unread invoice has no amount: the panel and the table wait for one
-                            rather than print S/ 0.00, which would be a figure nobody measured. */}
-                        {invoice.totals && (
+                            rather than print S/ 0.00, which would be a figure nobody measured. A
+                            rejected one will never be priced, so the panel would only promise an
+                            offer that is not coming. */}
+                        {invoice.totals && !auction?.isRejected() && (
                             <SettlementPanel
                                 totalAmount={invoice.totals.total}
                                 auction={auction}

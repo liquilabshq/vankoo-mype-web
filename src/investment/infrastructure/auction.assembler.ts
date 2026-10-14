@@ -26,7 +26,10 @@ export class AuctionAssembler {
             currentFunding: amount(resource.currentFunding),
             publishedAt: toDateOrNull(resource.publishedAt),
             expiresAt: toDateOrNull(resource.expiresAt),
-            acceptedQuote: resource.acceptedQuote && this.toQuoteFromResource(resource.acceptedQuote)
+            acceptedQuote: resource.acceptedQuote && this.toQuoteFromResource(resource.acceptedQuote),
+            // Older Investment builds do not send these: absent reads as not rejected.
+            rejectionReasonCode: resource.rejectionReasonCode ?? null,
+            rejectionReason: resource.rejectionReason ?? null
         });
     }
 
