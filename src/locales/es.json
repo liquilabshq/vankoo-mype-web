@@ -260,6 +260,13 @@
             "quoteNotActive": "Esta oferta ya no está vigente. Te mostramos la actual.",
             "tooCloseToDueDate": "La factura vence demasiado pronto para abrir una subasta.",
             "unknown": "No pudimos completar la operación. Inténtalo de nuevo."
+        },
+        "rejection": {
+            "reasons": {
+                "PAYER_NOT_IN_REGISTRY": "El RUC del pagador no figura en el padrón de SUNAT. Revisa que esté bien escrito en la factura.",
+                "PAYER_NOT_ACTIVE": "El pagador no figura como contribuyente activo en SUNAT, así que no podemos financiar facturas a su nombre.",
+                "PAYER_DOMICILE_NOT_FOUND": "SUNAT no encuentra el domicilio fiscal del pagador (no habido o no hallado), así que no podemos financiar facturas a su nombre."
+            }
         }
     }
 }

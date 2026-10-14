@@ -260,6 +260,13 @@
             "quoteNotActive": "This offer is no longer valid. Here is the current one.",
             "tooCloseToDueDate": "The invoice is due too soon to open an auction.",
             "unknown": "We could not complete the operation. Please try again."
+        },
+        "rejection": {
+            "reasons": {
+                "PAYER_NOT_IN_REGISTRY": "The payer's RUC is not in SUNAT's registry. Check that it is written correctly on the invoice.",
+                "PAYER_NOT_ACTIVE": "The payer is not an active taxpayer according to SUNAT, so we cannot fund invoices in its name.",
+                "PAYER_DOMICILE_NOT_FOUND": "SUNAT cannot locate the payer's fiscal address, so we cannot fund invoices in its name."
+            }
         }
     }
 }

@@ -53,8 +53,13 @@ export interface InvoiceProgress {
  * "Aprobada" is amber, not indigo: the platform is done and the next move is the
  * MYPE's. It is the one rail step where "attention" means "your turn" rather than
  * "something to fix".
+ *
+ * An auction the risk evaluation rejected reads exactly like an invoice Invoicing
+ * found not eligible: blocked at "validating", with the "No elegible" pill. To the
+ * MYPE both mean the same — this invoice will not be funded — whoever decided it.
  */
 export function progressFor(invoice: InvoiceDetail, auction: Auction | null): InvoiceProgress {
+    if (auction?.isRejected()) return {rail: railStateFor('NOT_ELIGIBLE'), status: 'NOT_ELIGIBLE'};
     if (auction?.isPublished()) return {rail: railStateFor('PUBLISHED'), status: 'PUBLISHED'};
     if (auction?.canBeQuoted()) {
         return {rail: {currentIndex: RAIL_MILESTONES.indexOf('approved'), currentState: 'attention'}, status: 'APPROVED'};
