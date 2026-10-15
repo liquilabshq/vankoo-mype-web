@@ -265,7 +265,8 @@
             "reasons": {
                 "PAYER_NOT_IN_REGISTRY": "El RUC del pagador no figura en el padrón de SUNAT. Revisa que esté bien escrito en la factura.",
                 "PAYER_NOT_ACTIVE": "El pagador no figura como contribuyente activo en SUNAT, así que no podemos financiar facturas a su nombre.",
-                "PAYER_DOMICILE_NOT_FOUND": "SUNAT no encuentra el domicilio fiscal del pagador (no habido o no hallado), así que no podemos financiar facturas a su nombre."
+                "PAYER_DOMICILE_NOT_FOUND": "SUNAT no encuentra el domicilio fiscal del pagador (no habido o no hallado), así que no podemos financiar facturas a su nombre.",
+                "PAYER_SHELL_COMPANY": "SUNAT declaró al pagador sujeto sin capacidad operativa: considera que sus operaciones no son reales, así que no podemos financiar facturas a su nombre."
             }
         }
     }
