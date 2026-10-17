@@ -269,5 +269,82 @@
                 "PAYER_SHELL_COMPANY": "SUNAT has declared the payer a taxpayer without operating capacity: it does not consider its operations real, so we cannot fund invoices in its name."
             }
         }
+    },
+    "profile": {
+        "title": "Company profile",
+        "completeSubtitle": "Complete your company's details to operate on Vankoo. They are sent all at once.",
+        "companyTitle": "Company details",
+        "fields": {
+            "ruc": "RUC",
+            "businessName": "Legal name",
+            "industrySector": "Sector",
+            "contactPhone": "Contact phone",
+            "contactEmail": "Contact email",
+            "legalAddress": "Registered address",
+            "street": "Address",
+            "city": "City",
+            "state": "Region",
+            "postalCode": "Postal code",
+            "country": "Country"
+        },
+        "form": {
+            "companySection": "Company",
+            "addressSection": "Registered address",
+            "rucHint": "11 digits, no spaces.",
+            "rucInvalid": "A RUC has 11 digits.",
+            "businessNameHint": "As registered with SUNAT: the green certificate is compared with it.",
+            "sectorPlaceholder": "Choose a sector",
+            "submit": "Save profile",
+            "saving": "Saving…"
+        },
+        "sectors": {
+            "AGRICULTURE": "Agriculture",
+            "MANUFACTURING": "Manufacturing",
+            "SERVICES": "Services",
+            "TECHNOLOGY": "Technology",
+            "RETAIL": "Retail",
+            "OTHER": "Other"
+        },
+        "certificate": {
+            "title": "Green certificate",
+            "intro": "Upload your environmental certificate (ISO 14001 or ISO 50001) and your invoices can carry the Green Factoring badge in the marketplace.",
+            "status": {
+                "NONE": "No certificate",
+                "UNDER_REVIEW": "Under review",
+                "GREEN": "Green Factoring",
+                "NOT_GREEN": "Not validated"
+            },
+            "standard": "Standard",
+            "issuer": "Issued by",
+            "validUntil": "Valid until",
+            "standards": {
+                "ISO_14001": "ISO 14001 · Environmental management",
+                "ISO_50001": "ISO 50001 · Energy management"
+            },
+            "criteria": {
+                "CERTIFICATE_READABLE": "The certificate could be read",
+                "ACCEPTED_STANDARD": "Accepted standard",
+                "IN_FORCE": "In force",
+                "HOLDER_MATCHES_SUNAT": "Issued to your company",
+                "NOT_ENVIRONMENTAL_OFFENDER": "No environmental sanctions (OEFA)"
+            },
+            "passed": "(passed)",
+            "failed": "(failed)",
+            "notGreenBody": "We could not validate it. See what failed and upload another certificate.",
+            "reviewing": "We are reading your certificate. It usually takes a few seconds.",
+            "uploading": "Uploading the certificate…",
+            "dropzone": {
+                "cta": "Upload your certificate",
+                "replace": "Upload another certificate",
+                "hint": "PDF, JPG or PNG"
+            },
+            "needsProfile": "Fill in your RUC and legal name first: the certificate is compared with what SUNAT has on your company.",
+            "disclaimer": "We check that the certificate is in force and matches your company in SUNAT, and that you have no OEFA sanctions. We do not verify its authenticity with the certification body."
+        },
+        "errors": {
+            "load": "We could not load your profile. Try again in a moment.",
+            "save": "We could not save the profile. Check the details and try again.",
+            "upload": "We could not upload the certificate. Use a PDF, JPG or PNG and try again."
+        }
     }
 }

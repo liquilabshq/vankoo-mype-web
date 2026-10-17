@@ -9,6 +9,7 @@ interface ImportMetaEnv {
     readonly VITE_USERS_ENDPOINT_PATH: string;
     readonly VITE_INVOICES_ENDPOINT_PATH: string;
     readonly VITE_AUCTIONS_ENDPOINT_PATH: string;
+    readonly VITE_COMPANY_ENDPOINT_PATH: string;
 }
 
 interface ImportMeta {

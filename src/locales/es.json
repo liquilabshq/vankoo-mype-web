@@ -269,5 +269,82 @@
                 "PAYER_SHELL_COMPANY": "SUNAT declaró al pagador sujeto sin capacidad operativa: considera que sus operaciones no son reales, así que no podemos financiar facturas a su nombre."
             }
         }
+    },
+    "profile": {
+        "title": "Perfil de la empresa",
+        "completeSubtitle": "Completa los datos de tu empresa para operar en Vankoo. Se envían todos a la vez.",
+        "companyTitle": "Datos de la empresa",
+        "fields": {
+            "ruc": "RUC",
+            "businessName": "Razón social",
+            "industrySector": "Sector",
+            "contactPhone": "Teléfono de contacto",
+            "contactEmail": "Correo de contacto",
+            "legalAddress": "Domicilio fiscal",
+            "street": "Dirección",
+            "city": "Ciudad",
+            "state": "Departamento",
+            "postalCode": "Código postal",
+            "country": "País"
+        },
+        "form": {
+            "companySection": "Empresa",
+            "addressSection": "Domicilio fiscal",
+            "rucHint": "11 dígitos, sin espacios.",
+            "rucInvalid": "El RUC tiene 11 dígitos.",
+            "businessNameHint": "Tal como figura en SUNAT: el certificado verde se compara con ella.",
+            "sectorPlaceholder": "Elige un sector",
+            "submit": "Guardar perfil",
+            "saving": "Guardando…"
+        },
+        "sectors": {
+            "AGRICULTURE": "Agricultura",
+            "MANUFACTURING": "Manufactura",
+            "SERVICES": "Servicios",
+            "TECHNOLOGY": "Tecnología",
+            "RETAIL": "Comercio",
+            "OTHER": "Otro"
+        },
+        "certificate": {
+            "title": "Certificado verde",
+            "intro": "Sube tu certificado ambiental (ISO 14001 o ISO 50001) y tus facturas podrán llevar el distintivo Factoring Verde en el mercado.",
+            "status": {
+                "NONE": "Sin certificado",
+                "UNDER_REVIEW": "En revisión",
+                "GREEN": "Factoring Verde",
+                "NOT_GREEN": "No validado"
+            },
+            "standard": "Norma",
+            "issuer": "Emitido por",
+            "validUntil": "Vigente hasta",
+            "standards": {
+                "ISO_14001": "ISO 14001 · Gestión ambiental",
+                "ISO_50001": "ISO 50001 · Gestión de la energía"
+            },
+            "criteria": {
+                "CERTIFICATE_READABLE": "Se pudo leer el certificado",
+                "ACCEPTED_STANDARD": "Norma aceptada",
+                "IN_FORCE": "Vigente",
+                "HOLDER_MATCHES_SUNAT": "El titular es tu empresa",
+                "NOT_ENVIRONMENTAL_OFFENDER": "Sin sanciones ambientales (OEFA)"
+            },
+            "passed": "(cumple)",
+            "failed": "(no cumple)",
+            "notGreenBody": "No pudimos validarlo. Revisa qué falló y sube otro certificado.",
+            "reviewing": "Estamos leyendo tu certificado. Suele tardar unos segundos.",
+            "uploading": "Subiendo el certificado…",
+            "dropzone": {
+                "cta": "Sube tu certificado",
+                "replace": "Sube otro certificado",
+                "hint": "PDF, JPG o PNG"
+            },
+            "needsProfile": "Completa primero el RUC y la razón social: el certificado se compara con lo que SUNAT tiene de tu empresa.",
+            "disclaimer": "Comprobamos que el certificado esté vigente y coincida con tu empresa en SUNAT, y que no tengas sanciones de OEFA. No verificamos su autenticidad ante el organismo certificador."
+        },
+        "errors": {
+            "load": "No pudimos cargar tu perfil. Vuelve a intentarlo en un momento.",
+            "save": "No pudimos guardar el perfil. Revisa los datos y vuelve a intentarlo.",
+            "upload": "No pudimos subir el certificado. Usa un PDF, JPG o PNG y vuelve a intentarlo."
+        }
     }
 }

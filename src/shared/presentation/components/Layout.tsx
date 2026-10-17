@@ -7,6 +7,7 @@ import {cn} from '@/lib/utils';
 import {useIamStore} from '../../../iam/application/iam.store';
 import {iamPaths} from '../../../iam/presentation/iam-paths';
 import {invoicingPaths} from '../../../invoicing/presentation/invoicing-paths';
+import {profilePaths} from '../../../profile/presentation/profile-paths';
 import {SidebarItem} from './SidebarItem';
 import {TopBar} from './TopBar';
 import {Wordmark} from './Wordmark';
@@ -17,8 +18,8 @@ import {Wordmark} from './Wordmark';
  *
  * The layout is the one place allowed to reach into a bounded context from outside,
  * and it does so through that context's store and its paths, which is the loosest
- * coupling available. Wallet and profile have no screens yet, so their sidebar
- * entries render inert instead of linking somewhere that would 404.
+ * coupling available. The wallet has no screen yet, so its sidebar entry renders
+ * inert instead of linking somewhere that would 404.
  */
 export function Layout() {
     const {t} = useTranslation();
@@ -59,7 +60,7 @@ export function Layout() {
                         end={false}
                     />
                     <SidebarItem icon={Wallet} label={t('common.nav.wallet')} />
-                    <SidebarItem icon={User} label={t('common.nav.profile')} />
+                    <SidebarItem icon={User} label={t('common.nav.profile')} to={profilePaths.myCompany()} />
                 </nav>
 
                 <div className="flex-1" />
