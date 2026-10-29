@@ -1,3 +1,5 @@
+import {cn} from '@/lib/utils';
+
 /**
  * The background dot grid: the logo's dot, tiled.
  *
@@ -13,12 +15,14 @@
  * It is desktop-only, and that is the same rule again rather than an exception to it:
  * below `lg` the form sits directly on this surface instead of on a card, so the
  * texture would end up behind the labels. The mockups drop it there for that reason.
+ * `everywhere` is for screens that keep their card on a phone too, like the
+ * onboarding: there the card covers the text and the field shows only around it.
  */
-export function DotField() {
+export function DotField({everywhere = false}: {everywhere?: boolean}) {
     return (
         <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 hidden opacity-50 lg:block"
+            className={cn('pointer-events-none absolute inset-0 opacity-50', everywhere ? 'block' : 'hidden lg:block')}
             style={{
                 backgroundImage: 'radial-gradient(circle, var(--vk-decor-dot) 2px, transparent 2px)',
                 backgroundSize: '26px 26px'

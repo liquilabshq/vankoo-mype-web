@@ -14,6 +14,20 @@ export interface CompanyResource {
         country: string;
     };
     profileComplete: boolean;
+    logoUrl?: string;
+    rucDocumentUrl?: string;
+    kyc?: {
+        status: string;
+        submittedAt?: string;
+        decidedAt?: string;
+        checks: {code: string; passed: boolean; detail: string}[];
+        reasonCodes: string[];
+        fieldErrors: {field: string; code: string}[];
+        evidence: {code: string; detail: string}[];
+        demo: boolean;
+        attempts: number;
+        retryAvailableAt?: string;
+    };
     sustainability: {
         status: string;
         submittedAt?: string;

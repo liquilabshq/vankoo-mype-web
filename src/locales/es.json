@@ -221,7 +221,13 @@
             }
         },
         "errors": {
-            "uploadFailed": "No pudimos subir la factura. Inténtalo de nuevo."
+            "uploadFailed": "No pudimos subir la factura. Inténtalo de nuevo.",
+            "notVerified": "Tu empresa debe estar verificada para subir facturas."
+        },
+        "kycGate": {
+            "title": "Tu empresa aún no está verificada",
+            "message": "Podrás subir facturas cuando verifiquemos tu empresa.",
+            "link": "Ir a mi perfil"
         }
     },
     "home": {
@@ -271,9 +277,7 @@
         }
     },
     "profile": {
-        "title": "Perfil de la empresa",
-        "completeSubtitle": "Completa los datos de tu empresa para operar en Vankoo. Se envían todos a la vez.",
-        "companyTitle": "Datos de la empresa",
+        "title": "Mi perfil",
         "fields": {
             "ruc": "RUC",
             "businessName": "Razón social",
@@ -281,21 +285,16 @@
             "contactPhone": "Teléfono de contacto",
             "contactEmail": "Correo de contacto",
             "legalAddress": "Domicilio fiscal",
-            "street": "Dirección",
+            "street": "Calle",
             "city": "Ciudad",
             "state": "Departamento",
             "postalCode": "Código postal",
             "country": "País"
         },
         "form": {
-            "companySection": "Empresa",
-            "addressSection": "Domicilio fiscal",
             "rucHint": "11 dígitos, sin espacios.",
             "rucInvalid": "El RUC tiene 11 dígitos.",
-            "businessNameHint": "Tal como figura en SUNAT: el certificado verde se compara con ella.",
-            "sectorPlaceholder": "Elige un sector",
-            "submit": "Guardar perfil",
-            "saving": "Guardando…"
+            "sectorPlaceholder": "Elige un sector"
         },
         "sectors": {
             "AGRICULTURE": "Agricultura",
@@ -338,13 +337,132 @@
                 "replace": "Sube otro certificado",
                 "hint": "PDF, JPG o PNG"
             },
-            "needsProfile": "Completa primero el RUC y la razón social: el certificado se compara con lo que SUNAT tiene de tu empresa.",
-            "disclaimer": "Comprobamos que el certificado esté vigente y coincida con tu empresa en SUNAT, y que no tengas sanciones de OEFA. No verificamos su autenticidad ante el organismo certificador."
+            "disclaimer": "Comprobamos que el certificado esté vigente y coincida con tu empresa en SUNAT, y que no tengas sanciones de OEFA. No verificamos su autenticidad ante el organismo certificador.",
+            "needsVerification": "Podrás subirlo cuando verifiquemos tu empresa."
         },
         "errors": {
             "load": "No pudimos cargar tu perfil. Vuelve a intentarlo en un momento.",
-            "save": "No pudimos guardar el perfil. Revisa los datos y vuelve a intentarlo.",
-            "upload": "No pudimos subir el certificado. Usa un PDF, JPG o PNG y vuelve a intentarlo."
+            "save": "No pudimos enviar tus datos. Revisa la ficha RUC y vuelve a intentarlo.",
+            "upload": "No pudimos subir el certificado. Usa un PDF, JPG o PNG y vuelve a intentarlo.",
+            "contact": "No pudimos guardar tus datos de contacto. Vuelve a intentarlo.",
+            "logo": "No pudimos subir el logo. Usa una imagen JPG o PNG."
+        },
+        "onboarding": {
+            "title": "Completa el perfil de tu empresa",
+            "subtitle": "Verificamos tu RUC antes de que puedas operar. Solo se hace una vez.",
+            "signOut": "Salir",
+            "companySection": "Datos de la empresa",
+            "addressSection": "Dirección fiscal",
+            "rucDocumentSection": "Ficha RUC",
+            "rucDocumentHelpLabel": "Qué es la ficha RUC",
+            "rucDocumentHelp": "Es el reporte certificado que descargas desde SUNAT Operaciones en Línea con tu Clave SOL. Lleva firma digital y código QR.",
+            "dropzone": {
+                "title": "Arrastra el archivo o haz clic para elegirlo",
+                "hint": "El PDF de tu ficha RUC, tal como lo descargas de SUNAT",
+                "replace": "Elegir otro archivo"
+            },
+            "rucDocumentNotPdf": "La ficha RUC debe ser el PDF que descargas de SUNAT.",
+            "rucNotFound": "No encontramos ese RUC. Revisa el número.",
+            "nameMismatch": "No coincide con la razón social que SUNAT tiene para tu RUC.",
+            "submit": "Enviar para revisión",
+            "sending": "Enviando…",
+            "review": {
+                "title": "Estamos revisando tu perfil",
+                "subtitle": "Comprobamos tu RUC contra el padrón de SUNAT y revisamos la ficha que enviaste.",
+                "alertTitle": "Puedes entrar, pero aún no operar",
+                "alertMessage": "Podrás subir facturas y recargar tu billetera cuando verifiquemos tu empresa.",
+                "goHome": "Ir al inicio"
+            },
+            "rejected": {
+                "title": "No pudimos verificar tu empresa",
+                "subtitle": "Revisa lo que nos indican y vuelve a enviarlo. No pierdes lo que ya escribiste.",
+                "retryAt": "Podrás volver a enviarlo el {{date}}.",
+                "retryNow": "Ya puedes volver a enviarlo.",
+                "fix": "Corregir y reenviar"
+            },
+            "reasons": {
+                "TAXPAYER_FOUND": {
+                    "title": "No encontramos tu RUC en SUNAT",
+                    "message": "Revisa el número y vuelve a enviarlo."
+                },
+                "RUC_DOCUMENT_SIGNED": {
+                    "title": "La ficha RUC no tiene la firma digital de SUNAT",
+                    "message": "Descárgala otra vez desde SUNAT Operaciones en Línea y súbela tal cual, sin editarla ni escanearla."
+                },
+                "RUC_DOCUMENT_RECENT": {
+                    "title": "La ficha RUC tiene más de 30 días",
+                    "message": "Descarga una nueva desde SUNAT Operaciones en Línea."
+                },
+                "RUC_DOCUMENT_MATCHES": {
+                    "title": "La ficha RUC es de otro RUC",
+                    "message": "Sube la ficha del RUC que escribiste."
+                },
+                "NAME_MATCHES": {
+                    "title": "La razón social no coincide con SUNAT",
+                    "message": "Escríbela tal como figura en tu ficha RUC."
+                },
+                "TAXPAYER_ACTIVE": {
+                    "title": "Tu RUC no está activo en SUNAT",
+                    "message": "Solo podemos verificar contribuyentes con estado ACTIVO."
+                },
+                "DOMICILE_FOUND": {
+                    "title": "Tu domicilio fiscal no figura como habido",
+                    "message": "Regulariza tu domicilio fiscal en SUNAT y vuelve a enviarlo."
+                },
+                "NOT_SHELL_COMPANY": {
+                    "title": "Tu RUC figura en la lista SSCO de SUNAT",
+                    "message": "SUNAT lo lista como sin capacidad operativa, así que no podemos verificarlo."
+                },
+                "UNKNOWN": {
+                    "title": "No pudimos verificar tu empresa",
+                    "message": "Revisa tus datos y la ficha RUC y vuelve a enviarlo."
+                }
+            }
+        },
+        "kyc": {
+            "title": "Verificación",
+            "status": {
+                "PENDING": "Sin enviar",
+                "IN_REVIEW": "En revisión",
+                "VERIFIED": "Verificado",
+                "REJECTED": "Rechazado",
+                "DEMO": "Verificado (demo)"
+            },
+            "verifiedOn": "Verificada el {{date}}.",
+            "submittedOn": "La enviaste el {{date}}.",
+            "rejectedOn": "Rechazada el {{date}}.",
+            "notSubmitted": "Aún no enviaste tus datos.",
+            "demoNote": "Ficha de demostración firmada por Vankoo, no por SUNAT.",
+            "rucDocument": "Ficha RUC",
+            "rucDocumentName": "ficha-ruc.pdf",
+            "uploadedOn": "Subida el {{date}}",
+            "view": "Ver",
+            "viewLabel": "Ver la ficha RUC",
+            "fix": "Corregir y reenviar",
+            "complete": "Completar perfil"
+        },
+        "reviewBanner": {
+            "title": "Estamos revisando tus datos",
+            "message": "Puedes moverte por la app, pero no podrás editar tu perfil ni operar hasta que terminemos."
+        },
+        "summary": {
+            "sector": "Sector",
+            "phone": "Teléfono",
+            "address": "Dirección legal",
+            "email": "Correo de contacto",
+            "ruc": "RUC {{ruc}}"
+        },
+        "edit": {
+            "button": "Editar datos",
+            "title": "Editar datos de contacto",
+            "description": "El RUC y la razón social no cambian: son los que verificamos con SUNAT.",
+            "save": "Guardar",
+            "saving": "Guardando…",
+            "cancel": "Cancelar"
+        },
+        "logo": {
+            "change": "Cambiar el logo",
+            "alt": "Logo de {{name}}"
         }
     }
 }

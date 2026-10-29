@@ -7,6 +7,7 @@ import {cn} from '@/lib/utils';
 import {useIamStore} from '../../../iam/application/iam.store';
 import {iamPaths} from '../../../iam/presentation/iam-paths';
 import {invoicingPaths} from '../../../invoicing/presentation/invoicing-paths';
+import {useProfileStore} from '../../../profile/application/profile.store';
 import {profilePaths} from '../../../profile/presentation/profile-paths';
 import {SidebarItem} from './SidebarItem';
 import {TopBar} from './TopBar';
@@ -19,13 +20,15 @@ import {Wordmark} from './Wordmark';
  * The layout is the one place allowed to reach into a bounded context from outside,
  * and it does so through that context's store and its paths, which is the loosest
  * coupling available. The wallet has no screen yet, so its sidebar entry renders
- * inert instead of linking somewhere that would 404.
+ * inert instead of linking somewhere that would 404. The foot of the sidebar names the
+ * company, as the mockups do, and falls back to the account's email until it has one.
  */
 export function Layout() {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const session = useIamStore(state => state.session);
     const signOut = useIamStore(state => state.signOut);
+    const businessName = useProfileStore(state => state.company?.businessName ?? null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     function handleSignOut() {
@@ -68,7 +71,7 @@ export function Layout() {
                 {session && (
                     <div className="flex flex-col gap-4">
                         <p className="text-caption text-sidebar-foreground truncate font-semibold">
-                            {session.user.email}
+                            {businessName ?? session.user.email}
                         </p>
                         <Button
                             type="button"

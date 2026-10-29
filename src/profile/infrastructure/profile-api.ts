@@ -20,8 +20,25 @@ export class ProfileApi extends BaseApi {
         return this.http.get(companyEndpointPath);
     }
 
-    completeMyProfile(body: object): Promise<AxiosResponse<CompanyResource>> {
+    /** Sends the data and the ficha RUC already in storage: the company goes `IN_REVIEW`. */
+    submitMyProfile(body: object): Promise<AxiosResponse<CompanyResource>> {
         return this.http.patch(`${companyEndpointPath}/profile`, body);
+    }
+
+    updateMyContact(body: object): Promise<AxiosResponse<CompanyResource>> {
+        return this.http.patch(`${companyEndpointPath}/contact`, body);
+    }
+
+    requestRucDocumentUploadUrl(): Promise<AxiosResponse<UploadUrlResource>> {
+        return this.http.post(`${companyEndpointPath}/ruc/upload-url`, {contentType: 'application/pdf'});
+    }
+
+    requestLogoUploadUrl(contentType: string): Promise<AxiosResponse<UploadUrlResource>> {
+        return this.http.post(`${companyEndpointPath}/logo/upload-url`, {contentType});
+    }
+
+    submitLogo(logoUrl: string): Promise<AxiosResponse<CompanyResource>> {
+        return this.http.patch(`${companyEndpointPath}/logo`, {logoUrl});
     }
 
     requestCertificateUploadUrl(contentType: string): Promise<AxiosResponse<UploadUrlResource>> {

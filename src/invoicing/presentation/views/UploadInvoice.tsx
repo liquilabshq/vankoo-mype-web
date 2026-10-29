@@ -10,6 +10,8 @@ import {UploadInvoiceCommand} from '../../domain/model/upload-invoice.command';
 import {InvoiceDropzone} from '../components/InvoiceDropzone';
 import {InvoiceRail} from '../components/InvoiceRail';
 import {InvoicingErrorAlert} from '../components/InvoicingErrorAlert';
+import {KycGateAlert} from '../components/KycGate';
+import {useCanUploadInvoices} from '../use-can-upload-invoices';
 import {StatusPill} from '../components/StatusPill';
 import {UploadedFileCard} from '../components/UploadedFileCard';
 import {invoicingPaths} from '../invoicing-paths';
@@ -38,6 +40,7 @@ const STATUS_POLL_MAX_ATTEMPTS = 30;
 export function UploadInvoice() {
     const {t} = useTranslation();
     const navigate = useNavigate();
+    const canUpload = useCanUploadInvoices();
     const submitting = useInvoicingStore(state => state.submitting);
     const errors = useInvoicingStore(state => state.errors);
     const uploadedInvoiceId = useInvoicingStore(state => state.uploadedInvoiceId);
@@ -103,6 +106,7 @@ export function UploadInvoice() {
             <h1 className="text-h1 text-fg font-bold">{t('invoicing.upload.title')}</h1>
 
             <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-6 rounded-xl border p-8">
+                {!canUpload && <KycGateAlert />}
                 <InvoicingErrorAlert errors={errors} />
 
                 {uploadedInvoiceId && selectedFile ? (
@@ -157,6 +161,7 @@ export function UploadInvoice() {
                             title={t('invoicing.upload.dropzone.cta')}
                             hint={t('invoicing.upload.dropzone.hint')}
                             onFileSelected={handleFileSelected}
+                            disabled={!canUpload}
                         />
                         <p className="text-caption text-fg-muted">{t('invoicing.upload.helper')}</p>
                     </>
