@@ -79,7 +79,7 @@ export function CompanyCard({company, saving, uploading, onSaveContact, onLogoSe
             <dl className="grid gap-3 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-4">
                 {rows.map(([label, value]) => (
                     <div key={label} className="flex items-baseline justify-between gap-4 sm:flex-col sm:justify-start sm:gap-1">
-                        <dt className="text-caption text-fg-muted">{label}</dt>
+                        <dt className="text-caption text-fg-muted shrink-0 whitespace-nowrap">{label}</dt>
                         <dd className="text-caption sm:text-body text-fg text-right font-semibold break-words sm:text-left">
                             {value ?? '—'}
                         </dd>

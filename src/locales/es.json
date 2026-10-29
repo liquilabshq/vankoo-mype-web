@@ -350,6 +350,7 @@
         "onboarding": {
             "title": "Completa el perfil de tu empresa",
             "subtitle": "Verificamos tu RUC antes de que puedas operar. Solo se hace una vez.",
+            "signOut": "Salir",
             "companySection": "Datos de la empresa",
             "addressSection": "Dirección fiscal",
             "rucDocumentSection": "Ficha RUC",

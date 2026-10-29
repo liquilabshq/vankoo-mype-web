@@ -350,6 +350,7 @@
         "onboarding": {
             "title": "Complete your company profile",
             "subtitle": "We verify your RUC before you can operate. It is done only once.",
+            "signOut": "Sign out",
             "companySection": "Company details",
             "addressSection": "Tax address",
             "rucDocumentSection": "Ficha RUC",

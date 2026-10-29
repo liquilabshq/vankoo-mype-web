@@ -16,7 +16,8 @@ import {Wordmark} from '../../../shared/presentation/components/Wordmark';
  * Outside the sidebar on purpose, as the mockups draw it. Until the company is sent
  * for verification there is nothing in the sidebar it may use, and a menu of dead
  * links is worse than none. Signing out stays, because a MYPE that signed up with the
- * wrong account has no other way back.
+ * wrong account has no other way back; it reads «Salir», as in the mockup, which is
+ * also what fits next to the preferences on a phone.
  *
  * The two lights are the brand panel's tokens, softened for a light surface: at the
  * bottom-left and top-right, blurred far enough to read as tint rather than shapes.
@@ -56,7 +57,7 @@ export function OnboardingLayout({children}: {children: ReactNode}) {
                         onClick={handleSignOut}
                     >
                         <LogOut data-icon="inline-start" />
-                        {t('common.signOut')}
+                        {t('profile.onboarding.signOut')}
                     </Button>
                 </div>
             </header>
