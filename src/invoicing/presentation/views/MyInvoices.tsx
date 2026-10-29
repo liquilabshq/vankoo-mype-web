@@ -11,6 +11,8 @@ import {useInvoicingStore} from '../../application/invoicing.store';
 import {ALL_INVOICE_STATUSES, presentationForStatus, type InvoiceStatus} from '../../domain/model/invoice-status';
 import {InvoicingErrorAlert} from '../components/InvoicingErrorAlert';
 import {InvoiceRow} from '../components/InvoiceRow';
+import {KycGateAlert} from '../components/KycGate';
+import {useCanUploadInvoices} from '../use-can-upload-invoices';
 import {invoicingPaths} from '../invoicing-paths';
 
 const PAGE_SIZE = 10;
@@ -24,6 +26,7 @@ export function MyInvoices() {
     const invoicesLoaded = useInvoicingStore(state => state.invoicesLoaded);
     const errors = useInvoicingStore(state => state.errors);
     const fetchInvoices = useInvoicingStore(state => state.fetchInvoices);
+    const canUpload = useCanUploadInvoices();
 
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState<InvoiceStatus | 'all'>('all');
@@ -55,12 +58,18 @@ export function MyInvoices() {
         <div className="flex w-full flex-col gap-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h1 className="text-h1 text-fg font-bold">{t('invoicing.myInvoices.title')}</h1>
-                <Button type="button" onClick={() => navigate(invoicingPaths.uploadInvoice())} className="w-full sm:w-auto">
+                <Button
+                    type="button"
+                    onClick={() => navigate(invoicingPaths.uploadInvoice())}
+                    className="w-full sm:w-auto"
+                    disabled={!canUpload}
+                >
                     <FileUp data-icon="inline-start" />
                     {t('invoicing.myInvoices.uploadInvoice')}
                 </Button>
             </div>
 
+            {!canUpload && <KycGateAlert />}
             <InvoicingErrorAlert errors={errors} />
 
             {!invoicesLoading && invoicesLoaded && invoices.length === 0 && !hasFiltered ? (
@@ -70,7 +79,7 @@ export function MyInvoices() {
                         title={t('invoicing.myInvoices.empty.title')}
                         description={t('invoicing.myInvoices.empty.description')}
                         action={
-                            <Button type="button" onClick={() => navigate(invoicingPaths.uploadInvoice())}>
+                            <Button type="button" onClick={() => navigate(invoicingPaths.uploadInvoice())} disabled={!canUpload}>
                                 <FileUp data-icon="inline-start" />
                                 {t('invoicing.myInvoices.uploadInvoice')}
                             </Button>
