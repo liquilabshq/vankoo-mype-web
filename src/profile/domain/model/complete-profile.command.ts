@@ -1,7 +1,7 @@
 import type {LegalAddress} from './company.entity';
 import type {IndustrySector} from './industry-sector';
 
-/** Everything `PATCH /companies/me/profile` asks for, at once. */
+/** Everything `PATCH /companies/me/profile` asks for, at once, besides the ficha RUC itself. */
 export class CompleteProfileCommand {
     readonly rucNumber: string;
     readonly businessName: string;

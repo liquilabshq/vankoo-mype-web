@@ -2,7 +2,9 @@ import {createBrowserRouter} from 'react-router';
 import {authenticationLoader} from './iam/infrastructure/authentication.loader';
 import {iamRoutes} from './iam/presentation/iam-routes';
 import {invoicingRoutes} from './invoicing/presentation/invoicing-routes';
+import {onboardingLoader} from './profile/infrastructure/onboarding.loader';
 import {profileRoutes} from './profile/presentation/profile-routes';
+import {CompanyOnboarding} from './profile/presentation/views/CompanyOnboarding';
 import {Layout} from './shared/presentation/components/Layout';
 import {Home} from './shared/presentation/views/Home';
 import {NotFound} from './shared/presentation/views/NotFound';
@@ -18,16 +20,26 @@ import {NotFound} from './shared/presentation/views/NotFound';
  *
  * Everything else hangs off the shell route that carries the loader, so the next
  * context is protected by being added there rather than by someone remembering to.
+ *
+ * The onboarding sits outside the shell too, behind the session check only: it is
+ * where the shell's guard sends a company that has not sent its data for
+ * verification, so guarding it with that same check would loop.
  */
+
+/** A session first, then a company that went past the onboarding. */
+async function shellLoader() {
+    return authenticationLoader() ?? (await onboardingLoader());
+}
 export const router = createBrowserRouter([
     {path: '/iam', children: iamRoutes},
+    {path: '/onboarding', Component: CompanyOnboarding, loader: authenticationLoader},
     {
         path: '/',
         Component: Layout,
         children: [
-            {index: true, Component: Home, loader: authenticationLoader},
-            {path: 'invoicing', children: invoicingRoutes, loader: authenticationLoader},
-            {path: 'profile', children: profileRoutes, loader: authenticationLoader},
+            {index: true, Component: Home, loader: shellLoader},
+            {path: 'invoicing', children: invoicingRoutes, loader: shellLoader},
+            {path: 'profile', children: profileRoutes, loader: shellLoader},
             {path: '*', Component: NotFound}
         ]
     }

@@ -3,9 +3,11 @@ import {useTranslation} from 'react-i18next';
 import {Spinner} from '@/components/ui/spinner';
 import {useProfileStore} from '../../application/profile.store';
 import {CERTIFICATE_CONTENT_TYPES} from '../../application/profile.store';
-import type {Company} from '../../domain/model/company.entity';
+import {InlineAlert} from '../../../shared/presentation/components/InlineAlert';
+import {LOGO_CONTENT_TYPES} from '../../application/profile.store';
 import {CertificateSection} from '../components/CertificateSection';
-import {CompanyForm} from '../components/CompanyForm';
+import {CompanyCard} from '../components/CompanyCard';
+import {VerificationCard} from '../components/VerificationCard';
 import {ProfileErrorAlert} from '../components/ProfileErrorAlert';
 
 /**
@@ -16,33 +18,13 @@ import {ProfileErrorAlert} from '../components/ProfileErrorAlert';
 const REVIEW_POLL_INTERVAL_MS = 3000;
 const REVIEW_POLL_MAX_ATTEMPTS = 40;
 
-function CompanySummary({company}: {company: Company}) {
-    const {t} = useTranslation();
-    const address = company.legalAddress;
-    const rows: [string, string | null][] = [
-        [t('profile.fields.ruc'), company.rucNumber],
-        [t('profile.fields.businessName'), company.businessName],
-        [t('profile.fields.industrySector'), company.industrySector ? t(`profile.sectors.${company.industrySector}`) : null],
-        [t('profile.fields.contactPhone'), company.contactPhone],
-        [t('profile.fields.contactEmail'), company.contactEmail],
-        [
-            t('profile.fields.legalAddress'),
-            address ? `${address.street}, ${address.city}, ${address.state} ${address.postalCode}, ${address.country}` : null
-        ]
-    ];
-    return (
-        <dl className="grid gap-4 sm:grid-cols-2">
-            {rows.map(([label, value]) => (
-                <div key={label}>
-                    <dt className="text-caption text-fg-muted">{label}</dt>
-                    <dd className="text-body text-fg font-semibold break-words">{value ?? '—'}</dd>
-                </div>
-            ))}
-        </dl>
-    );
-}
-
-/** Routed view of the MYPE's own company: its data and its green certificate. */
+/**
+ * «Mi perfil»: the company on the left, and on the right where its verification
+ * stands and its green certificate. Stacked on a phone, the company first.
+ *
+ * While the KYC is in review the page says so on top and nothing can be edited, as the
+ * mockup draws it; the screen keeps asking, so the banner goes away by itself.
+ */
 export function CompanyProfile() {
     const {t} = useTranslation();
     const company = useProfileStore(state => state.company);
@@ -52,10 +34,13 @@ export function CompanyProfile() {
     const uploading = useProfileStore(state => state.uploading);
     const errors = useProfileStore(state => state.errors);
     const fetchCompany = useProfileStore(state => state.fetchCompany);
-    const completeProfile = useProfileStore(state => state.completeProfile);
+    const updateContact = useProfileStore(state => state.updateContact);
+    const uploadLogo = useProfileStore(state => state.uploadLogo);
     const uploadCertificate = useProfileStore(state => state.uploadCertificate);
     const refreshWhileUnderReview = useProfileStore(state => state.refreshWhileUnderReview);
+    const refreshWhileKycInReview = useProfileStore(state => state.refreshWhileKycInReview);
     const underReview = company?.sustainability.isUnderReview ?? false;
+    const kycInReview = company?.kyc.isInReview ?? false;
 
     useEffect(() => {
         void fetchCompany();
@@ -81,6 +66,33 @@ export function CompanyProfile() {
         };
     }, [underReview, refreshWhileUnderReview]);
 
+    useEffect(() => {
+        if (!kycInReview) return;
+        let cancelled = false;
+        let attempts = 0;
+        let timer: ReturnType<typeof setTimeout>;
+        const poll = async () => {
+            const stillReviewing = await refreshWhileKycInReview();
+            attempts += 1;
+            if (!cancelled && stillReviewing && attempts < REVIEW_POLL_MAX_ATTEMPTS) {
+                timer = setTimeout(() => void poll(), REVIEW_POLL_INTERVAL_MS);
+            }
+        };
+        timer = setTimeout(() => void poll(), REVIEW_POLL_INTERVAL_MS);
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [kycInReview, refreshWhileKycInReview]);
+
+    function handleLogoSelected(file: File) {
+        if (!(LOGO_CONTENT_TYPES as readonly string[]).includes(file.type)) {
+            useProfileStore.setState({errors: [{kind: 'logo', error: new Error(`Unsupported type ${file.type}`)}]});
+            return;
+        }
+        void uploadLogo(file);
+    }
+
     function handleFileSelected(file: File) {
         if (!(CERTIFICATE_CONTENT_TYPES as readonly string[]).includes(file.type)) {
             useProfileStore.setState({errors: [{kind: 'upload', error: new Error(`Unsupported type ${file.type}`)}]});
@@ -98,28 +110,32 @@ export function CompanyProfile() {
     }
 
     return (
-        <div className="flex w-full max-w-4xl flex-col gap-8">
-            <div className="flex flex-col gap-2">
-                <h1 className="text-h1 text-fg font-bold">{t('profile.title')}</h1>
-                {company && !company.profileComplete && (
-                    <p className="text-body text-fg-secondary">{t('profile.completeSubtitle')}</p>
-                )}
-            </div>
+        <div className="flex w-full flex-col gap-6">
+            <h1 className="text-h1 text-fg font-bold">{t('profile.title')}</h1>
 
+            {kycInReview && (
+                <InlineAlert
+                    variant="warning"
+                    title={t('profile.reviewBanner.title')}
+                    message={t('profile.reviewBanner.message')}
+                />
+            )}
             <ProfileErrorAlert errors={errors} />
 
             {company && (
-                <>
-                    <section className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-6 rounded-xl border p-8">
-                        <h2 className="text-h3 text-fg font-bold">{t('profile.companyTitle')}</h2>
-                        {company.profileComplete ? (
-                            <CompanySummary company={company} />
-                        ) : (
-                            <CompanyForm saving={saving} onSubmit={command => void completeProfile(command)} />
-                        )}
-                    </section>
-                    <CertificateSection company={company} uploading={uploading} onFileSelected={handleFileSelected} />
-                </>
+                <div className="flex flex-col items-stretch gap-6 lg:flex-row lg:items-start">
+                    <CompanyCard
+                        company={company}
+                        saving={saving}
+                        uploading={uploading}
+                        onSaveContact={updateContact}
+                        onLogoSelected={handleLogoSelected}
+                    />
+                    <div className="flex w-full shrink-0 flex-col gap-6 lg:w-90">
+                        <VerificationCard company={company} />
+                        <CertificateSection company={company} uploading={uploading} onFileSelected={handleFileSelected} />
+                    </div>
+                </div>
             )}
         </div>
     );

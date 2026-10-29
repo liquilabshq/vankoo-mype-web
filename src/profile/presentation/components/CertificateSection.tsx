@@ -22,6 +22,7 @@ function formatDay(day: string, locale: string): string {
 
 /**
  * The company's environmental certificate: what it is worth, and where to upload it.
+ * Only a verified company may upload one; until then the card says when it can.
  *
  * Only the risk service decides whether it is green; this section shows its answer
  * and, when it is not green, every check so the MYPE knows what to fix. The note
@@ -31,21 +32,20 @@ function formatDay(day: string, locale: string): string {
 export function CertificateSection({company, uploading, onFileSelected}: CertificateSectionProps) {
     const {t, i18n} = useTranslation();
     const certification = company.sustainability;
-    const hasRuc = Boolean(company.rucNumber && company.businessName);
 
     return (
-        <section className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-6 rounded-xl border p-8">
+        <section className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-4 rounded-xl border p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                    <Leaf className="text-green-finance size-6" aria-hidden="true" />
-                    <h2 className="text-h3 text-fg font-bold">{t('profile.certificate.title')}</h2>
+                    <Leaf className="text-green-finance size-5" aria-hidden="true" />
+                    <h2 className="text-body text-fg font-semibold">{t('profile.certificate.title')}</h2>
                 </div>
                 <SustainabilityPill status={certification.status} />
             </div>
-            <p className="text-body text-fg-secondary">{t('profile.certificate.intro')}</p>
+            <p className="text-caption text-fg-secondary">{t('profile.certificate.intro')}</p>
 
             {certification.isGreen && certification.validUntil && (
-                <dl className="grid gap-4 sm:grid-cols-3">
+                <dl className="grid gap-3">
                     <div>
                         <dt className="text-caption text-fg-muted">{t('profile.certificate.standard')}</dt>
                         <dd className="text-body text-fg font-semibold">
@@ -80,7 +80,7 @@ export function CertificateSection({company, uploading, onFileSelected}: Certifi
                     <Spinner className="size-5" />
                     <p className="text-caption text-fg-muted">{t('profile.certificate.uploading')}</p>
                 </div>
-            ) : hasRuc ? (
+            ) : company.canUploadCertificate ? (
                 <InvoiceDropzone
                     title={certification.status === 'NONE' ? t('profile.certificate.dropzone.cta') : t('profile.certificate.dropzone.replace')}
                     hint={t('profile.certificate.dropzone.hint')}
@@ -88,7 +88,7 @@ export function CertificateSection({company, uploading, onFileSelected}: Certifi
                     onFileSelected={onFileSelected}
                 />
             ) : (
-                <p className="text-caption text-fg-muted">{t('profile.certificate.needsProfile')}</p>
+                <p className="text-caption text-fg-muted">{t('profile.certificate.needsVerification')}</p>
             )}
 
             <p className="text-caption text-fg-muted">{t('profile.certificate.disclaimer')}</p>
