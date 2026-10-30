@@ -22,7 +22,7 @@ export class InvoiceAssembler {
             number: resource.number,
             payerName: resource.payerName,
             payerRuc: resource.payerRuc,
-            dueDate: resource.dueDate ? new Date(resource.dueDate) : null,
+            dueDate: toCalendarDateOrNull(resource.dueDate),
             status: resource.status,
             amount: resource.amount,
             uploadedAt: new Date(resource.uploadedAt)
@@ -68,8 +68,8 @@ export class InvoiceAssembler {
             issuerRuc: resource.issuerRuc,
             payerName: resource.payerName,
             payerRuc: resource.payerRuc,
-            issuedAt: toDateOrNull(resource.issueDate),
-            dueDate: toDateOrNull(resource.dueDate),
+            issuedAt: toCalendarDateOrNull(resource.issueDate),
+            dueDate: toCalendarDateOrNull(resource.dueDate),
             currency: resource.currency,
             fiscalNumber: resource.fiscalInvoiceNumber,
             lineItems: resource.items.map(item => ({
@@ -96,9 +96,17 @@ export class InvoiceAssembler {
 /** The product's currency, only to label line items the OCR read without one. */
 const DEFAULT_CURRENCY = 'PEN';
 
-/** A date from the wire, or null when the field is empty or does not parse. */
-function toDateOrNull(value: string | null): Date | null {
-    if (!value) return null;
-    const date = new Date(value);
+/**
+ * A calendar day from the wire, at local midnight, or null when the field is empty or
+ * does not parse.
+ *
+ * Invoicing sends an issue or due date as UTC midnight. Read as an instant, that is
+ * the evening before in Lima, so every date showed one day early; only the day part
+ * is kept, so the 28th stays the 28th in any time zone.
+ */
+function toCalendarDateOrNull(value: string | null): Date | null {
+    const match = value ? /^(\d{4})-(\d{2})-(\d{2})/.exec(value) : null;
+    if (!match) return null;
+    const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
     return Number.isNaN(date.getTime()) ? null : date;
 }
