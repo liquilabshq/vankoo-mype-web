@@ -248,4 +248,11 @@
     :root.dark {
         color-scheme: dark;
     }
+    /* Only for the frame the theme changes in (see `applyTheme` in theme.ts). */
+    .theme-switching,
+    .theme-switching *,
+    .theme-switching *::before,
+    .theme-switching *::after {
+        transition: none !important;
+    }
 }
