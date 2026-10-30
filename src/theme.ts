@@ -9,6 +9,9 @@ export const THEME_STORAGE_KEY = 'vankoo.theme';
 /** The class `tokens.css` hangs the dark palette off, applied to `<html>`. */
 const DARK_CLASS = 'dark';
 
+/** Set on `<html>` while the palette swaps; `index.css` turns transitions off under it. */
+const SWITCHING_CLASS = 'theme-switching';
+
 const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
 const listeners = new Set<() => void>();
@@ -35,8 +38,23 @@ export function resolveTheme(): Theme {
     return storedTheme() ?? (systemPrefersDark.matches ? 'dark' : 'light');
 }
 
+/**
+ * Paints a theme in one frame.
+ *
+ * Inputs, selects and buttons carry `transition-colors`/`transition-all` for hover and
+ * focus, and those transitions would also animate the swap of every token: for up to
+ * a second the fields stay white and some labels blend into their old background.
+ * Transitions are switched off, the new palette is forced through style, and they
+ * come back right after. A timeout and not `requestAnimationFrame`: a hidden or
+ * throttled tab may never paint a frame, and the class would then stay and turn
+ * every transition off for good.
+ */
 function applyTheme(theme: Theme) {
-    document.documentElement.classList.toggle(DARK_CLASS, theme === 'dark');
+    const root = document.documentElement;
+    root.classList.add(SWITCHING_CLASS);
+    root.classList.toggle(DARK_CLASS, theme === 'dark');
+    void getComputedStyle(root).color;
+    setTimeout(() => root.classList.remove(SWITCHING_CLASS), 0);
 }
 
 /**

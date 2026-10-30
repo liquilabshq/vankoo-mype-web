@@ -4,7 +4,18 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>vankoo-mype-web</title>
+    <title>Vankoo</title>
+    <!-- Paints the dark palette before the first frame, so a reload in dark mode does
+         not flash light while the bundle loads. Same rule as resolveTheme() in
+         src/theme.ts, which takes over once the app runs. -->
+    <script>
+      try {
+        var theme = localStorage.getItem('vankoo.theme');
+        if (theme === 'dark' || (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (error) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
