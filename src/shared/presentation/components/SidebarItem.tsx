@@ -20,15 +20,16 @@ const baseClassName = 'relative flex h-10 items-center gap-3 rounded-md px-3';
 /**
  * One entry of the app's sidebar navigation.
  *
- * Lives on the navy `sidebar` surface, so its text uses the on-inverse token rather
- * than the app's usual foreground ones. The active state adds a 3px accent bar next
- * to the fill change, because color alone would not carry the state for someone who
+ * The sidebar is a raised surface, so a resting item reads in `text/secondary`; the
+ * mockups still carry the on-inverse blue from when the sidebar was navy, and on white
+ * it falls to 1.7:1. The active item is navy. It also gets a 3px accent bar next to
+ * the fill change, because color alone would not carry the state for someone who
  * cannot distinguish it.
  */
 export function SidebarItem({icon: Icon, label, to, end = true}: SidebarItemProps) {
     if (!to) {
         return (
-            <span className={cn(baseClassName, 'text-fg-on-inverse cursor-default opacity-60')} aria-disabled="true">
+            <span className={cn(baseClassName, 'text-fg-disabled cursor-default')} aria-disabled="true">
                 <Icon className="size-5 shrink-0" />
                 <span className="text-body flex-1 truncate">{label}</span>
             </span>
@@ -44,7 +45,7 @@ export function SidebarItem({icon: Icon, label, to, end = true}: SidebarItemProp
                     baseClassName,
                     isActive
                         ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold'
-                        : 'text-fg-on-inverse hover:bg-sidebar-accent/50'
+                        : 'text-fg-secondary hover:bg-accent hover:text-accent-foreground'
                 )
             }
         >

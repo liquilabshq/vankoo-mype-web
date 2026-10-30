@@ -1,7 +1,7 @@
 {
     "common": {
         "tagline": "Tu liquidez, hoy.",
-        "signOut": "Cerrar sesión",
+        "signOut": "Salir",
         "preferences": {
             "switchLanguage": "Cambiar a inglés",
             "switchToDark": "Cambiar al tema oscuro",
