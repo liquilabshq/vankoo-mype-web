@@ -134,6 +134,7 @@
   --vk-surface-raised: #FFFFFF;
   --vk-surface-overlay: #FFFFFF;
   --vk-surface-sunken: #E5EBF3;
+  --vk-surface-field: #EFF6FD;
   --vk-surface-inverse: #0E2A47;
   --vk-text-primary: #0E2A47;
   --vk-text-secondary: #5F646B;
@@ -155,7 +156,7 @@
   --vk-action-secondary-bg-hover: #274C74;
   --vk-action-secondary-bg-active: #396698;
   --vk-action-secondary-fg: #FFFFFF;
-  --vk-action-ghost-bg: transparent;
+  --vk-action-ghost-bg: #FFFFFF;
   --vk-action-ghost-bg-hover: #E5EBF3;
   --vk-action-ghost-fg: #0E2A47;
   --vk-action-danger-bg: #DD3135;
@@ -258,6 +259,7 @@
   --vk-surface-raised: #0E2A47;
   --vk-surface-overlay: #0E2A47;
   --vk-surface-sunken: #071D33;
+  --vk-surface-field: #071D33;
   --vk-surface-inverse: #FFFFFF;
   --vk-text-primary: #E5EBF3;
   --vk-text-secondary: #BFC5CC;
@@ -279,7 +281,7 @@
   --vk-action-secondary-bg-hover: #4D80B8;
   --vk-action-secondary-bg-active: #4D80B8;
   --vk-action-secondary-fg: #E5EBF3;
-  --vk-action-ghost-bg: transparent;
+  --vk-action-ghost-bg: #0E2A47;
   --vk-action-ghost-bg-hover: #274C74;
   --vk-action-ghost-fg: #E5EBF3;
   --vk-action-danger-bg: #DD3135;

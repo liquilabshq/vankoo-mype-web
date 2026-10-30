@@ -101,6 +101,18 @@
     --color-surface-raised: var(--vk-surface-raised);
     --color-surface-sunken: var(--vk-surface-sunken);
     --color-surface-inverse: var(--vk-surface-inverse);
+    /* What receives content sinks, what is pressed stands out: fields (Input,
+       Select, the dropzone) fill with surface/field, buttons with action/ghost/bg.
+       Both keep border/strong, which is what actually draws them. */
+    --color-surface-field: var(--vk-surface-field);
+
+    --color-action-ghost: var(--vk-action-ghost-bg);
+    --color-action-primary-hover: var(--vk-action-primary-bg-hover);
+    --color-action-secondary-hover: var(--vk-action-secondary-bg-hover);
+    --color-action-danger-hover: var(--vk-action-danger-bg-hover);
+    --color-action-danger-fg: var(--vk-action-danger-fg);
+    --color-action-disabled: var(--vk-action-disabled-bg);
+    --color-action-disabled-fg: var(--vk-action-disabled-fg);
 
     --color-fg: var(--vk-text-primary);
     --color-fg-secondary: var(--vk-text-secondary);
