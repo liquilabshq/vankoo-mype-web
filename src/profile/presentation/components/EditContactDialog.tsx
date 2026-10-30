@@ -72,7 +72,7 @@ export function EditContactDialog({company, open, onOpenChange, saving, onSave}:
                     </div>
                     <AddressFields value={legalAddress} onChange={setLegalAddress} disabled={saving} />
                     <DialogFooter>
-                        <DialogClose disabled={saving} className={cn(buttonVariants({variant: 'ghost'}), 'border-border-strong')}>
+                        <DialogClose disabled={saving} className={cn(buttonVariants({variant: 'outline'}))}>
                             {t('profile.edit.cancel')}
                         </DialogClose>
                         <button type="submit" disabled={!canSave} className={buttonVariants({variant: 'default'})}>

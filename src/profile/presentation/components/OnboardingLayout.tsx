@@ -51,9 +51,8 @@ export function OnboardingLayout({children}: {children: ReactNode}) {
                     <PreferencesBar />
                     <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        className="bg-surface-raised border-border-strong"
                         onClick={handleSignOut}
                     >
                         <LogOut data-icon="inline-start" />

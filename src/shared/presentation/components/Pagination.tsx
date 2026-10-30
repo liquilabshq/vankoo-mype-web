@@ -25,7 +25,7 @@ export function Pagination({page, totalPages, onPageChange, summary}: Pagination
                     type="button"
                     disabled={page <= 1}
                     onClick={() => onPageChange(page - 1)}
-                    className="border-border-strong flex size-9 shrink-0 items-center justify-center rounded-md border disabled:opacity-40"
+                    className="border-border-strong bg-action-ghost text-fg hover:bg-accent disabled:border-border-subtle disabled:text-action-disabled-fg flex size-9 shrink-0 items-center justify-center rounded-md border"
                 >
                     <ChevronLeft className="size-4" />
                 </button>
@@ -38,7 +38,7 @@ export function Pagination({page, totalPages, onPageChange, summary}: Pagination
                             'text-caption flex size-9 shrink-0 items-center justify-center rounded-md border',
                             pageNumber === page
                                 ? 'bg-surface-inverse text-fg-inverse border-transparent font-semibold'
-                                : 'border-border-strong text-fg'
+                                : 'border-border-strong bg-action-ghost text-fg hover:bg-accent'
                         )}
                     >
                         {pageNumber}
@@ -48,7 +48,7 @@ export function Pagination({page, totalPages, onPageChange, summary}: Pagination
                     type="button"
                     disabled={page >= totalPages}
                     onClick={() => onPageChange(page + 1)}
-                    className="border-border-strong flex size-9 shrink-0 items-center justify-center rounded-md border disabled:opacity-40"
+                    className="border-border-strong bg-action-ghost text-fg hover:bg-accent disabled:border-border-subtle disabled:text-action-disabled-fg flex size-9 shrink-0 items-center justify-center rounded-md border"
                 >
                     <ChevronRight className="size-4" />
                 </button>

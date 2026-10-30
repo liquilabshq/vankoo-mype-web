@@ -44,7 +44,7 @@ export function AcceptQuoteDialog({open, onOpenChange, quote, onConfirm, confirm
                 <DialogFooter>
                     <DialogClose
                         disabled={confirming}
-                        className={cn(buttonVariants({variant: 'ghost'}), 'border-border-strong')}
+                        className={cn(buttonVariants({variant: 'outline'}))}
                     >
                         {t('investment.offer.dialog.cancel')}
                     </DialogClose>

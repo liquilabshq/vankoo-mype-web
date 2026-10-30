@@ -144,7 +144,7 @@ export function UploadInvoice() {
                             <button
                                 type="button"
                                 onClick={handleReset}
-                                className={cn(buttonVariants({variant: 'ghost'}), 'border-border-strong')}
+                                className={cn(buttonVariants({variant: 'outline'}))}
                             >
                                 {t('invoicing.upload.uploadAnother')}
                             </button>

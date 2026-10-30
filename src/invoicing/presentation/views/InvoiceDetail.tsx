@@ -119,7 +119,7 @@ export function InvoiceDetail() {
             <button
                 type="button"
                 onClick={() => navigate(invoicingPaths.myInvoices())}
-                className={cn(buttonVariants({variant: 'ghost', size: 'sm'}), 'border-border-strong w-fit')}
+                className={cn(buttonVariants({variant: 'outline', size: 'sm'}), 'w-fit')}
             >
                 <ChevronLeft data-icon="inline-start" />
                 {t('invoicing.detail.back')}
