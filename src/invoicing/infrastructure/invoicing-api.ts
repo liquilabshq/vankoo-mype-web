@@ -2,17 +2,18 @@ import type {AxiosResponse} from 'axios';
 import {BaseApi, type BaseApiOptions} from '../../shared/infrastructure/base-api';
 import type {InvoiceStatus} from '../domain/model/invoice-status';
 import type {InvoiceDetailResource} from './invoice-detail.resource';
-import type {InvoiceListItemResource} from './invoice-list.resource';
+import type {InvoicePageResource} from './invoice-list.resource';
 import type {InvoiceResource} from './invoice.resource';
 
 const invoicesEndpointPath = import.meta.env.VITE_INVOICES_ENDPOINT_PATH;
 
-/** Filters `GET /invoices` accepts, all optional. */
+/** Filters `GET /invoices` accepts, all optional. `from` is a day, `YYYY-MM-DD`. */
 export interface InvoiceListQuery {
     search?: string;
     status?: InvoiceStatus;
     from?: string;
     page?: number;
+    pageSize?: number;
 }
 
 /**
@@ -43,14 +44,10 @@ export class InvoicingApi extends BaseApi {
     }
 
     /**
-     * Lists the MYPE's own invoices, filtered and paginated server-side.
-     *
-     * Provisional, like `InvoiceListItemResource`: this endpoint is not implemented
-     * on the backend yet, so a call here fails until it is.
+     * Lists the MYPE's own invoices, filtered and paginated server-side. The service
+     * reads the MYPE from the token the gateway checked, never from a parameter.
      */
-    getInvoices(
-        query: InvoiceListQuery = {}
-    ): Promise<AxiosResponse<InvoiceListItemResource[] | Record<string, InvoiceListItemResource[]>>> {
+    getInvoices(query: InvoiceListQuery = {}): Promise<AxiosResponse<InvoicePageResource>> {
         return this.http.get(invoicesEndpointPath, {params: query});
     }
 

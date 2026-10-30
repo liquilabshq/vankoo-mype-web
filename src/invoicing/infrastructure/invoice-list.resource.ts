@@ -1,15 +1,26 @@
 /**
- * Wire shape of one row from `GET /invoices`.
+ * Wire shape of one row from `GET /invoices` (`InvoiceSummaryResponse` in
+ * invoicing-service).
  *
- * Provisional — see `Invoice`'s own note: this endpoint does not exist on the
- * backend yet.
+ * Until the OCR has read the invoice it has no number, payer, dates or amount yet:
+ * those come in null.
  */
 export interface InvoiceListItemResource {
     id: string;
-    number: string;
-    payerName: string;
-    payerRuc: string;
-    dueDate: string;
+    number: string | null;
+    payerName: string | null;
+    payerRuc: string | null;
+    issueDate: string | null;
+    dueDate: string | null;
     status: string;
-    amount: {value: number; currency: string};
+    amount: {value: number; currency: string} | null;
+    uploadedAt: string;
+}
+
+/** Wire shape of `GET /invoices`: one page of the MYPE's own invoices, newest first. */
+export interface InvoicePageResource {
+    items: InvoiceListItemResource[];
+    page: number;
+    pageSize: number;
+    totalItems: number;
 }

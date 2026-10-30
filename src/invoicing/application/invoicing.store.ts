@@ -5,6 +5,8 @@ import type {InvoiceStatus} from '../domain/model/invoice-status';
 import type {Invoice} from '../domain/model/invoice.entity';
 import {InvoiceAssembler} from '../infrastructure/invoice.assembler';
 import {InvoicingApi, type InvoiceListQuery} from '../infrastructure/invoicing-api';
+
+export type {InvoiceListQuery};
 import type {UploadInvoiceCommand} from '../domain/model/upload-invoice.command';
 
 const invoicingApi = new InvoicingApi({requestInterceptors: [iamInterceptor]});
@@ -39,6 +41,8 @@ export interface InvoicingState {
     reset: () => void;
 
     invoices: Invoice[];
+    /** How many invoices match the last filters, across every page. */
+    invoicesTotal: number;
     invoicesLoading: boolean;
     invoicesLoaded: boolean;
     fetchInvoices: (query?: InvoiceListQuery) => Promise<void>;
@@ -63,6 +67,7 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
     uploadedInvoiceId: null,
     uploadedInvoiceStatus: null,
     invoices: [],
+    invoicesTotal: 0,
     invoicesLoading: false,
     invoicesLoaded: false,
     invoiceDetail: null,
@@ -126,10 +131,10 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
         set({invoicesLoading: true, errors: []});
         try {
             const response = await invoicingApi.getInvoices(query);
-            const invoices = InvoiceAssembler.toInvoicesFromResponse(response);
-            set({invoices, invoicesLoading: false, invoicesLoaded: true});
+            const {invoices, totalItems} = InvoiceAssembler.toInvoicePageFromResponse(response);
+            set({invoices, invoicesTotal: totalItems, invoicesLoading: false, invoicesLoaded: true});
         } catch (error) {
-            set({errors: [error as Error], invoices: [], invoicesLoading: false, invoicesLoaded: true});
+            set({errors: [error as Error], invoices: [], invoicesTotal: 0, invoicesLoading: false, invoicesLoaded: true});
         }
     },
 

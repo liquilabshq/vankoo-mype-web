@@ -18,9 +18,11 @@ interface InvoiceRowProps {
  */
 export function InvoiceRow({invoice}: InvoiceRowProps) {
     const {t, i18n} = useTranslation();
-    const dueDate = new Intl.DateTimeFormat(i18n.language, {day: '2-digit', month: 'short', year: 'numeric'}).format(
-        invoice.dueDate
-    );
+    // Until the OCR reads it, an invoice has no number, payer, due date or amount yet.
+    const missing = '—';
+    const dueDate = invoice.dueDate
+        ? new Intl.DateTimeFormat(i18n.language, {day: '2-digit', month: 'short', year: 'numeric'}).format(invoice.dueDate)
+        : missing;
 
     return (
         <Link
@@ -28,15 +30,15 @@ export function InvoiceRow({invoice}: InvoiceRowProps) {
             className="border-border-subtle hover:bg-surface-sunken flex flex-col gap-2 border-b p-4 sm:flex-row sm:items-center sm:gap-4 sm:py-3"
         >
             <div className="flex items-center justify-between gap-4 sm:w-[140px] sm:shrink-0">
-                <p className="text-body text-fg-secondary font-medium">{invoice.number}</p>
+                <p className="text-body text-fg-secondary font-medium">{invoice.number ?? missing}</p>
                 <div className="sm:hidden">
                     <StatusPill status={invoice.status} />
                 </div>
             </div>
-            <p className="text-body text-fg min-w-0 sm:flex-1 sm:truncate">{invoice.payerName}</p>
+            <p className="text-body text-fg min-w-0 sm:flex-1 sm:truncate">{invoice.payerName ?? missing}</p>
             <p className="text-caption text-fg-secondary sm:w-[150px] sm:shrink-0 sm:text-body sm:font-medium">
                 <span className="text-fg-muted sm:hidden">{t('invoicing.myInvoices.columns.payerRuc')}: </span>
-                {invoice.payerRuc}
+                {invoice.payerRuc ?? missing}
             </p>
             <p className="text-caption text-fg-secondary sm:w-[130px] sm:shrink-0 sm:text-body">
                 <span className="text-fg-muted sm:hidden">{t('invoicing.myInvoices.columns.dueDate')}: </span>
@@ -46,7 +48,7 @@ export function InvoiceRow({invoice}: InvoiceRowProps) {
                 <StatusPill status={invoice.status} />
             </div>
             <p className="text-body text-fg-secondary font-medium sm:w-[150px] sm:shrink-0 sm:text-right">
-                {invoice.formattedAmount()}
+                {invoice.formattedAmount() ?? missing}
             </p>
         </Link>
     );
