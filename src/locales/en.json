@@ -115,6 +115,8 @@
         "myInvoices": {
             "title": "Invoices",
             "uploadInvoice": "Upload invoice",
+            "uploadShort": "Upload",
+            "invoiceNumber": "Invoice {{number}}",
             "filters": {
                 "search": "Search",
                 "searchPlaceholder": "RUC or invoice number",
@@ -238,10 +240,9 @@
         "placeholder": "Placeholder screen. The MYPE dashboard arrives once invoices, profile and wallet are designed."
     },
     "notFound": {
-        "code": "Error 404",
         "title": "This page does not exist",
         "body": "The link may be misspelled, or the page may have moved.",
-        "back": "Back to home"
+        "back": "Go to home"
     },
     "investment": {
         "offer": {

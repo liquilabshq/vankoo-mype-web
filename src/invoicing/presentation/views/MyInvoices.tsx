@@ -42,30 +42,33 @@ export function MyInvoices() {
         void fetchInvoices({...applied, page, pageSize: PAGE_SIZE});
     }, [applied, page, fetchInvoices]);
 
-    function handleFilter() {
+    function handleFilter(nextStatus = status) {
         setPage(1);
         setHasFiltered(true);
         setApplied({
             search: search.trim() || undefined,
-            status: status === 'all' ? undefined : status,
+            status: nextStatus === 'all' ? undefined : nextStatus,
             from: from || undefined
         });
+    }
+
+    // Below `sm` the status is the only filter and there is no «Filtrar» button, as in
+    // the mobile mockup, so choosing one applies it at once.
+    function handleStatusChange(value: InvoiceStatus | 'all') {
+        setStatus(value);
+        if (!window.matchMedia('(min-width: 40rem)').matches) handleFilter(value);
     }
 
     const totalPages = Math.max(1, Math.ceil(invoicesTotal / PAGE_SIZE));
 
     return (
-        <div className="flex w-full flex-col gap-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full flex-col gap-4 sm:gap-8">
+            <div className="flex items-center justify-between gap-4">
                 <h1 className="text-h1 text-fg font-bold">{t('invoicing.myInvoices.title')}</h1>
-                <Button
-                    type="button"
-                    onClick={() => navigate(invoicingPaths.uploadInvoice())}
-                    className="w-full sm:w-auto"
-                    disabled={!canUpload}
-                >
+                <Button type="button" onClick={() => navigate(invoicingPaths.uploadInvoice())} disabled={!canUpload}>
                     <FileUp data-icon="inline-start" />
-                    {t('invoicing.myInvoices.uploadInvoice')}
+                    <span className="sm:hidden">{t('invoicing.myInvoices.uploadShort')}</span>
+                    <span className="hidden sm:inline">{t('invoicing.myInvoices.uploadInvoice')}</span>
                 </Button>
             </div>
 
@@ -88,8 +91,8 @@ export function MyInvoices() {
                 </div>
             ) : (
                 <>
-                    <div className="bg-surface-raised border-border-subtle flex flex-col gap-4 rounded-xl border p-4 sm:flex-row sm:items-end">
-                        <div className="flex flex-1 flex-col gap-1">
+                    <div className="sm:bg-surface-raised sm:border-border-subtle flex flex-col gap-4 sm:flex-row sm:items-end sm:rounded-xl sm:border sm:p-4">
+                        <div className="hidden flex-1 flex-col gap-1 sm:flex">
                             <label className="text-caption text-fg-secondary font-semibold">
                                 {t('invoicing.myInvoices.filters.search')}
                             </label>
@@ -101,10 +104,10 @@ export function MyInvoices() {
                         </div>
 
                         <div className="flex flex-1 flex-col gap-1">
-                            <label className="text-caption text-fg-secondary font-semibold">
+                            <label className="text-caption text-fg-secondary font-semibold max-sm:sr-only">
                                 {t('invoicing.myInvoices.filters.status')}
                             </label>
-                            <Select value={status} onValueChange={value => setStatus(value as InvoiceStatus | 'all')}>
+                            <Select value={status} onValueChange={value => handleStatusChange(value as InvoiceStatus | 'all')}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder={t('invoicing.myInvoices.filters.allStatuses')}>
                                         {(value: InvoiceStatus | 'all') =>
@@ -125,14 +128,14 @@ export function MyInvoices() {
                             </Select>
                         </div>
 
-                        <div className="flex flex-1 flex-col gap-1">
+                        <div className="hidden flex-1 flex-col gap-1 sm:flex">
                             <label className="text-caption text-fg-secondary font-semibold">
                                 {t('invoicing.myInvoices.filters.dateRange')}
                             </label>
                             <Input type="date" value={from} onChange={event => setFrom(event.target.value)} />
                         </div>
 
-                        <Button type="button" variant="secondary" onClick={handleFilter} className="w-full sm:w-auto">
+                        <Button type="button" variant="secondary" onClick={() => handleFilter()} className="hidden sm:inline-flex">
                             {t('invoicing.myInvoices.filters.submit')}
                         </Button>
                     </div>
@@ -153,8 +156,13 @@ export function MyInvoices() {
                                     <p className="w-[150px] shrink-0 text-right">{t('invoicing.myInvoices.columns.amount')}</p>
                                 </div>
 
-                                {!invoicesLoading &&
-                                    invoices.map(invoice => <InvoiceRow key={invoice.id} invoice={invoice} />)}
+                                {!invoicesLoading && (
+                                    <div className="flex flex-col">
+                                        {invoices.map(invoice => (
+                                            <InvoiceRow key={invoice.id} invoice={invoice} />
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
 

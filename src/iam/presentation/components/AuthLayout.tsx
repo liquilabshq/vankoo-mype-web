@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {PreferencesBar} from '../../../shared/presentation/components/PreferencesBar';
 import {BrandPanel} from './BrandPanel';
 import {DotField} from './DotField';
+import {FormLights} from './FormLights';
 
 interface AuthLayoutProps {
     children: ReactNode;
@@ -21,8 +22,8 @@ interface AuthLayoutProps {
  * fills the lower third with something useful instead of more ornament, and a footer
  * that floats just under the form does neither.
  *
- * The dot field is a sibling of the card, not an ancestor, so nothing decorative ever
- * ends up behind the text.
+ * The lights and the dot field are siblings of the card, not ancestors, so nothing
+ * decorative ever ends up behind the text.
  */
 export function AuthLayout({children}: AuthLayoutProps) {
     const {t} = useTranslation();
@@ -36,6 +37,7 @@ export function AuthLayout({children}: AuthLayoutProps) {
             <BrandPanel />
 
             <main className="relative flex flex-1 flex-col px-4 py-8 lg:px-16">
+                <FormLights />
                 <DotField />
 
                 {/*
