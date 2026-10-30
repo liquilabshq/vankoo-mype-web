@@ -240,10 +240,9 @@
         "placeholder": "Pantalla provisional. El panel de la MYPE llega cuando se diseñen facturas, perfil y billetera."
     },
     "notFound": {
-        "code": "Error 404",
         "title": "Esta página no existe",
         "body": "Puede que el enlace esté mal escrito o que la página se haya movido.",
-        "back": "Volver al inicio"
+        "back": "Ir al inicio"
     },
     "investment": {
         "offer": {
