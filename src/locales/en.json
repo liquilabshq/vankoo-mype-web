@@ -115,6 +115,8 @@
         "myInvoices": {
             "title": "Invoices",
             "uploadInvoice": "Upload invoice",
+            "uploadShort": "Upload",
+            "invoiceNumber": "Invoice {{number}}",
             "filters": {
                 "search": "Search",
                 "searchPlaceholder": "RUC or invoice number",

@@ -17,6 +17,12 @@ interface InvoiceRailProps {
      * to. Blocked (solid red) — a dead end.
      */
     currentState?: 'automatic' | 'attention' | 'blocked';
+    /**
+     * Only the track, 8px dots and no labels — the design's `Riel · Compacto`, for a
+     * list row. It is hidden from assistive tech: the row prints the status next to
+     * it, and five unlabelled dots would only be noise read aloud.
+     */
+    compact?: boolean;
 }
 
 type StepState = 'done' | 'current-automatic' | 'current-attention' | 'current-blocked' | 'pending';
@@ -57,9 +63,9 @@ const LINE_CLASS: Record<StepState, string> = {
  * person has to act) is amber with a hollow ring, blocked is solid red with no ring,
  * and not-yet is gray.
  */
-export function InvoiceRail({steps, currentIndex, currentState = 'automatic'}: InvoiceRailProps) {
+export function InvoiceRail({steps, currentIndex, currentState = 'automatic', compact = false}: InvoiceRailProps) {
     return (
-        <ol className="flex w-full items-start">
+        <ol className={cn('flex w-full', compact ? 'items-center' : 'items-start')} aria-hidden={compact || undefined}>
             {steps.map((step, index) => {
                 const state = stateFor(index, currentIndex, currentState);
                 return (
@@ -68,10 +74,13 @@ export function InvoiceRail({steps, currentIndex, currentState = 'automatic'}: I
                             <span className={cn('h-0.5 flex-1', index === 0 ? 'bg-transparent' : LINE_CLASS[state])} />
                             <span
                                 className={cn(
-                                    'size-4 shrink-0 rounded-full',
+                                    'shrink-0 rounded-full',
+                                    compact ? 'size-2' : 'size-4',
                                     state === 'done' && 'bg-fg',
-                                    state === 'current-automatic' && 'bg-surface-raised border-2 border-status-ocr-processing',
-                                    state === 'current-attention' && 'bg-surface-raised border-2 border-status-requires-review',
+                                    state === 'current-automatic' &&
+                                        cn('bg-surface-raised border-status-ocr-processing', compact ? 'border-[1.5px]' : 'border-2'),
+                                    state === 'current-attention' &&
+                                        cn('bg-surface-raised border-status-requires-review', compact ? 'border-[1.5px]' : 'border-2'),
                                     state === 'current-blocked' && 'bg-status-rejected',
                                     state === 'pending' && 'bg-border-strong'
                                 )}
@@ -80,9 +89,11 @@ export function InvoiceRail({steps, currentIndex, currentState = 'automatic'}: I
                                 className={cn('h-0.5 flex-1', index === steps.length - 1 ? 'bg-transparent' : LINE_CLASS[state])}
                             />
                         </div>
-                        <p className="text-fg w-full px-1 text-center text-[11px] leading-4 break-words sm:text-caption">
-                            {step.label}
-                        </p>
+                        {!compact && (
+                            <p className="text-fg w-full px-1 text-center text-[11px] leading-4 break-words sm:text-caption">
+                                {step.label}
+                            </p>
+                        )}
                     </li>
                 );
             })}

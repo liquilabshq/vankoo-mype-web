@@ -115,6 +115,8 @@
         "myInvoices": {
             "title": "Facturas",
             "uploadInvoice": "Subir factura",
+            "uploadShort": "Subir",
+            "invoiceNumber": "Factura {{number}}",
             "filters": {
                 "search": "Buscar",
                 "searchPlaceholder": "RUC o N° de factura",
