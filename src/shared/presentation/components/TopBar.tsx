@@ -8,8 +8,8 @@ interface TopBarProps {
 }
 
 /**
- * The bar above the page content: search, notifications, settings, and the language
- * and theme switcher.
+ * The bar above the page content: search, then the language and theme switcher,
+ * notifications and settings, in the mockups' order.
  *
  * Search, notifications and settings are visual only — none of the services behind
  * them exist on this frontend yet, so they render as plain icons rather than an
@@ -38,10 +38,10 @@ export function TopBar({onMenuClick}: TopBarProps) {
                 />
             </div>
 
-            <div className="ml-auto flex items-center gap-3 sm:gap-6">
+            <div className="ml-auto flex items-center gap-4">
+                <PreferencesBar />
                 <Bell className="text-fg size-5 shrink-0" aria-hidden="true" />
                 <Settings className="text-fg hidden size-5 shrink-0 sm:block" aria-hidden="true" />
-                <PreferencesBar />
             </div>
         </div>
     );
