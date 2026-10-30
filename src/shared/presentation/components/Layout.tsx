@@ -1,21 +1,21 @@
 import {FileText, House, LogOut, User, Wallet} from 'lucide-react';
-import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Outlet, useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
-import {cn} from '@/lib/utils';
 import {useIamStore} from '../../../iam/application/iam.store';
 import {iamPaths} from '../../../iam/presentation/iam-paths';
 import {invoicingPaths} from '../../../invoicing/presentation/invoicing-paths';
 import {useProfileStore} from '../../../profile/application/profile.store';
 import {profilePaths} from '../../../profile/presentation/profile-paths';
+import {BottomTabBar} from './BottomTabBar';
 import {SidebarItem} from './SidebarItem';
 import {TopBar} from './TopBar';
 import {Wordmark} from './Wordmark';
 
 /**
  * The app shell: a sidebar for navigation, a top bar, and whatever the router
- * puts in the outlet.
+ * puts in the outlet. Below `lg` the sidebar gives way to a tab bar fixed to the
+ * bottom, as in the mobile mockups, and the top bar takes the wordmark and «Salir».
  *
  * The layout is the one place allowed to reach into a bounded context from outside,
  * and it does so through that context's store and its paths, which is the loosest
@@ -29,7 +29,6 @@ export function Layout() {
     const session = useIamStore(state => state.session);
     const signOut = useIamStore(state => state.signOut);
     const businessName = useProfileStore(state => state.company?.businessName ?? null);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     function handleSignOut() {
         signOut();
@@ -38,20 +37,7 @@ export function Layout() {
 
     return (
         <div className="flex min-h-dvh">
-            {sidebarOpen && (
-                <div
-                    className="fixed inset-0 z-30 bg-black/50 lg:hidden"
-                    onClick={() => setSidebarOpen(false)}
-                    aria-hidden="true"
-                />
-            )}
-
-            <aside
-                className={cn(
-                    'bg-sidebar border-sidebar-border fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 -translate-x-full flex-col gap-6 border-r p-6 transition-transform duration-200 lg:static lg:translate-x-0',
-                    sidebarOpen && 'translate-x-0'
-                )}
-            >
+            <aside className="bg-sidebar border-sidebar-border hidden w-60 shrink-0 flex-col gap-6 border-r p-6 lg:flex">
                 <Wordmark className="text-sidebar-foreground h-8 w-auto" />
 
                 <nav className="flex flex-col gap-1">
@@ -88,11 +74,15 @@ export function Layout() {
             </aside>
 
             <div className="flex min-w-0 flex-1 flex-col">
-                <TopBar onMenuClick={() => setSidebarOpen(true)} />
-                <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
+                <TopBar onSignOut={session ? handleSignOut : undefined} />
+                {/* The bottom padding below `lg` clears the tab bar: its 72px, the safe
+                    area it pads itself by, and the usual 16px of breathing room. */}
+                <main className="min-w-0 flex-1 p-4 pb-[calc(88px+env(safe-area-inset-bottom))] sm:p-6 sm:pb-[calc(96px+env(safe-area-inset-bottom))] lg:p-8">
                     <Outlet />
                 </main>
             </div>
+
+            <BottomTabBar />
         </div>
     );
 }
