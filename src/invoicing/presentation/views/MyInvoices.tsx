@@ -7,7 +7,7 @@ import {Input} from '@/components/ui/input';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {EmptyState} from '../../../shared/presentation/components/EmptyState';
 import {Pagination} from '../../../shared/presentation/components/Pagination';
-import {useInvoicingStore} from '../../application/invoicing.store';
+import {useInvoicingStore, type InvoiceListQuery} from '../../application/invoicing.store';
 import {ALL_INVOICE_STATUSES, presentationForStatus, type InvoiceStatus} from '../../domain/model/invoice-status';
 import {InvoicingErrorAlert} from '../components/InvoicingErrorAlert';
 import {InvoiceRow} from '../components/InvoiceRow';
@@ -22,6 +22,7 @@ export function MyInvoices() {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const invoices = useInvoicingStore(state => state.invoices);
+    const invoicesTotal = useInvoicingStore(state => state.invoicesTotal);
     const invoicesLoading = useInvoicingStore(state => state.invoicesLoading);
     const invoicesLoaded = useInvoicingStore(state => state.invoicesLoaded);
     const errors = useInvoicingStore(state => state.errors);
@@ -32,27 +33,26 @@ export function MyInvoices() {
     const [status, setStatus] = useState<InvoiceStatus | 'all'>('all');
     const [from, setFrom] = useState('');
     const [page, setPage] = useState(1);
+    // The filters last applied with «Filtrar», kept apart from what is being typed so a
+    // page change asks for the same filters, not for whatever the inputs hold now.
+    const [applied, setApplied] = useState<InvoiceListQuery>({});
     const [hasFiltered, setHasFiltered] = useState(false);
 
     useEffect(() => {
-        void fetchInvoices({page});
-        // Only the page changing should re-fetch on its own; typing a filter waits for
-        // "Filtrar" so every keystroke does not fire a request.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page]);
+        void fetchInvoices({...applied, page, pageSize: PAGE_SIZE});
+    }, [applied, page, fetchInvoices]);
 
     function handleFilter() {
         setPage(1);
         setHasFiltered(true);
-        void fetchInvoices({
+        setApplied({
             search: search.trim() || undefined,
             status: status === 'all' ? undefined : status,
-            from: from || undefined,
-            page: 1
+            from: from || undefined
         });
     }
 
-    const totalPages = Math.max(1, Math.ceil(invoices.length / PAGE_SIZE) || 1);
+    const totalPages = Math.max(1, Math.ceil(invoicesTotal / PAGE_SIZE));
 
     return (
         <div className="flex w-full flex-col gap-8">
@@ -172,7 +172,7 @@ export function MyInvoices() {
                                     page={page}
                                     totalPages={totalPages}
                                     onPageChange={setPage}
-                                    summary={t('invoicing.myInvoices.resultsSummary', {count: invoices.length})}
+                                    summary={t('invoicing.myInvoices.resultsSummary', {count: invoicesTotal})}
                                 />
                             </div>
                         )}

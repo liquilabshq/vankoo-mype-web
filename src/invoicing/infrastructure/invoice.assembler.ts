@@ -1,9 +1,9 @@
 import type {AxiosResponse} from 'axios';
 import {InvoiceDetail} from '../domain/model/invoice-detail.entity';
 import {isInvoiceStatus} from '../domain/model/invoice-status';
-import {Invoice} from '../domain/model/invoice.entity';
+import {Invoice, type InvoicePage} from '../domain/model/invoice.entity';
 import type {InvoiceDetailResource} from './invoice-detail.resource';
-import type {InvoiceListItemResource} from './invoice-list.resource';
+import type {InvoiceListItemResource, InvoicePageResource} from './invoice-list.resource';
 import type {InvoiceResource} from './invoice.resource';
 
 /** Anti-corruption layer for the invoicing calls. */
@@ -22,27 +22,25 @@ export class InvoiceAssembler {
             number: resource.number,
             payerName: resource.payerName,
             payerRuc: resource.payerRuc,
-            dueDate: new Date(resource.dueDate),
+            dueDate: resource.dueDate ? new Date(resource.dueDate) : null,
             status: resource.status,
-            amount: resource.amount
+            amount: resource.amount,
+            uploadedAt: new Date(resource.uploadedAt)
         });
     }
 
     /**
-     * The rows of the invoice list.
-     *
-     * Tolerates both a bare array and an envelope keyed by the resource name, the
-     * same as `BaseEndpoint.getAll()` does — a row whose status this build does not
-     * recognise is dropped rather than shown wrong.
+     * One page of the invoice list. A row whose status this build does not recognise is
+     * dropped rather than shown wrong; the total still counts it, as the server does.
      */
-    static toInvoicesFromResponse(
-        response: AxiosResponse<InvoiceListItemResource[] | Record<string, InvoiceListItemResource[]>>
-    ): Invoice[] {
+    static toInvoicePageFromResponse(response: AxiosResponse<InvoicePageResource>): InvoicePage {
         const body = response.data;
-        const items = Array.isArray(body) ? body : Object.values(body).flat();
-        return items
-            .map(item => this.toInvoiceFromListResource(item))
-            .filter((invoice): invoice is Invoice => invoice !== null);
+        return {
+            invoices: (body?.items ?? [])
+                .map(item => this.toInvoiceFromListResource(item))
+                .filter((invoice): invoice is Invoice => invoice !== null),
+            totalItems: body?.totalItems ?? 0
+        };
     }
 
     /**
