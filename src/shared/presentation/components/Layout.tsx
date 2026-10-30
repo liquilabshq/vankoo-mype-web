@@ -14,7 +14,7 @@ import {TopBar} from './TopBar';
 import {Wordmark} from './Wordmark';
 
 /**
- * The app shell: a navy sidebar for navigation, a top bar, and whatever the router
+ * The app shell: a sidebar for navigation, a top bar, and whatever the router
  * puts in the outlet.
  *
  * The layout is the one place allowed to reach into a bounded context from outside,
@@ -75,9 +75,9 @@ export function Layout() {
                         </p>
                         <Button
                             type="button"
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
-                            className="border-border-strong text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full"
+                            className="w-full"
                             onClick={handleSignOut}
                         >
                             <LogOut data-icon="inline-start" />
