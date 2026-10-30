@@ -33,24 +33,14 @@ export function PreferencesBar({className}: PreferencesBarProps) {
 
     return (
         <div className={cn('flex items-center gap-2', className)}>
-            {/* The outline is not decoration: the design system's Ghost button is an
-                outlined tertiary button, and these two are its only use on this screen.
-
-                It uses border/strong rather than the Ghost variant's border/default for
-                the same reason `--input` does — a control's boundary needs 3:1, and
-                border/default measures 1.6:1 on the light surface and 1.91:1 on the
-                dark one. On the sign-in screen it is also, exactly, the colour of the
-                dots it sits on. border/strong clears 3:1 on both surfaces and both
-                themes.
-
-                Still no fill: which one is right depends on what the bar sits on, and
-                on the app shell — surface/raised — a raised fill would be invisible.
-                That waits for the dashboard. */}
+            {/* The design system's Ghost button (`outline` here): a raised fill and
+                border/strong, as Figma has it since September. The border is what
+                draws it — border/strong clears 3:1 on every surface in both themes —
+                and the fill only makes it read as something to press, not to type in. */}
             <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="border-border-strong"
                 aria-label={t('common.preferences.switchLanguage')}
                 onClick={() => void i18n.changeLanguage(language === 'es' ? 'en' : 'es')}
             >
@@ -60,9 +50,8 @@ export function PreferencesBar({className}: PreferencesBarProps) {
 
             <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="icon-sm"
-                className="border-border-strong"
                 aria-label={t(isDark ? 'common.preferences.switchToLight' : 'common.preferences.switchToDark')}
                 onClick={toggleTheme}
             >

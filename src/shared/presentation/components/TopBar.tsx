@@ -29,7 +29,7 @@ export function TopBar({onMenuClick}: TopBarProps) {
                 <Menu className="size-5" aria-hidden="true" />
             </button>
 
-            <div className="bg-surface-sunken border-border-strong hidden h-9 min-w-0 flex-1 items-center gap-2 rounded-md border px-3 sm:flex md:max-w-80">
+            <div className="bg-surface-field border-border-strong hidden h-9 min-w-0 flex-1 items-center gap-2 rounded-md border px-3 sm:flex md:max-w-80">
                 <Search className="text-fg-muted size-4 shrink-0" aria-hidden="true" />
                 <input
                     type="search"

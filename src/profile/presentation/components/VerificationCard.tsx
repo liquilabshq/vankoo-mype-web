@@ -57,7 +57,7 @@ export function VerificationCard({company}: {company: Company}) {
                             target="_blank"
                             rel="noreferrer"
                             aria-label={t('profile.kyc.viewLabel')}
-                            className="text-caption text-fg bg-surface-raised border-border-strong hover:bg-muted inline-flex h-8 items-center rounded-md border px-3 font-semibold"
+                            className="text-caption text-fg bg-action-ghost border-border-strong hover:bg-accent inline-flex h-8 items-center rounded-md border px-3 font-semibold"
                         >
                             {t('profile.kyc.view')}
                         </a>
