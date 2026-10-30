@@ -228,14 +228,17 @@
     --chart-4: var(--vk-navy-600);
     --chart-5: var(--vk-red-500);
 
-    /* The sidebar is the navy surface from the mockups. */
-    --sidebar: var(--vk-surface-inverse);
-    --sidebar-foreground: var(--vk-text-inverse);
+    /* The sidebar is a raised surface like the top bar, as in the mockups, and
+       flips with the theme. Only the active item is navy: it borrows the Secondary
+       button's pair, which holds AA in both themes (14.6:1 and 5:1). The mockups
+       paint it with secondary/bg-hover, but white on that falls to 4.1:1 in dark. */
+    --sidebar: var(--vk-surface-raised);
+    --sidebar-foreground: var(--vk-text-primary);
     --sidebar-primary: var(--vk-action-primary-bg);
     --sidebar-primary-foreground: var(--vk-action-primary-fg);
-    --sidebar-accent: var(--vk-action-secondary-bg-hover);
-    --sidebar-accent-foreground: var(--vk-text-inverse);
-    --sidebar-border: var(--vk-navy-800);
+    --sidebar-accent: var(--vk-action-secondary-bg);
+    --sidebar-accent-foreground: var(--vk-action-secondary-fg);
+    --sidebar-border: var(--vk-border-subtle);
     --sidebar-ring: var(--vk-border-focus);
 }
 
