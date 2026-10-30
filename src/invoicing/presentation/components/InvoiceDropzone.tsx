@@ -39,9 +39,9 @@ export function InvoiceDropzone({title, hint, onFileSelected, disabled = false, 
             onDragLeave={() => setIsDraggingOver(false)}
             onDrop={handleDrop}
             className={cn(
-                'bg-surface-sunken border-border-strong flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-center transition-colors',
+                'bg-surface-field border-border-strong flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-center transition-colors',
                 isDraggingOver && 'border-ring',
-                disabled && 'pointer-events-none opacity-50'
+                disabled && 'bg-surface-sunken pointer-events-none *:text-fg-disabled'
             )}
         >
             <FileUp className="text-fg size-6" aria-hidden="true" />
