@@ -9,7 +9,12 @@ import {useInvestmentStore} from '../../../investment/application/investment.sto
 import {EmptyState} from '../../../shared/presentation/components/EmptyState';
 import {Pagination} from '../../../shared/presentation/components/Pagination';
 import {useInvoicingStore, type InvoiceListQuery} from '../../application/invoicing.store';
-import {ALL_INVOICE_STATUSES, presentationForStatus, type InvoiceStatus} from '../../domain/model/invoice-status';
+import {
+    STATUS_FILTER_GROUPS,
+    presentationForStatus,
+    statusesInFilterGroup,
+    type InvoiceStatus
+} from '../../domain/model/invoice-status';
 import {InvoicingErrorAlert} from '../components/InvoicingErrorAlert';
 import {InvoiceRow} from '../components/InvoiceRow';
 import {KycGateAlert} from '../components/KycGate';
@@ -57,7 +62,7 @@ export function MyInvoices() {
         setHasFiltered(true);
         setApplied({
             search: search.trim() || undefined,
-            status: nextStatus === 'all' ? undefined : nextStatus,
+            statuses: nextStatus === 'all' ? undefined : statusesInFilterGroup(nextStatus),
             from: from || undefined
         });
     }
@@ -129,9 +134,9 @@ export function MyInvoices() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">{t('invoicing.myInvoices.filters.allStatuses')}</SelectItem>
-                                    {ALL_INVOICE_STATUSES.map(candidate => (
-                                        <SelectItem key={candidate} value={candidate}>
-                                            {t(presentationForStatus(candidate).labelKey)}
+                                    {STATUS_FILTER_GROUPS.map(([key]) => (
+                                        <SelectItem key={key} value={key}>
+                                            {t(presentationForStatus(key).labelKey)}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
