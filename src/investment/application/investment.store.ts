@@ -47,6 +47,17 @@ export interface InvestmentState {
     clearErrors: () => void;
     /** Forgets the offer, so leaving the detail does not flash another invoice's figures. */
     clearOffer: () => void;
+
+    /** Every auction the MYPE owns, by the invoice it was opened for. For the invoice list. */
+    auctionsByInvoice: ReadonlyMap<string, Auction>;
+    /**
+     * Reads every auction the MYPE owns, in one call, so the list can say where each
+     * invoice really is.
+     *
+     * A failure leaves the map empty rather than reporting an error: the list still
+     * shows what Invoicing knows, which is worse but not wrong enough to stop the screen.
+     */
+    loadMyAuctions: () => Promise<void>;
 }
 
 /**
@@ -63,6 +74,7 @@ export const useInvestmentStore = create<InvestmentState>()((set, get) => ({
     offerLoaded: false,
     accepting: false,
     errors: [],
+    auctionsByInvoice: new Map(),
 
     loadOffer: async invoiceId => {
         set({offerLoading: true, errors: []});
@@ -112,7 +124,18 @@ export const useInvestmentStore = create<InvestmentState>()((set, get) => ({
     },
 
     clearErrors: () => set({errors: []}),
-    clearOffer: () => set({auction: null, quote: null, offerLoaded: false, errors: []})
+    clearOffer: () => set({auction: null, quote: null, offerLoaded: false, errors: []}),
+
+    loadMyAuctions: async () => {
+        const mypeId = useIamStore.getState().session?.user.id;
+        if (!mypeId) return;
+        try {
+            const auctions = AuctionAssembler.toAuctionsFromResponse(await investmentApi.getAuctionsByMype(mypeId));
+            set({auctionsByInvoice: new Map(auctions.map(auction => [auction.invoiceId, auction]))});
+        } catch {
+            set({auctionsByInvoice: new Map()});
+        }
+    }
 }));
 
 /**

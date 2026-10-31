@@ -38,6 +38,13 @@ export class AuctionAssembler {
         return this.toAuctionFromResource(response.data);
     }
 
+    /** Every auction of the list this build knows how to read. */
+    static toAuctionsFromResponse(response: AxiosResponse<AuctionResource[]>): Auction[] {
+        return response.data
+            .map(resource => this.toAuctionFromResource(resource))
+            .filter((auction): auction is Auction => auction !== null);
+    }
+
     /**
      * The auction opened for one invoice, out of everything the MYPE owns.
      *

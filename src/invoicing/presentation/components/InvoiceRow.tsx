@@ -1,14 +1,17 @@
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router';
+import type {Auction} from '../../../investment/domain/model/auction.entity';
 import type {Invoice} from '../../domain/model/invoice.entity';
-import {presentationForStatus, railStateFor} from '../../domain/model/invoice-status';
+import {presentationForStatus} from '../../domain/model/invoice-status';
 import {invoicingPaths} from '../invoicing-paths';
-import {RAIL_MILESTONES} from '../rail-caption';
+import {progressFor, RAIL_MILESTONES} from '../rail-caption';
 import {InvoiceRail} from './InvoiceRail';
 import {StatusPill} from './StatusPill';
 
 interface InvoiceRowProps {
     invoice: Invoice;
+    /** The auction opened for it, if any: past `CONSISTENCY_PASSED` it is what says where the invoice is. */
+    auction: Auction | null;
 }
 
 /**
@@ -24,14 +27,15 @@ interface InvoiceRowProps {
  * list row: who owes, which invoice, the compact rail with the status in words, and
  * the amount on the right.
  */
-export function InvoiceRow({invoice}: InvoiceRowProps) {
+export function InvoiceRow({invoice, auction}: InvoiceRowProps) {
     const {t, i18n} = useTranslation();
     // Until the OCR reads it, an invoice has no number, payer, due date or amount yet.
     const missing = '—';
     const dueDate = invoice.dueDate
         ? new Intl.DateTimeFormat(i18n.language, {day: '2-digit', month: 'short', year: 'numeric'}).format(invoice.dueDate)
         : missing;
-    const rail = railStateFor(invoice.status);
+    // The same reading as the detail, so a row never says less than the screen it opens.
+    const {rail, status} = progressFor(invoice, auction);
     const steps = RAIL_MILESTONES.map(milestone => ({label: milestone}));
 
     return (
@@ -51,7 +55,7 @@ export function InvoiceRow({invoice}: InvoiceRowProps) {
                                 <InvoiceRail steps={steps} currentIndex={rail.currentIndex} currentState={rail.currentState} compact />
                             </div>
                         )}
-                        <p className="text-caption text-fg-muted min-w-0">{t(presentationForStatus(invoice.status).labelKey)}</p>
+                        <p className="text-caption text-fg-muted min-w-0">{t(presentationForStatus(status).labelKey)}</p>
                     </div>
                 </div>
                 <p className="text-body text-fg shrink-0 font-medium">{invoice.formattedAmount() ?? missing}</p>
@@ -63,7 +67,7 @@ export function InvoiceRow({invoice}: InvoiceRowProps) {
                 <p className="text-body text-fg-secondary w-[150px] shrink-0 font-medium">{invoice.payerRuc ?? missing}</p>
                 <p className="text-body text-fg-secondary w-[130px] shrink-0">{dueDate}</p>
                 <div className="flex w-[170px] shrink-0 items-center">
-                    <StatusPill status={invoice.status} />
+                    <StatusPill status={status} />
                 </div>
                 <p className="text-body text-fg-secondary w-[150px] shrink-0 text-right font-medium">
                     {invoice.formattedAmount() ?? missing}
