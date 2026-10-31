@@ -45,7 +45,8 @@ export function MyInvoices() {
         void fetchInvoices({...applied, page, pageSize: PAGE_SIZE});
     }, [applied, page, fetchInvoices]);
 
-    // Invoicing stops at CONSISTENCY_PASSED; what happens next lives in Investment.
+    // Invoicing learns what happens after CONSISTENCY_PASSED from Investment's events, a
+    // moment late; the auction itself is the up-to-date word on each row.
     // One call covers every page, so it runs once per visit, not per page.
     useEffect(() => {
         void loadMyAuctions();
