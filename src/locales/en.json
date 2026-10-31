@@ -229,6 +229,31 @@
             "title": "Your company is not verified yet",
             "message": "You can upload invoices once we verify your company.",
             "link": "Go to my profile"
+        },
+        "review": {
+            "title": "Confirm your invoice's details",
+            "description": "We read your invoice, but we're not sure about some details. Compare them with your PDF, fix anything that doesn't match, and confirm. If everything adds up, the invoice moves on by itself.",
+            "fields": {
+                "series": "Series",
+                "number": "Number",
+                "issueDate": "Issue date",
+                "dueDate": "Due date",
+                "issuerRuc": "Issuer RUC",
+                "payerRuc": "Payer RUC",
+                "subtotal": "Subtotal",
+                "tax": "IGV",
+                "total": "Total"
+            },
+            "totalsDoNotAddUp": "The subtotal plus IGV comes to {{expected}}, not the total.",
+            "footnote": "By confirming, you state that these details match your invoice.",
+            "confirm": "Confirm details",
+            "confirming": "Confirming…",
+            "errors": {
+                "invalidRuc": "One of the RUCs is not valid. Check it has 11 digits and matches your invoice.",
+                "invalidFields": "Check the details: one is missing or the due date is before the issue date.",
+                "notInReview": "This invoice is no longer in review. Reload the page to see its status.",
+                "generic": "We couldn't confirm the details. Try again in a moment."
+            }
         }
     },
     "home": {

@@ -1,8 +1,9 @@
 import type {AxiosResponse} from 'axios';
+import type {ConfirmInvoiceReviewCommand} from '../domain/model/confirm-invoice-review.command';
 import {InvoiceDetail} from '../domain/model/invoice-detail.entity';
 import {isInvoiceStatus} from '../domain/model/invoice-status';
 import {Invoice, type InvoicePage} from '../domain/model/invoice.entity';
-import type {InvoiceDetailResource} from './invoice-detail.resource';
+import type {ConfirmInvoiceReviewResource, InvoiceDetailResource} from './invoice-detail.resource';
 import type {InvoiceListItemResource, InvoicePageResource} from './invoice-list.resource';
 import type {InvoiceResource} from './invoice.resource';
 
@@ -86,12 +87,33 @@ export class InvoiceAssembler {
                       commercialDiscount: amount(resource.discount),
                       total: amount(resource.total)
                   },
-            // The service explains a review in its own words; the first issue is the
-            // one worth a banner, and the view has copy of its own when there is none.
-            alertMessage: resource.validationIssues[0]?.message ?? null
+            // The service explains a review in its own words; the first issue that is not
+            // a mere warning is the one worth a banner, and the view has copy of its own
+            // when there is none.
+            alertMessage:
+                (resource.validationIssues.find(issue => issue.severity !== WARNING_SEVERITY) ??
+                    resource.validationIssues[0])?.message ?? null
         });
     }
+
+    /** What `POST /invoices/{id}/review` expects from the MYPE's confirmation. */
+    static toConfirmInvoiceReviewResource(command: ConfirmInvoiceReviewCommand): ConfirmInvoiceReviewResource {
+        return {
+            series: command.series,
+            number: command.number,
+            issueDate: command.issueDate,
+            dueDate: command.dueDate,
+            issuerRuc: command.issuerRuc,
+            payerRuc: command.payerRuc,
+            subtotal: command.subtotal,
+            tax: command.tax,
+            total: command.total
+        };
+    }
 }
+
+/** `InvoiceValidationSeverity.WARNING`: a note on the record, never the reason to stop. */
+const WARNING_SEVERITY = 1;
 
 /** The product's currency, only to label line items the OCR read without one. */
 const DEFAULT_CURRENCY = 'PEN';
