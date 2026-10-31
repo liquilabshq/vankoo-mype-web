@@ -5,6 +5,7 @@ import {useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {useInvestmentStore} from '../../../investment/application/investment.store';
 import {EmptyState} from '../../../shared/presentation/components/EmptyState';
 import {Pagination} from '../../../shared/presentation/components/Pagination';
 import {useInvoicingStore, type InvoiceListQuery} from '../../application/invoicing.store';
@@ -28,6 +29,8 @@ export function MyInvoices() {
     const errors = useInvoicingStore(state => state.errors);
     const fetchInvoices = useInvoicingStore(state => state.fetchInvoices);
     const canUpload = useCanUploadInvoices();
+    const auctionsByInvoice = useInvestmentStore(state => state.auctionsByInvoice);
+    const loadMyAuctions = useInvestmentStore(state => state.loadMyAuctions);
 
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState<InvoiceStatus | 'all'>('all');
@@ -41,6 +44,12 @@ export function MyInvoices() {
     useEffect(() => {
         void fetchInvoices({...applied, page, pageSize: PAGE_SIZE});
     }, [applied, page, fetchInvoices]);
+
+    // Invoicing stops at CONSISTENCY_PASSED; what happens next lives in Investment.
+    // One call covers every page, so it runs once per visit, not per page.
+    useEffect(() => {
+        void loadMyAuctions();
+    }, [loadMyAuctions]);
 
     function handleFilter(nextStatus = status) {
         setPage(1);
@@ -159,7 +168,7 @@ export function MyInvoices() {
                                 {!invoicesLoading && (
                                     <div className="flex flex-col">
                                         {invoices.map(invoice => (
-                                            <InvoiceRow key={invoice.id} invoice={invoice} />
+                                            <InvoiceRow key={invoice.id} invoice={invoice} auction={auctionsByInvoice.get(invoice.id) ?? null} />
                                         ))}
                                     </div>
                                 )}
