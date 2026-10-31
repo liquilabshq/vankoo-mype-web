@@ -229,6 +229,31 @@
             "title": "Tu empresa aún no está verificada",
             "message": "Podrás subir facturas cuando verifiquemos tu empresa.",
             "link": "Ir a mi perfil"
+        },
+        "review": {
+            "title": "Confirma los datos de tu factura",
+            "description": "Leímos tu factura, pero no estamos seguros de algunos datos. Compáralos con tu PDF, corrige lo que no coincida y confirma. Si todo cuadra, la factura sigue sola.",
+            "fields": {
+                "series": "Serie",
+                "number": "Número",
+                "issueDate": "Fecha de emisión",
+                "dueDate": "Fecha de vencimiento",
+                "issuerRuc": "RUC del emisor",
+                "payerRuc": "RUC del pagador",
+                "subtotal": "Subtotal",
+                "tax": "IGV",
+                "total": "Total"
+            },
+            "totalsDoNotAddUp": "El subtotal más el IGV da {{expected}}, no el total.",
+            "footnote": "Al confirmar, declaras que estos datos coinciden con tu factura.",
+            "confirm": "Confirmar datos",
+            "confirming": "Confirmando…",
+            "errors": {
+                "invalidRuc": "Uno de los RUC no es válido. Revisa que tenga 11 dígitos y coincida con tu factura.",
+                "invalidFields": "Revisa los datos: falta alguno o el vencimiento es anterior a la emisión.",
+                "notInReview": "Esta factura ya no está en revisión. Recarga la página para ver su estado.",
+                "generic": "No pudimos confirmar los datos. Inténtalo de nuevo en un momento."
+            }
         }
     },
     "home": {

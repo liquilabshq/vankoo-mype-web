@@ -15,6 +15,7 @@ import {useInvoicingStore} from '../../application/invoicing.store';
 import {FactField} from '../components/FactField';
 import {InvoiceLineItemsTable} from '../components/InvoiceLineItemsTable';
 import {InvoiceRail} from '../components/InvoiceRail';
+import {ReviewConfirmationCard} from '../components/ReviewConfirmationCard';
 import {SettlementPanel} from '../components/SettlementPanel';
 import {StatusPill} from '../components/StatusPill';
 import {invoicingPaths} from '../invoicing-paths';
@@ -50,6 +51,9 @@ export function InvoiceDetail() {
     const fetchInvoiceDetail = useInvoicingStore(state => state.fetchInvoiceDetail);
     const clearInvoiceDetail = useInvoicingStore(state => state.clearInvoiceDetail);
     const openInvoiceFile = useInvoicingStore(state => state.openInvoiceFile);
+    const confirmingReview = useInvoicingStore(state => state.confirmingReview);
+    const reviewErrors = useInvoicingStore(state => state.reviewErrors);
+    const confirmInvoiceReview = useInvoicingStore(state => state.confirmInvoiceReview);
 
     const auction = useInvestmentStore(state => state.auction);
     const quote = useInvestmentStore(state => state.quote);
@@ -168,11 +172,20 @@ export function InvoiceDetail() {
                     </div>
 
                     {invoice.status === 'REQUIRES_REVIEW' && (
-                        <InlineAlert
-                            variant="warning"
-                            title={t('invoicing.detail.reviewAlert.title')}
-                            message={invoice.alertMessage ?? t('invoicing.detail.reviewAlert.fallbackMessage')}
-                        />
+                        <>
+                            <InlineAlert
+                                variant="warning"
+                                title={t('invoicing.detail.reviewAlert.title')}
+                                message={invoice.alertMessage ?? t('invoicing.detail.reviewAlert.fallbackMessage')}
+                            />
+                            <ReviewConfirmationCard
+                                key={invoice.id}
+                                invoice={invoice}
+                                confirming={confirmingReview}
+                                errors={reviewErrors}
+                                onConfirm={confirmInvoiceReview}
+                            />
+                        </>
                     )}
 
                     <InvestmentErrorAlert errors={offerErrors} />

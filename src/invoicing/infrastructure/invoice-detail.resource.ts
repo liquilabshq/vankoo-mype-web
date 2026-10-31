@@ -35,6 +35,20 @@ export interface InvoiceDetailResource {
     validationIssues: readonly {
         code: string;
         message: string;
-        severity: string;
+        /** The service's enum as a number: 1 a warning, 2 a review, 3 an error. */
+        severity: number;
     }[];
+}
+
+/** Body of `POST /invoices/{id}/review`: what the MYPE read on its own PDF. */
+export interface ConfirmInvoiceReviewResource {
+    series: string;
+    number: string;
+    issueDate: string;
+    dueDate: string;
+    issuerRuc: string;
+    payerRuc: string;
+    subtotal: number;
+    tax: number;
+    total: number;
 }

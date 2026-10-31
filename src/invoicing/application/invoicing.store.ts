@@ -1,5 +1,6 @@
 import {create} from 'zustand';
 import {iamInterceptor} from '../../iam/infrastructure/iam.interceptor';
+import type {ConfirmInvoiceReviewCommand} from '../domain/model/confirm-invoice-review.command';
 import type {InvoiceDetail} from '../domain/model/invoice-detail.entity';
 import type {InvoiceStatus} from '../domain/model/invoice-status';
 import type {Invoice} from '../domain/model/invoice.entity';
@@ -53,6 +54,15 @@ export interface InvoicingState {
     fetchInvoiceDetail: (invoiceId: string) => Promise<void>;
     /** Forgets the last detail read, so leaving the screen does not flash stale data on the next visit. */
     clearInvoiceDetail: () => void;
+
+    confirmingReview: boolean;
+    /** Why the last confirmation was refused; kept apart so it shows next to the form, not as an upload error. */
+    reviewErrors: Error[];
+    /**
+     * Sends the MYPE's confirmation of an invoice in review and swaps the detail for the
+     * one the service answers with, which may have moved on or still be in review.
+     */
+    confirmInvoiceReview: (command: ConfirmInvoiceReviewCommand) => Promise<boolean>;
 }
 
 /**
@@ -73,6 +83,8 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
     invoiceDetail: null,
     invoiceDetailLoading: false,
     invoiceDetailLoaded: false,
+    confirmingReview: false,
+    reviewErrors: [],
 
     uploadInvoice: async command => {
         set({submitting: true, errors: []});
@@ -149,5 +161,21 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
         }
     },
 
-    clearInvoiceDetail: () => set({invoiceDetail: null, invoiceDetailLoaded: false})
+    clearInvoiceDetail: () => set({invoiceDetail: null, invoiceDetailLoaded: false, reviewErrors: []}),
+
+    confirmInvoiceReview: async command => {
+        set({confirmingReview: true, reviewErrors: []});
+        try {
+            const response = await invoicingApi.confirmInvoiceReview(
+                command.invoiceId,
+                InvoiceAssembler.toConfirmInvoiceReviewResource(command)
+            );
+            const invoiceDetail = InvoiceAssembler.toInvoiceDetailFromResponse(response);
+            set(invoiceDetail ? {invoiceDetail, confirmingReview: false} : {confirmingReview: false});
+            return true;
+        } catch (error) {
+            set({reviewErrors: [error as Error], confirmingReview: false});
+            return false;
+        }
+    }
 }));

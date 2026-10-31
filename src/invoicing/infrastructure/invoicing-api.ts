@@ -1,7 +1,7 @@
 import type {AxiosResponse} from 'axios';
 import {BaseApi, type BaseApiOptions} from '../../shared/infrastructure/base-api';
 import type {InvoiceStatus} from '../domain/model/invoice-status';
-import type {InvoiceDetailResource} from './invoice-detail.resource';
+import type {ConfirmInvoiceReviewResource, InvoiceDetailResource} from './invoice-detail.resource';
 import type {InvoicePageResource} from './invoice-list.resource';
 import type {InvoiceResource} from './invoice.resource';
 
@@ -71,5 +71,16 @@ export class InvoicingApi extends BaseApi {
      */
     getInvoiceById(invoiceId: string): Promise<AxiosResponse<InvoiceDetailResource>> {
         return this.http.get(`${invoicesEndpointPath}/${invoiceId}`);
+    }
+
+    /**
+     * Confirms, or corrects, the data of an invoice in review — `POST .../{id}/review`.
+     * Answers with the invoice as it stands after the service checked them again.
+     */
+    confirmInvoiceReview(
+        invoiceId: string,
+        body: ConfirmInvoiceReviewResource
+    ): Promise<AxiosResponse<InvoiceDetailResource>> {
+        return this.http.post(`${invoicesEndpointPath}/${invoiceId}/review`, body);
     }
 }
