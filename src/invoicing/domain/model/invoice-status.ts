@@ -102,8 +102,28 @@ export function presentationForStatus(status: InvoiceStatus): StatusPresentation
     return PRESENTATION_BY_STATUS[status];
 }
 
-/** Every status, in the order the filter's `Select` should list them. */
-export const ALL_INVOICE_STATUSES: readonly InvoiceStatus[] = KNOWN_STATUSES;
+/**
+ * The choices of the status filter, in the order its `Select` lists them.
+ *
+ * Statuses the MYPE reads the same are one choice: «Leyendo datos» is two of them and
+ * «Validando con SUNAT» three, and picking the label has to find every invoice that
+ * wears it. A choice is keyed and worded by its first status.
+ */
+export const STATUS_FILTER_GROUPS: readonly (readonly [InvoiceStatus, ...InvoiceStatus[]])[] = [
+    ['UPLOADED'],
+    ['OCR_PROCESSING', 'DATA_EXTRACTED'],
+    ['CONSISTENCY_PASSED', 'SUNAT_VALIDATING', 'SUNAT_VALIDATED'],
+    ['APPROVED'],
+    ['PUBLISHED'],
+    ['REQUIRES_REVIEW'],
+    ['NOT_ELIGIBLE'],
+    ['REJECTED']
+];
+
+/** Every status the filter choice keyed by `key` stands for. */
+export function statusesInFilterGroup(key: InvoiceStatus): readonly InvoiceStatus[] {
+    return STATUS_FILTER_GROUPS.find(group => group[0] === key) ?? [key];
+}
 
 /** The five milestones of the rail (`Riel`), left to right. */
 export type InvoiceMilestone = 'received' | 'reading' | 'validating' | 'approved' | 'inAuction';

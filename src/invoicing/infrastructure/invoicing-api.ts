@@ -7,10 +7,13 @@ import type {InvoiceResource} from './invoice.resource';
 
 const invoicesEndpointPath = import.meta.env.VITE_INVOICES_ENDPOINT_PATH;
 
-/** Filters `GET /invoices` accepts, all optional. `from` is a day, `YYYY-MM-DD`. */
+/**
+ * Filters `GET /invoices` accepts, all optional. `from` is a day, `YYYY-MM-DD`. An
+ * invoice matches `statuses` if it has any of them.
+ */
 export interface InvoiceListQuery {
     search?: string;
-    status?: InvoiceStatus;
+    statuses?: readonly InvoiceStatus[];
     from?: string;
     page?: number;
     pageSize?: number;
@@ -48,7 +51,10 @@ export class InvoicingApi extends BaseApi {
      * reads the MYPE from the token the gateway checked, never from a parameter.
      */
     getInvoices(query: InvoiceListQuery = {}): Promise<AxiosResponse<InvoicePageResource>> {
-        return this.http.get(invoicesEndpointPath, {params: query});
+        const {statuses, ...rest} = query;
+        // The service reads several statuses as one comma-separated `status`; axios would
+        // otherwise send an array as `status[]=…`, which it does not understand.
+        return this.http.get(invoicesEndpointPath, {params: {...rest, status: statuses?.join(',') || undefined}});
     }
 
     /**
