@@ -190,7 +190,9 @@ export function InvoiceDetail() {
 
                     <InvestmentErrorAlert errors={offerErrors} />
 
-                    {invoice.status === 'NOT_ELIGIBLE' && (
+                    {/* When risk rejected the auction, Invoicing marks the invoice NOT_ELIGIBLE too,
+                        but the reason is Investment's: AuctionRejectionAlert says it, once. */}
+                    {invoice.status === 'NOT_ELIGIBLE' && !auction?.isRejected() && (
                         <InlineAlert
                             variant="error"
                             title={t('invoicing.detail.notEligibleAlert.title')}

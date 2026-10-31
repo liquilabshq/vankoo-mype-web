@@ -44,9 +44,9 @@ export interface InvoiceProgress {
 /**
  * Combines the invoice's own status with its auction's to place it on the rail.
  *
- * Invoicing never moves an invoice past `CONSISTENCY_PASSED`: nothing in the
- * platform sets `APPROVED` or `PUBLISHED` on it. What actually happens next lives in
- * Investment — the auction is evaluated, then waits for the MYPE, then is published —
+ * What happens after `CONSISTENCY_PASSED` lives in Investment — the auction is
+ * evaluated, then waits for the MYPE, then is published. Invoicing follows it from
+ * Investment's events (`APPROVED`, `NOT_ELIGIBLE`, `PUBLISHED`), but a moment later,
  * so the last two milestones are read off the auction, and the invoice's status
  * only speaks while there is no auction to speak for it.
  *
