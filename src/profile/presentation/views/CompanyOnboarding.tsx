@@ -5,6 +5,7 @@ import {cn} from '@/lib/utils';
 import {useProfileStore} from '../../application/profile.store';
 import {KycRejectedCard} from '../components/KycRejectedCard';
 import {KycReviewCard} from '../components/KycReviewCard';
+import {KycVerifiedCard} from '../components/KycVerifiedCard';
 import {OnboardingForm} from '../components/OnboardingForm';
 import {OnboardingLayout} from '../components/OnboardingLayout';
 import {ProfileErrorAlert} from '../components/ProfileErrorAlert';
@@ -37,6 +38,10 @@ export function CompanyOnboarding() {
     const refreshWhileKycInReview = useProfileStore(state => state.refreshWhileKycInReview);
     const [correcting, setCorrecting] = useState(false);
     const inReview = company?.kyc.isInReview ?? false;
+    // Whether this visit saw the review: if so, the result stays on screen until the
+    // MYPE moves on, instead of the screen jumping away the moment the review answers.
+    const [sawReview, setSawReview] = useState(false);
+    if (inReview && !sawReview) setSawReview(true);
 
     useEffect(() => {
         void fetchCompany();
@@ -74,7 +79,7 @@ export function CompanyOnboarding() {
     }
 
     const kyc = company.kyc;
-    if (kyc.isVerified) return <Navigate to="/" replace />;
+    if (kyc.isVerified && !sawReview) return <Navigate to="/" replace />;
     const showForm = kyc.isPending || (kyc.isRejected && correcting);
 
     return (
@@ -82,8 +87,11 @@ export function CompanyOnboarding() {
             <div
                 className={cn(
                     'bg-surface-raised shadow-elevation-2 mx-auto flex flex-col gap-4 rounded-xl',
-                    showForm ? 'w-full px-5 py-6 sm:px-8 sm:py-7' : 'w-full max-w-150 px-5 py-7 sm:p-10'
+                    showForm ? 'w-full px-5 py-6 sm:px-8 sm:py-7' : 'w-full max-w-150 px-5 py-7 sm:p-10',
+                    // The result replaces the review card in place; a short fade says it changed.
+                    'animate-in fade-in duration-300 motion-reduce:animate-none'
                 )}
+                key={kyc.status}
             >
                 {showForm && (
                     <div className="flex flex-col gap-2">
@@ -102,6 +110,8 @@ export function CompanyOnboarding() {
                     />
                 ) : kyc.isInReview ? (
                     <KycReviewCard />
+                ) : kyc.isVerified ? (
+                    <KycVerifiedCard kyc={kyc} />
                 ) : (
                     <KycRejectedCard kyc={kyc} onFix={() => setCorrecting(true)} />
                 )}

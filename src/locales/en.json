@@ -95,8 +95,10 @@
                 "hint": "PDF of an electronic invoice"
             },
             "helper": "PDF of an electronic invoice issued through SUNAT. We extract the data: you do not have to type anything.",
-            "submitting": "Uploading…",
-            "uploadComplete": "upload complete",
+            "readyToSend": "ready to send",
+            "sendHint": "Once you send it, we read and validate it on our own. You will see the progress in the invoice detail.",
+            "send": "Send invoice",
+            "sending": "Sending…",
             "removeFile": "Remove",
             "afterTitle": "What happens after you upload it",
             "afterBody": "We read the data, check that it adds up, and validate the invoice with SUNAT. If everything checks out, we publish it so investors can fund it.",
@@ -106,10 +108,7 @@
                 "validating": "Validating with SUNAT",
                 "approved": "Approved",
                 "inAuction": "In auction"
-            },
-            "viewDetail": "View detail",
-            "viewInvoice": "View invoice",
-            "uploadAnother": "Upload another"
+            }
         },
         "myInvoices": {
             "title": "Invoices",
@@ -253,6 +252,30 @@
                 "invalidFields": "Check the details: one is missing or the due date is before the issue date.",
                 "notInReview": "This invoice is no longer in review. Reload the page to see its status.",
                 "generic": "We couldn't confirm the details. Try again in a moment."
+            },
+            "checkThis": "Check this one."
+        },
+        "issues": {
+            "lowConfidence": "We are not sure we read {{fields}} correctly.",
+            "reviewAction": "Compare it with your PDF in the form below and confirm.",
+            "fields": {
+                "number": "the invoice number",
+                "issueDate": "the issue date",
+                "dueDate": "the due date",
+                "issuerRuc": "the issuer RUC",
+                "payerRuc": "the payer RUC",
+                "subtotal": "the subtotal",
+                "total": "the total"
+            },
+            "codes": {
+                "LOW_OCR_CONFIDENCE": "We are not sure we read some of the data correctly.",
+                "NO_LINE_ITEMS": "We could not find the invoice line items.",
+                "ITEMS_DO_NOT_MATCH_SUBTOTAL": "The line items do not add up to the subtotal.",
+                "TOTALS_DO_NOT_RECONCILE": "The subtotal, IGV and total do not add up.",
+                "FUTURE_ISSUE_DATE": "The issue date we read is later than today.",
+                "ISSUER_EQUALS_PAYER": "The issuer and the payer have the same RUC.",
+                "INVOICE_EXPIRED": "The invoice is already past due, so it cannot be advanced.",
+                "DUPLICATE_FISCAL_INVOICE": "This invoice was already uploaded to Vankoo."
             }
         }
     },
@@ -303,6 +326,7 @@
     },
     "profile": {
         "title": "My profile",
+        "loading": "Loading your profile…",
         "fields": {
             "ruc": "RUC",
             "businessName": "Legal name",
@@ -394,8 +418,16 @@
             "review": {
                 "title": "We are reviewing your profile",
                 "subtitle": "We check your RUC against SUNAT's register and review the ficha you sent.",
+                "working": "Reviewing… it usually takes a few seconds.",
                 "alertTitle": "You can come in, but not operate yet",
                 "alertMessage": "You will be able to upload invoices and top up your wallet once we verify your company.",
+                "goHome": "Go to home"
+            },
+            "verified": {
+                "title": "Your company is verified",
+                "subtitle": "We checked your RUC against the SUNAT registry and the ficha you sent.",
+                "alertTitle": "You can operate now",
+                "alertMessage": "Upload your invoices to receive funding offers.",
                 "goHome": "Go to home"
             },
             "rejected": {

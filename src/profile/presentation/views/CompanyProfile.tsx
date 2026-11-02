@@ -1,9 +1,10 @@
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Spinner} from '@/components/ui/spinner';
+import {Skeleton} from '@/components/ui/skeleton';
 import {useProfileStore} from '../../application/profile.store';
 import {CERTIFICATE_CONTENT_TYPES} from '../../application/profile.store';
 import {InlineAlert} from '../../../shared/presentation/components/InlineAlert';
+import {LoadingSkeleton} from '../../../shared/presentation/components/LoadingSkeleton';
 import {LOGO_CONTENT_TYPES} from '../../application/profile.store';
 import {CertificateSection} from '../components/CertificateSection';
 import {CompanyCard} from '../components/CompanyCard';
@@ -103,9 +104,22 @@ export function CompanyProfile() {
 
     if (!loaded || (loading && !company)) {
         return (
-            <div className="flex justify-center py-16">
-                <Spinner className="size-6" />
-            </div>
+            <LoadingSkeleton label={t('profile.loading')}>
+                <Skeleton className="bg-surface-raised h-9 w-32" />
+                <div className="flex flex-col gap-6 lg:flex-row">
+                    {[0, 1].map(card => (
+                        <div
+                            key={card}
+                            className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-1 flex-col gap-4 rounded-xl border p-6"
+                        >
+                            <Skeleton className="h-5 w-40" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </div>
+                    ))}
+                </div>
+            </LoadingSkeleton>
         );
     }
 

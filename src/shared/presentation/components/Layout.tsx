@@ -1,6 +1,6 @@
 import {FileText, House, LogOut, User, Wallet} from 'lucide-react';
 import {useTranslation} from 'react-i18next';
-import {Outlet, useNavigate} from 'react-router';
+import {Outlet, useLocation, useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {useIamStore} from '../../../iam/application/iam.store';
 import {iamPaths} from '../../../iam/presentation/iam-paths';
@@ -26,6 +26,7 @@ import {Wordmark} from './Wordmark';
 export function Layout() {
     const {t} = useTranslation();
     const navigate = useNavigate();
+    const {pathname} = useLocation();
     const session = useIamStore(state => state.session);
     const signOut = useIamStore(state => state.signOut);
     const businessName = useProfileStore(state => state.company?.businessName ?? null);
@@ -78,7 +79,11 @@ export function Layout() {
                 {/* The bottom padding below `lg` clears the tab bar: its 72px, the safe
                     area it pads itself by, and the usual 16px of breathing room. */}
                 <main className="min-w-0 flex-1 p-4 pb-[calc(88px+env(safe-area-inset-bottom))] sm:p-6 sm:pb-[calc(96px+env(safe-area-inset-bottom))] lg:p-8">
-                    <Outlet />
+                    {/* Each section fades in rather than snapping into place; with reduced
+                        motion it simply appears. */}
+                    <div key={pathname} className="animate-in fade-in duration-200 motion-reduce:animate-none">
+                        <Outlet />
+                    </div>
                 </main>
             </div>
 

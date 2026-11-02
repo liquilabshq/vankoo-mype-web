@@ -6,11 +6,15 @@ import {buttonVariants} from '@/components/ui/button';
 import {Field, FieldDescription, FieldLabel} from '@/components/ui/field';
 import {Input} from '@/components/ui/input';
 import {Spinner} from '@/components/ui/spinner';
+import {cn} from '@/lib/utils';
 import {ConfirmInvoiceReviewCommand} from '../../domain/model/confirm-invoice-review.command';
 import type {InvoiceDetail} from '../../domain/model/invoice-detail.entity';
+import type {ReviewField} from '../../domain/model/invoice-issue';
 
 interface ReviewConfirmationCardProps {
     invoice: InvoiceDetail;
+    /** The data Azure read with doubts: marked, so the MYPE checks those first. */
+    doubtfulFields: ReadonlySet<ReviewField>;
     confirming: boolean;
     errors: Error[];
     onConfirm: (command: ConfirmInvoiceReviewCommand) => Promise<boolean>;
@@ -71,8 +75,14 @@ function errorMessageKey(errors: Error[]): ReviewErrorKey {
  * read, it checks them against its PDF, corrects what is wrong and confirms. The service
  * checks them again and, if they add up, sends the invoice on to risk.
  */
-export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}: ReviewConfirmationCardProps) {
+export function ReviewConfirmationCard({invoice, doubtfulFields, confirming, errors, onConfirm}: ReviewConfirmationCardProps) {
     const {t} = useTranslation();
+    // A doubtful field gets the warning border and a line under it.
+    const doubtClass = (field: ReviewField) => (doubtfulFields.has(field) ? 'border-warning' : undefined);
+    const doubtNote = (field: ReviewField) =>
+        doubtfulFields.has(field) && (
+            <FieldDescription className="text-warning">{t('invoicing.review.checkThis')}</FieldDescription>
+        );
     const ids = {
         series: useId(),
         number: useId(),
@@ -139,7 +149,15 @@ export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}:
                 </Field>
                 <Field>
                     <FieldLabel htmlFor={ids.number}>{t('invoicing.review.fields.number')}</FieldLabel>
-                    <Input id={ids.number} value={number} onChange={event => setNumber(event.target.value)} disabled={confirming} required />
+                    <Input
+                        id={ids.number}
+                        value={number}
+                        onChange={event => setNumber(event.target.value)}
+                        disabled={confirming}
+                        required
+                        className={doubtClass('number')}
+                    />
+                    {doubtNote('number')}
                 </Field>
                 <Field>
                     <FieldLabel htmlFor={ids.issueDate}>{t('invoicing.review.fields.issueDate')}</FieldLabel>
@@ -150,7 +168,9 @@ export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}:
                         onChange={event => setIssueDate(event.target.value)}
                         disabled={confirming}
                         required
+                        className={doubtClass('issueDate')}
                     />
+                    {doubtNote('issueDate')}
                 </Field>
                 <Field>
                     <FieldLabel htmlFor={ids.dueDate}>{t('invoicing.review.fields.dueDate')}</FieldLabel>
@@ -161,7 +181,9 @@ export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}:
                         onChange={event => setDueDate(event.target.value)}
                         disabled={confirming}
                         required
+                        className={doubtClass('dueDate')}
                     />
+                    {doubtNote('dueDate')}
                 </Field>
                 <Field>
                     <FieldLabel htmlFor={ids.issuerRuc}>{t('invoicing.review.fields.issuerRuc')}</FieldLabel>
@@ -173,7 +195,9 @@ export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}:
                         onChange={event => setIssuerRuc(event.target.value)}
                         disabled={confirming}
                         required
+                        className={doubtClass('issuerRuc')}
                     />
+                    {doubtNote('issuerRuc')}
                 </Field>
                 <Field>
                     <FieldLabel htmlFor={ids.payerRuc}>{t('invoicing.review.fields.payerRuc')}</FieldLabel>
@@ -185,7 +209,9 @@ export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}:
                         onChange={event => setPayerRuc(event.target.value)}
                         disabled={confirming}
                         required
+                        className={doubtClass('payerRuc')}
                     />
+                    {doubtNote('payerRuc')}
                 </Field>
             </div>
 
@@ -195,12 +221,13 @@ export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}:
                     <Input
                         id={ids.subtotal}
                         inputMode="decimal"
-                        className="text-right tabular-nums"
+                        className={cn('text-right tabular-nums', doubtClass('subtotal'))}
                         value={subtotal}
                         onChange={event => setSubtotal(event.target.value)}
                         disabled={confirming}
                         required
                     />
+                    {doubtNote('subtotal')}
                 </Field>
                 <Field>
                     <FieldLabel htmlFor={ids.tax}>{t('invoicing.review.fields.tax')}</FieldLabel>
@@ -219,7 +246,7 @@ export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}:
                     <Input
                         id={ids.total}
                         inputMode="decimal"
-                        className="text-right tabular-nums"
+                        className={cn('text-right tabular-nums', doubtClass('total'))}
                         value={total}
                         onChange={event => setTotal(event.target.value)}
                         aria-invalid={totalsDoNotAddUp || undefined}
@@ -231,6 +258,7 @@ export function ReviewConfirmationCard({invoice, confirming, errors, onConfirm}:
                             {t('invoicing.review.totalsDoNotAddUp', {expected: expectedTotal.toFixed(2)})}
                         </FieldDescription>
                     )}
+                    {doubtNote('total')}
                 </Field>
             </div>
 

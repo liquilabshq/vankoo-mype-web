@@ -4,14 +4,16 @@ import {useTranslation} from 'react-i18next';
 import {useNavigate, useParams} from 'react-router';
 import {Alert, AlertDescription} from '@/components/ui/alert';
 import {buttonVariants} from '@/components/ui/button';
-import {Spinner} from '@/components/ui/spinner';
+import {Skeleton} from '@/components/ui/skeleton';
 import {cn} from '@/lib/utils';
 import {useInvestmentStore} from '../../../investment/application/investment.store';
 import {AcceptQuoteDialog} from '../../../investment/presentation/components/AcceptQuoteDialog';
 import {AuctionRejectionAlert} from '../../../investment/presentation/components/AuctionRejectionAlert';
 import {InvestmentErrorAlert} from '../../../investment/presentation/components/InvestmentErrorAlert';
 import {InlineAlert} from '../../../shared/presentation/components/InlineAlert';
+import {LoadingSkeleton} from '../../../shared/presentation/components/LoadingSkeleton';
 import {useInvoicingStore} from '../../application/invoicing.store';
+import {isInvoiceInProgress} from '../../domain/model/invoice-status';
 import {FactField} from '../components/FactField';
 import {InvoiceLineItemsTable} from '../components/InvoiceLineItemsTable';
 import {InvoiceRail} from '../components/InvoiceRail';
@@ -19,6 +21,7 @@ import {ReviewConfirmationCard} from '../components/ReviewConfirmationCard';
 import {SettlementPanel} from '../components/SettlementPanel';
 import {StatusPill} from '../components/StatusPill';
 import {invoicingPaths} from '../invoicing-paths';
+import {issueReasonFor} from '../issue-copy';
 import {isAwaitingAuction, progressFor, RAIL_MILESTONES, railCaptionKey} from '../rail-caption';
 
 /**
@@ -32,12 +35,38 @@ function formatLongDate(date: Date | null, language: string): string | null {
 }
 
 /**
- * How often, and for how long, the detail asks Investment whether the auction is
- * ready. Same numbers as the upload screen's status poll: the event and the risk
- * evaluation take seconds, and a minute covers them with room to spare.
+ * How often, and for how long, the detail follows an invoice that is still moving on
+ * its own: Invoicing while Azure reads it, Investment while risk evaluates it. The
+ * read takes about fifteen seconds and the evaluation up to a minute and a bit when it
+ * searches the news, so two minutes covers both with room to spare; after that,
+ * reopening the page asks again.
  */
-const AUCTION_POLL_INTERVAL_MS = 2000;
-const AUCTION_POLL_MAX_ATTEMPTS = 30;
+const POLL_INTERVAL_MS = 2000;
+const POLL_MAX_ATTEMPTS = 60;
+
+/** Stand-in for the header, rail and facts while the invoice loads. */
+function InvoiceDetailSkeleton({label}: {label: string}) {
+    return (
+        <LoadingSkeleton label={label}>
+            <div className="flex flex-col gap-2">
+                <Skeleton className="bg-surface-raised h-9 w-40" />
+                <Skeleton className="bg-surface-raised h-5 w-72 max-w-full" />
+            </div>
+            <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-4 rounded-xl border p-6">
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-4 w-64 max-w-full" />
+            </div>
+            <div className="bg-surface-raised border-border-subtle shadow-elevation-1 grid gap-6 rounded-xl border p-6 sm:grid-cols-2">
+                {Array.from({length: 6}, (_, index) => (
+                    <div key={index} className="flex flex-col gap-2">
+                        <Skeleton className="h-3 w-24" />
+                        <Skeleton className="h-5 w-48 max-w-full" />
+                    </div>
+                ))}
+            </div>
+        </LoadingSkeleton>
+    );
+}
 
 /** Routed view with everything the platform knows about one invoice. */
 export function InvoiceDetail() {
@@ -49,6 +78,7 @@ export function InvoiceDetail() {
     const loading = useInvoicingStore(state => state.invoiceDetailLoading);
     const loaded = useInvoicingStore(state => state.invoiceDetailLoaded);
     const fetchInvoiceDetail = useInvoicingStore(state => state.fetchInvoiceDetail);
+    const refreshInvoiceDetail = useInvoicingStore(state => state.refreshInvoiceDetail);
     const clearInvoiceDetail = useInvoicingStore(state => state.clearInvoiceDetail);
     const openInvoiceFile = useInvoicingStore(state => state.openInvoiceFile);
     const confirmingReview = useInvoicingStore(state => state.confirmingReview);
@@ -86,6 +116,31 @@ export function InvoiceDetail() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
+    // While Azure reads it and the service checks it, the invoice moves on its own: the
+    // screen follows it, so a review or a read that failed shows up here as it happens.
+    const invoiceInProgress = invoice !== null && invoice.id === id && isInvoiceInProgress(invoice.status);
+    useEffect(() => {
+        if (!invoiceInProgress || !id) return;
+        let cancelled = false;
+        let attempts = 0;
+        let timer: ReturnType<typeof setTimeout>;
+
+        const poll = async () => {
+            const status = await refreshInvoiceDetail(id);
+            attempts += 1;
+            if (cancelled) return;
+            if (status && isInvoiceInProgress(status) && attempts < POLL_MAX_ATTEMPTS) {
+                timer = setTimeout(() => void poll(), POLL_INTERVAL_MS);
+            }
+        };
+
+        timer = setTimeout(() => void poll(), POLL_INTERVAL_MS);
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [invoiceInProgress, id, refreshInvoiceDetail]);
+
     // Only while the auction is on its way: created by an event once the invoice
     // passes its checks, evaluated by another. Each read schedules the next only once
     // it has answered, so a slow response never stacks a second one behind it.
@@ -101,12 +156,12 @@ export function InvoiceDetail() {
             attempts += 1;
             if (cancelled) return;
             const stillWaiting = refreshed === null || refreshed.isAwaitingEvaluation();
-            if (stillWaiting && attempts < AUCTION_POLL_MAX_ATTEMPTS) {
-                timer = setTimeout(() => void poll(), AUCTION_POLL_INTERVAL_MS);
+            if (stillWaiting && attempts < POLL_MAX_ATTEMPTS) {
+                timer = setTimeout(() => void poll(), POLL_INTERVAL_MS);
             }
         };
 
-        timer = setTimeout(() => void poll(), AUCTION_POLL_INTERVAL_MS);
+        timer = setTimeout(() => void poll(), POLL_INTERVAL_MS);
         return () => {
             cancelled = true;
             clearTimeout(timer);
@@ -117,6 +172,7 @@ export function InvoiceDetail() {
     // The rail and the pill follow the auction once there is one; see `progressFor`.
     const progress = invoice ? progressFor(invoice, auction) : null;
     const rail = progress?.rail ?? null;
+    const issueReason = invoice ? issueReasonFor(invoice, t, i18n) : null;
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -129,12 +185,7 @@ export function InvoiceDetail() {
                 {t('invoicing.detail.back')}
             </button>
 
-            {loading && (
-                <div className="flex flex-col items-center gap-2 py-12 text-center">
-                    <Spinner className="size-6" />
-                    <p className="text-caption text-fg-muted">{t('invoicing.detail.loading')}</p>
-                </div>
-            )}
+            {loading && <InvoiceDetailSkeleton label={t('invoicing.detail.loading')} />}
 
             {!loading && loaded && !invoice && (
                 <Alert variant="destructive" role="alert">
@@ -176,11 +227,12 @@ export function InvoiceDetail() {
                             <InlineAlert
                                 variant="warning"
                                 title={t('invoicing.detail.reviewAlert.title')}
-                                message={invoice.alertMessage ?? t('invoicing.detail.reviewAlert.fallbackMessage')}
+                                message={`${issueReason ?? t('invoicing.detail.reviewAlert.fallbackMessage')} ${t('invoicing.issues.reviewAction')}`}
                             />
                             <ReviewConfirmationCard
                                 key={invoice.id}
                                 invoice={invoice}
+                                doubtfulFields={invoice.doubtfulFields()}
                                 confirming={confirmingReview}
                                 errors={reviewErrors}
                                 onConfirm={confirmInvoiceReview}
@@ -196,7 +248,7 @@ export function InvoiceDetail() {
                         <InlineAlert
                             variant="error"
                             title={t('invoicing.detail.notEligibleAlert.title')}
-                            message={invoice.alertMessage ?? t('invoicing.detail.notEligibleAlert.fallbackMessage')}
+                            message={issueReason ?? t('invoicing.detail.notEligibleAlert.fallbackMessage')}
                         />
                     )}
 
