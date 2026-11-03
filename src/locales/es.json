@@ -110,6 +110,34 @@
                 "inAuction": "En subasta"
             }
         },
+        "steps": {
+            "thePayer": "el pagador",
+            "received": "Recibimos tu factura y guardamos el PDF.",
+            "reading": {
+                "working": "Azure, nuestro lector de documentos, está leyendo tu factura. Suele tardar unos 15 segundos.",
+                "confirmBelow": "Confírmalos en el formulario de abajo para que siga.",
+                "done_one": "Leímos la factura de {{issuer}} a {{payer}}: total {{total}}, con {{count}} ítem.",
+                "done_other": "Leímos la factura de {{issuer}} a {{payer}}: total {{total}}, con {{count}} ítems.",
+                "confirmedByYou": "Confirmaste los datos que leímos con dudas."
+            },
+            "validating": {
+                "working": "Estamos revisando a {{payer}} en el padrón de SUNAT, en listas de sanciones y en noticias. Puede tardar hasta un minuto.",
+                "checked": "Revisamos a {{payer}} en el padrón de SUNAT, en listas de sanciones y en noticias.",
+                "rejected": "Con lo que encontramos, no podemos financiar esta factura.",
+                "grade": "Nota de riesgo: {{grade}}."
+            },
+            "approved": {
+                "offer": "Te ofrecemos {{amount}} por adelantado, con una TCEA de {{tcea}} %. La oferta vale hasta el {{validUntil}}.",
+                "acceptBelow": "Revisa el detalle abajo y acéptala para publicar la factura.",
+                "pricing": "Estamos calculando tu oferta.",
+                "accepted": "Aceptaste la oferta: recibes {{amount}}."
+            },
+            "inAuction": {
+                "published": "Publicada el {{date}}.",
+                "funding": "Financiado {{current}} de {{target}}.",
+                "closes": "La subasta cierra el {{date}}."
+            }
+        },
         "myInvoices": {
             "title": "Facturas",
             "uploadInvoice": "Subir factura",

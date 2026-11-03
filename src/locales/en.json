@@ -110,6 +110,34 @@
                 "inAuction": "In auction"
             }
         },
+        "steps": {
+            "thePayer": "the payer",
+            "received": "We received your invoice and stored the PDF.",
+            "reading": {
+                "working": "Azure, our document reader, is reading your invoice. It usually takes about 15 seconds.",
+                "confirmBelow": "Confirm them in the form below so it can move on.",
+                "done_one": "We read the invoice from {{issuer}} to {{payer}}: total {{total}}, with {{count}} line item.",
+                "done_other": "We read the invoice from {{issuer}} to {{payer}}: total {{total}}, with {{count}} line items.",
+                "confirmedByYou": "You confirmed the data we read with doubts."
+            },
+            "validating": {
+                "working": "We are checking {{payer}} against the SUNAT registry, sanction lists and the news. It can take up to a minute.",
+                "checked": "We checked {{payer}} against the SUNAT registry, sanction lists and the news.",
+                "rejected": "With what we found, we cannot fund this invoice.",
+                "grade": "Risk grade: {{grade}}."
+            },
+            "approved": {
+                "offer": "We offer you {{amount}} upfront, at an APR of {{tcea}} %. The offer is valid until {{validUntil}}.",
+                "acceptBelow": "Review the detail below and accept it to publish the invoice.",
+                "pricing": "We are pricing your offer.",
+                "accepted": "You accepted the offer: you receive {{amount}}."
+            },
+            "inAuction": {
+                "published": "Published on {{date}}.",
+                "funding": "Funded {{current}} of {{target}}.",
+                "closes": "The auction closes on {{date}}."
+            }
+        },
         "myInvoices": {
             "title": "Invoices",
             "uploadInvoice": "Upload invoice",
