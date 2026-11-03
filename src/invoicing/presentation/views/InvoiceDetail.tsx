@@ -10,6 +10,8 @@ import {useInvestmentStore} from '../../../investment/application/investment.sto
 import {AcceptQuoteDialog} from '../../../investment/presentation/components/AcceptQuoteDialog';
 import {AuctionRejectionAlert} from '../../../investment/presentation/components/AuctionRejectionAlert';
 import {InvestmentErrorAlert} from '../../../investment/presentation/components/InvestmentErrorAlert';
+import {useRiskStore} from '../../../risk/application/risk.store';
+import {RiskAssessmentCard} from '../../../risk/presentation/components/RiskAssessmentCard';
 import {InlineAlert} from '../../../shared/presentation/components/InlineAlert';
 import {LoadingSkeleton} from '../../../shared/presentation/components/LoadingSkeleton';
 import {useInvoicingStore} from '../../application/invoicing.store';
@@ -96,6 +98,10 @@ export function InvoiceDetail() {
     const offerErrors = useInvestmentStore(state => state.errors);
     const clearOffer = useInvestmentStore(state => state.clearOffer);
 
+    const riskAssessment = useRiskStore(state => state.assessment);
+    const loadRiskAssessment = useRiskStore(state => state.loadRiskAssessment);
+    const clearRiskAssessment = useRiskStore(state => state.clearRiskAssessment);
+
     const [confirmingAccept, setConfirmingAccept] = useState(false);
     // The step the MYPE opened, and where the invoice stood when it did: once the invoice
     // moves on, the panel follows it to the new step instead of staying on an old one.
@@ -119,6 +125,14 @@ export function InvoiceDetail() {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
+
+    // Once risk has graded the auction, the card explains the grade or the rejection.
+    const gradedAuctionId = auction && !auction.isAwaitingEvaluation() ? auction.id : null;
+    useEffect(() => {
+        if (gradedAuctionId) void loadRiskAssessment(gradedAuctionId);
+    }, [gradedAuctionId, loadRiskAssessment]);
+    useEffect(() => clearRiskAssessment, [clearRiskAssessment]);
+    const shownRiskAssessment = riskAssessment && riskAssessment.auctionId === gradedAuctionId ? riskAssessment : null;
 
     // While Azure reads it and the service checks it, the invoice moves on its own: the
     // screen follows it, so a review or a read that failed shows up here as it happens.
@@ -283,6 +297,7 @@ export function InvoiceDetail() {
                                         invoice={invoice}
                                         auction={auction}
                                         quote={quote}
+                                        riskAssessmentShown={shownRiskAssessment !== null}
                                         onOpenPdf={() => void openInvoiceFile(invoice.id)}
                                     />
                                 )
@@ -294,6 +309,8 @@ export function InvoiceDetail() {
                             </p>
                         )}
                     </div>
+
+                    {shownRiskAssessment && <RiskAssessmentCard assessment={shownRiskAssessment} />}
 
                     <div className="flex flex-col items-start gap-6 lg:flex-row">
                         <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex w-full flex-1 flex-col gap-4 rounded-xl border p-6">
