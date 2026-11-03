@@ -13,6 +13,27 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+    /* The rail's "working on it" stroke: a bar that crosses the stretch toward the next
+       milestone and starts again, for as long as the platform is working on its own. */
+    --animate-rail-loading: rail-loading 1.6s ease-in-out infinite;
+    @keyframes rail-loading {
+        from {
+            transform: translateX(-100%);
+        }
+        to {
+            transform: translateX(100%);
+        }
+    }
+    --animate-rail-loading-vertical: rail-loading-vertical 1.6s ease-in-out infinite;
+    @keyframes rail-loading-vertical {
+        from {
+            transform: translateY(-100%);
+        }
+        to {
+            transform: translateY(100%);
+        }
+    }
+
     /* Typography. Poppins is the brand voice and lives only in the logo and
        landing headlines; everything inside the product is Plus Jakarta Sans. */
     --font-sans: var(--vk-family-app);

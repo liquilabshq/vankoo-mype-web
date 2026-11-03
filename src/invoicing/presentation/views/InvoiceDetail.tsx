@@ -17,6 +17,7 @@ import {isInvoiceInProgress} from '../../domain/model/invoice-status';
 import {FactField} from '../components/FactField';
 import {InvoiceLineItemsTable} from '../components/InvoiceLineItemsTable';
 import {InvoiceRail} from '../components/InvoiceRail';
+import {RailStepSummary, type RailStepPhase} from '../components/RailStepSummary';
 import {ReviewConfirmationCard} from '../components/ReviewConfirmationCard';
 import {SettlementPanel} from '../components/SettlementPanel';
 import {StatusPill} from '../components/StatusPill';
@@ -96,6 +97,9 @@ export function InvoiceDetail() {
     const clearOffer = useInvestmentStore(state => state.clearOffer);
 
     const [confirmingAccept, setConfirmingAccept] = useState(false);
+    // The step the MYPE opened, and where the invoice stood when it did: once the invoice
+    // moves on, the panel follows it to the new step instead of staying on an old one.
+    const [picked, setPicked] = useState<{index: number; atCurrent: number} | null>(null);
 
     async function handleConfirmAccept() {
         // Closed either way: on success the panel moves on to "published", and on a
@@ -172,6 +176,15 @@ export function InvoiceDetail() {
     // The rail and the pill follow the auction once there is one; see `progressFor`.
     const progress = invoice ? progressFor(invoice, auction) : null;
     const rail = progress?.rail ?? null;
+    const selectedStep =
+        rail === null ? undefined : picked !== null && picked.atCurrent === rail.currentIndex ? picked.index : rail.currentIndex;
+    const stepPhase = (index: number): RailStepPhase => {
+        if (rail === null || index < rail.currentIndex) return 'done';
+        if (rail.currentState === 'attention') return 'attention';
+        if (rail.currentState === 'blocked') return 'blocked';
+        // The last milestone is where the work ends: once there, the invoice is in auction, not "being published".
+        return 'current';
+    };
     const issueReason = invoice ? issueReasonFor(invoice, t, i18n) : null;
 
     return (
@@ -255,7 +268,26 @@ export function InvoiceDetail() {
                     <AuctionRejectionAlert auction={auction} />
 
                     <div className="bg-surface-raised border-border-subtle shadow-elevation-1 flex flex-col gap-4 rounded-xl border p-6">
-                        <InvoiceRail steps={steps} currentIndex={rail?.currentIndex} currentState={rail?.currentState} />
+                        <InvoiceRail
+                            steps={steps}
+                            currentIndex={rail?.currentIndex}
+                            currentState={rail?.currentState}
+                            selectedIndex={selectedStep}
+                            onSelect={index => rail && setPicked({index, atCurrent: rail.currentIndex})}
+                            panel={
+                                selectedStep !== undefined && (
+                                    <RailStepSummary
+                                        key={selectedStep}
+                                        milestone={RAIL_MILESTONES[selectedStep]}
+                                        phase={stepPhase(selectedStep)}
+                                        invoice={invoice}
+                                        auction={auction}
+                                        quote={quote}
+                                        onOpenPdf={() => void openInvoiceFile(invoice.id)}
+                                    />
+                                )
+                            }
+                        />
                         {rail && (
                             <p className="text-caption text-fg-muted">
                                 {t(railCaptionKey(rail))}
