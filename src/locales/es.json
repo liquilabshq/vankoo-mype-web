@@ -95,8 +95,10 @@
                 "hint": "PDF de factura electrónica"
             },
             "helper": "PDF de una factura electrónica emitida en SUNAT. Nosotros extraemos los datos: no tienes que escribir nada.",
-            "submitting": "Subiendo…",
-            "uploadComplete": "subida completa",
+            "readyToSend": "listo para enviar",
+            "sendHint": "Al enviarla la leemos y la validamos solos. Verás el avance en el detalle de la factura.",
+            "send": "Enviar factura",
+            "sending": "Enviando…",
             "removeFile": "Quitar",
             "afterTitle": "Qué pasa después de subirla",
             "afterBody": "Leemos los datos, comprobamos que cuadren y validamos la factura con SUNAT. Si todo va bien, la publicamos para que los inversionistas la financien.",
@@ -106,10 +108,7 @@
                 "validating": "Validando con SUNAT",
                 "approved": "Aprobada",
                 "inAuction": "En subasta"
-            },
-            "viewDetail": "Ver detalle",
-            "viewInvoice": "Ver la factura",
-            "uploadAnother": "Subir otra"
+            }
         },
         "myInvoices": {
             "title": "Facturas",
@@ -253,6 +252,30 @@
                 "invalidFields": "Revisa los datos: falta alguno o el vencimiento es anterior a la emisión.",
                 "notInReview": "Esta factura ya no está en revisión. Recarga la página para ver su estado.",
                 "generic": "No pudimos confirmar los datos. Inténtalo de nuevo en un momento."
+            },
+            "checkThis": "Revisa este dato."
+        },
+        "issues": {
+            "lowConfidence": "No estamos seguros de haber leído bien {{fields}}.",
+            "reviewAction": "Compáralo con tu PDF en el formulario de abajo y confirma.",
+            "fields": {
+                "number": "el número de la factura",
+                "issueDate": "la fecha de emisión",
+                "dueDate": "la fecha de vencimiento",
+                "issuerRuc": "el RUC del emisor",
+                "payerRuc": "el RUC del pagador",
+                "subtotal": "el subtotal",
+                "total": "el total"
+            },
+            "codes": {
+                "LOW_OCR_CONFIDENCE": "No estamos seguros de haber leído bien algunos datos.",
+                "NO_LINE_ITEMS": "No encontramos el detalle de productos o servicios de la factura.",
+                "ITEMS_DO_NOT_MATCH_SUBTOTAL": "La suma de los productos o servicios no coincide con el subtotal.",
+                "TOTALS_DO_NOT_RECONCILE": "El subtotal, el IGV y el total no cuadran entre sí.",
+                "FUTURE_ISSUE_DATE": "La fecha de emisión que leímos es posterior a hoy.",
+                "ISSUER_EQUALS_PAYER": "El RUC del emisor y el del pagador son el mismo.",
+                "INVOICE_EXPIRED": "La factura ya venció, así que no se puede adelantar su cobro.",
+                "DUPLICATE_FISCAL_INVOICE": "Esta factura ya se subió antes a Vankoo."
             }
         }
     },
@@ -303,6 +326,7 @@
     },
     "profile": {
         "title": "Mi perfil",
+        "loading": "Cargando tu perfil…",
         "fields": {
             "ruc": "RUC",
             "businessName": "Razón social",
@@ -394,8 +418,16 @@
             "review": {
                 "title": "Estamos revisando tu perfil",
                 "subtitle": "Comprobamos tu RUC contra el padrón de SUNAT y revisamos la ficha que enviaste.",
+                "working": "Revisando… suele tardar unos segundos.",
                 "alertTitle": "Puedes entrar, pero aún no operar",
                 "alertMessage": "Podrás subir facturas y recargar tu billetera cuando verifiquemos tu empresa.",
+                "goHome": "Ir al inicio"
+            },
+            "verified": {
+                "title": "Tu empresa está verificada",
+                "subtitle": "Comprobamos tu RUC en el padrón de SUNAT y la ficha que enviaste.",
+                "alertTitle": "Ya puedes operar",
+                "alertMessage": "Sube tus facturas para recibir ofertas de financiamiento.",
                 "goHome": "Ir al inicio"
             },
             "rejected": {

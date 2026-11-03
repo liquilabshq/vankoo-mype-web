@@ -1,6 +1,7 @@
 import type {AxiosResponse} from 'axios';
 import type {ConfirmInvoiceReviewCommand} from '../domain/model/confirm-invoice-review.command';
 import {InvoiceDetail} from '../domain/model/invoice-detail.entity';
+import {LOW_OCR_CONFIDENCE, type InvoiceIssueSeverity, type ReviewField} from '../domain/model/invoice-issue';
 import {isInvoiceStatus} from '../domain/model/invoice-status';
 import {Invoice, type InvoicePage} from '../domain/model/invoice.entity';
 import type {ConfirmInvoiceReviewResource, InvoiceDetailResource} from './invoice-detail.resource';
@@ -87,12 +88,12 @@ export class InvoiceAssembler {
                       commercialDiscount: amount(resource.discount),
                       total: amount(resource.total)
                   },
-            // The service explains a review in its own words; the first issue that is not
-            // a mere warning is the one worth a banner, and the view has copy of its own
-            // when there is none.
-            alertMessage:
-                (resource.validationIssues.find(issue => issue.severity !== WARNING_SEVERITY) ??
-                    resource.validationIssues[0])?.message ?? null
+            issues: resource.validationIssues.map(issue => ({
+                code: issue.code,
+                severity: SEVERITY_BY_NUMBER[issue.severity] ?? 'review',
+                field: issue.code === LOW_OCR_CONFIDENCE ? fieldNamedIn(issue.message) : null,
+                message: issue.message
+            }))
         });
     }
 
@@ -112,8 +113,31 @@ export class InvoiceAssembler {
     }
 }
 
-/** `InvoiceValidationSeverity.WARNING`: a note on the record, never the reason to stop. */
-const WARNING_SEVERITY = 1;
+/** The service's `InvoiceValidationSeverity`, which travels as a number. */
+const SEVERITY_BY_NUMBER: Record<number, InvoiceIssueSeverity> = {1: 'warning', 2: 'review', 3: 'error'};
+
+/** Azure's names for the critical fields, as the service quotes them, against the form's. */
+const REVIEW_FIELD_BY_AZURE_NAME: Record<string, ReviewField> = {
+    InvoiceId: 'number',
+    InvoiceDate: 'issueDate',
+    DueDate: 'dueDate',
+    IssuerTaxId: 'issuerRuc',
+    PayerTaxId: 'payerRuc',
+    SubTotal: 'subtotal',
+    InvoiceTotal: 'total'
+};
+
+/**
+ * The field a low-confidence finding is about.
+ *
+ * The service names it only inside its sentence — «El campo crítico 'InvoiceTotal'
+ * tiene confianza OCR de 74 %» — so it is read from between the quotes. A sentence
+ * worded differently yields null, and the screen falls back to a general reason.
+ */
+function fieldNamedIn(message: string): ReviewField | null {
+    const azureName = /'([A-Za-z]+)'/.exec(message)?.[1];
+    return azureName ? (REVIEW_FIELD_BY_AZURE_NAME[azureName] ?? null) : null;
+}
 
 /** The product's currency, only to label line items the OCR read without one. */
 const DEFAULT_CURRENCY = 'PEN';

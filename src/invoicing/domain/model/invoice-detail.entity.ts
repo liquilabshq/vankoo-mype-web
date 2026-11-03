@@ -1,3 +1,5 @@
+import type {InvoiceIssue, ReviewField} from './invoice-issue';
+import {LOW_OCR_CONFIDENCE} from './invoice-issue';
 import {railStateFor, type InvoiceStatus, type RailState} from './invoice-status';
 import type {InvoiceAmount} from './invoice.entity';
 
@@ -35,12 +37,8 @@ export interface InvoiceDetailAttributes {
     lineItems: readonly InvoiceLineItem[];
     /** Null until the service has an amount. S/ 0.00 would be a figure nobody measured. */
     totals: InvoiceTotals | null;
-    /**
-     * The backend's own explanation of why this invoice needs a person, worded for
-     * `InlineAlert`. Set while `status` is `REQUIRES_REVIEW` or `NOT_ELIGIBLE`; null
-     * otherwise.
-     */
-    alertMessage: string | null;
+    /** What the service found: why it needs a person, or why it cannot go on. */
+    issues: readonly InvoiceIssue[];
 }
 
 /**
@@ -65,7 +63,7 @@ export class InvoiceDetail {
     readonly fiscalNumber: string | null;
     readonly lineItems: readonly InvoiceLineItem[];
     readonly totals: InvoiceTotals | null;
-    readonly alertMessage: string | null;
+    readonly issues: readonly InvoiceIssue[];
 
     constructor({
         id,
@@ -81,7 +79,7 @@ export class InvoiceDetail {
         fiscalNumber,
         lineItems,
         totals,
-        alertMessage
+        issues
     }: InvoiceDetailAttributes) {
         this.id = id;
         this.number = number;
@@ -96,7 +94,21 @@ export class InvoiceDetail {
         this.fiscalNumber = fiscalNumber;
         this.lineItems = lineItems;
         this.totals = totals;
-        this.alertMessage = alertMessage;
+        this.issues = issues;
+    }
+
+    /** The findings that stop the invoice, in the service's order; warnings are only notes. */
+    blockingIssues(): readonly InvoiceIssue[] {
+        return this.issues.filter(issue => issue.severity !== 'warning');
+    }
+
+    /** The data Azure read with too little confidence, for the MYPE to check first. */
+    doubtfulFields(): ReadonlySet<ReviewField> {
+        return new Set(
+            this.blockingIssues()
+                .filter(issue => issue.code === LOW_OCR_CONFIDENCE && issue.field !== null)
+                .map(issue => issue.field as ReviewField)
+        );
     }
 
     /** Where `status` places this invoice on the rail, or null off it (`REJECTED`). */

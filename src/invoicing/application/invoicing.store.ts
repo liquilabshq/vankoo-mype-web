@@ -16,19 +16,8 @@ const invoicingApi = new InvoicingApi({requestInterceptors: [iamInterceptor]});
 export interface InvoicingState {
     submitting: boolean;
     errors: Error[];
-    /** The id the backend answered with, so the view can confirm the upload succeeded. */
-    uploadedInvoiceId: string | null;
-    /** Where that invoice actually is, as the service last reported it. */
-    uploadedInvoiceStatus: InvoiceStatus | null;
-    uploadInvoice: (command: UploadInvoiceCommand) => Promise<boolean>;
-    /**
-     * Asks the service where the uploaded invoice is now, and answers with it.
-     *
-     * A failed read keeps the last known status rather than reporting an error: this
-     * runs on a timer, and one dropped request is not something to put in front of
-     * the person while the next one is two seconds away.
-     */
-    refreshUploadedInvoice: () => Promise<InvoiceStatus | null>;
+    /** Sends the file and answers with the new invoice's id, or null if the service refused it. */
+    uploadInvoice: (command: UploadInvoiceCommand) => Promise<string | null>;
     /**
      * Opens that invoice's PDF in a new tab.
      *
@@ -38,8 +27,6 @@ export interface InvoicingState {
      */
     openInvoiceFile: (invoiceId: string) => Promise<void>;
     clearErrors: () => void;
-    /** Forgets the last upload, so the dropzone can be used again. */
-    reset: () => void;
 
     invoices: Invoice[];
     /** How many invoices match the last filters, across every page. */
@@ -52,6 +39,14 @@ export interface InvoicingState {
     invoiceDetailLoading: boolean;
     invoiceDetailLoaded: boolean;
     fetchInvoiceDetail: (invoiceId: string) => Promise<void>;
+    /**
+     * Reads the same invoice again without the loading state, and answers with its status.
+     *
+     * A failed read keeps what is on screen rather than reporting an error: this runs on
+     * a timer while the invoice is being read, and one dropped request is not something
+     * to put in front of the person while the next one is two seconds away.
+     */
+    refreshInvoiceDetail: (invoiceId: string) => Promise<InvoiceStatus | null>;
     /** Forgets the last detail read, so leaving the screen does not flash stale data on the next visit. */
     clearInvoiceDetail: () => void;
 
@@ -74,8 +69,6 @@ export interface InvoicingState {
 export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
     submitting: false,
     errors: [],
-    uploadedInvoiceId: null,
-    uploadedInvoiceStatus: null,
     invoices: [],
     invoicesTotal: 0,
     invoicesLoading: false,
@@ -93,14 +86,13 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
             const invoiceId = InvoiceAssembler.toInvoiceIdFromResponse(response);
             if (!invoiceId) {
                 set({errors: [new Error('Upload answered without an invoice id')], submitting: false});
-                return false;
+                return null;
             }
-            // UPLOADED is what a successful POST means; the next read replaces it.
-            set({uploadedInvoiceId: invoiceId, uploadedInvoiceStatus: 'UPLOADED', submitting: false});
-            return true;
+            set({submitting: false});
+            return invoiceId;
         } catch (error) {
             set({errors: [error as Error], submitting: false});
-            return false;
+            return null;
         }
     },
 
@@ -121,23 +113,7 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
         }
     },
 
-    refreshUploadedInvoice: async () => {
-        const invoiceId = get().uploadedInvoiceId;
-        if (!invoiceId) return null;
-        try {
-            const response = await invoicingApi.getInvoiceById(invoiceId);
-            const detail = InvoiceAssembler.toInvoiceDetailFromResponse(response);
-            // The upload may have been reset while this was in flight.
-            if (!detail || get().uploadedInvoiceId !== invoiceId) return get().uploadedInvoiceStatus;
-            set({uploadedInvoiceStatus: detail.status});
-            return detail.status;
-        } catch {
-            return get().uploadedInvoiceStatus;
-        }
-    },
-
     clearErrors: () => set({errors: []}),
-    reset: () => set({uploadedInvoiceId: null, uploadedInvoiceStatus: null, errors: [], submitting: false}),
 
     fetchInvoices: async (query = {}) => {
         set({invoicesLoading: true, errors: []});
@@ -158,6 +134,19 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
             set({invoiceDetail, invoiceDetailLoading: false, invoiceDetailLoaded: true});
         } catch (error) {
             set({errors: [error as Error], invoiceDetail: null, invoiceDetailLoading: false, invoiceDetailLoaded: true});
+        }
+    },
+
+    refreshInvoiceDetail: async invoiceId => {
+        try {
+            const response = await invoicingApi.getInvoiceById(invoiceId);
+            const invoiceDetail = InvoiceAssembler.toInvoiceDetailFromResponse(response);
+            // The person may have left, or opened another invoice, while this was in flight.
+            if (!invoiceDetail || get().invoiceDetail?.id !== invoiceId) return get().invoiceDetail?.status ?? null;
+            set({invoiceDetail});
+            return invoiceDetail.status;
+        } catch {
+            return get().invoiceDetail?.status ?? null;
         }
     },
 

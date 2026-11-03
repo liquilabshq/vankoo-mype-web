@@ -5,8 +5,10 @@ import {useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Skeleton} from '@/components/ui/skeleton';
 import {useInvestmentStore} from '../../../investment/application/investment.store';
 import {EmptyState} from '../../../shared/presentation/components/EmptyState';
+import {LoadingSkeleton} from '../../../shared/presentation/components/LoadingSkeleton';
 import {Pagination} from '../../../shared/presentation/components/Pagination';
 import {useInvoicingStore, type InvoiceListQuery} from '../../application/invoicing.store';
 import {
@@ -22,6 +24,24 @@ import {useCanUploadInvoices} from '../use-can-upload-invoices';
 import {invoicingPaths} from '../invoicing-paths';
 
 const PAGE_SIZE = 10;
+
+/** Stand-ins for a page of rows: as tall as the real ones, so nothing jumps when they arrive. */
+function InvoiceRowSkeletons() {
+    return (
+        <div className="flex flex-col">
+            {Array.from({length: 5}, (_, index) => (
+                <div key={index} className="border-border-subtle flex items-center gap-4 border-b px-4 py-4 last:border-b-0">
+                    <Skeleton className="h-4 w-24 sm:w-[124px]" />
+                    <Skeleton className="h-4 min-w-0 flex-1" />
+                    <Skeleton className="hidden h-4 w-[134px] sm:block" />
+                    <Skeleton className="hidden h-4 w-[114px] sm:block" />
+                    <Skeleton className="h-6 w-24 rounded-full sm:w-[120px]" />
+                    <Skeleton className="hidden h-4 w-[110px] sm:block" />
+                </div>
+            ))}
+        </div>
+    );
+}
 
 /** Routed view listing the MYPE's own invoices, filterable and paginated. */
 export function MyInvoices() {
@@ -90,7 +110,15 @@ export function MyInvoices() {
             {!canUpload && <KycGateAlert />}
             <InvoicingErrorAlert errors={errors} />
 
-            {!invoicesLoading && invoicesLoaded && invoices.length === 0 && !hasFiltered ? (
+            {/* Until the first answer there is no telling a new MYPE from one with invoices:
+                neither the empty state nor the table is shown yet, only their stand-in. */}
+            {!invoicesLoaded ? (
+                <LoadingSkeleton label={t('invoicing.myInvoices.loading')}>
+                    <div className="bg-surface-raised border-border-subtle shadow-elevation-1 overflow-hidden rounded-xl border">
+                        <InvoiceRowSkeletons />
+                    </div>
+                </LoadingSkeleton>
+            ) : !invoicesLoading && invoices.length === 0 && !hasFiltered ? (
                 <div className="bg-surface-raised border-border-subtle shadow-elevation-1 rounded-xl border">
                     <EmptyState
                         icon={FileText}
@@ -182,7 +210,9 @@ export function MyInvoices() {
                         </div>
 
                         {invoicesLoading && (
-                            <p className="text-caption text-fg-muted px-4 py-8 text-center">{t('invoicing.myInvoices.loading')}</p>
+                            <LoadingSkeleton label={t('invoicing.myInvoices.loading')}>
+                                <InvoiceRowSkeletons />
+                            </LoadingSkeleton>
                         )}
 
                         {!invoicesLoading && invoicesLoaded && invoices.length === 0 && (
