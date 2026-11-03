@@ -8,6 +8,7 @@ import type {FinancialQuote} from '../../../investment/domain/model/financial-qu
 import type {InvoiceDetail} from '../../domain/model/invoice-detail.entity';
 import type {InvoiceMilestone} from '../../domain/model/invoice-status';
 import {formatInvoiceAmount} from '../../domain/model/invoice.entity';
+import {RISK_ASSESSMENT_CARD_ID} from '../../../risk/presentation/components/RiskAssessmentCard';
 import {issueReasonFor} from '../issue-copy';
 
 /** Whether the step is behind the invoice, is where it stands, or is where it stopped. */
@@ -20,6 +21,8 @@ interface RailStepSummaryProps {
     auction: Auction | null;
     /** The quote the MYPE can accept right now, if any. */
     quote: FinancialQuote | null;
+    /** Whether the risk assessment's card is on screen, for the validation step to point at it. */
+    riskAssessmentShown: boolean;
     onOpenPdf: () => void;
 }
 
@@ -38,7 +41,15 @@ const MYPE_CONFIRMED_DATA = 'MYPE_CONFIRMED_DATA';
  * cards below, so this says what the step did and what came out of it. The current step
  * says what is going on now; a step behind says how it ended.
  */
-export function RailStepSummary({milestone, phase, invoice, auction, quote, onOpenPdf}: RailStepSummaryProps) {
+export function RailStepSummary({
+    milestone,
+    phase,
+    invoice,
+    auction,
+    quote,
+    riskAssessmentShown,
+    onOpenPdf
+}: RailStepSummaryProps) {
     const {t, i18n} = useTranslation();
     const dateTime = (value: Date) =>
         new Intl.DateTimeFormat(i18n.language, {dateStyle: 'medium', timeStyle: 'short'}).format(value);
@@ -78,8 +89,7 @@ export function RailStepSummary({milestone, phase, invoice, auction, quote, onOp
             break;
         case 'validating':
             if (auction?.isRejected()) {
-                lines.push(t('invoicing.steps.validating.checked', {payer}));
-                lines.push(t('invoicing.steps.validating.rejected'));
+                lines.push(t('invoicing.steps.validating.rejected', {payer}));
             } else if (phase === 'blocked') {
                 lines.push(issueReasonFor(invoice, t, i18n) ?? t('invoicing.detail.notEligibleAlert.fallbackMessage'));
             } else if (phase === 'current') {
@@ -89,6 +99,24 @@ export function RailStepSummary({milestone, phase, invoice, auction, quote, onOp
                 if (auction && auction.riskGrade !== 'UNDER_EVALUATION') {
                     lines.push(t('invoicing.steps.validating.grade', {grade: auction.riskGrade}));
                 }
+            }
+            if (riskAssessmentShown) {
+                action = (
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="w-fit"
+                        onClick={() =>
+                            document.getElementById(RISK_ASSESSMENT_CARD_ID)?.scrollIntoView({
+                                behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+                                block: 'start'
+                            })
+                        }
+                    >
+                        {t('invoicing.steps.validating.seeAssessment')}
+                    </Button>
+                );
             }
             break;
         case 'approved': {
