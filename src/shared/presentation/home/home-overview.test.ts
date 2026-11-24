@@ -71,6 +71,16 @@ describe('readHomeInvoice', () => {
         expect(readHomeInvoice(invoice('1', 'PUBLISHED'), auction('1', 'CLOSED')).bucket).toBe('funded');
     });
 
+    it('pills a funded invoice as «Fondeada», whichever side says it first', () => {
+        // The auction already filled, Invoicing has not heard yet.
+        expect(readHomeInvoice(invoice('1', 'PUBLISHED'), auction('1', 'FULLY_FUNDED'))).toMatchObject({
+            bucket: 'funded',
+            status: 'FUNDED'
+        });
+        // Invoicing heard, and the auction is not in the list (it failed to load).
+        expect(readHomeInvoice(invoice('1', 'FUNDED'), null)).toMatchObject({bucket: 'funded', status: 'FUNDED'});
+    });
+
     it('puts every dead end in not eligible, whoever decided it', () => {
         expect(readHomeInvoice(invoice('1', 'NOT_ELIGIBLE'), null).bucket).toBe('notEligible');
         expect(readHomeInvoice(invoice('1', 'REJECTED'), null).bucket).toBe('notEligible');

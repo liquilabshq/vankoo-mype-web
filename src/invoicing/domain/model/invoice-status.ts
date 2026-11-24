@@ -4,7 +4,7 @@ import type es from '@/locales/es.json';
 type InvoiceStatusKey = `invoicing.status.${keyof typeof es.invoicing.status & string}`;
 
 /**
- * The values `InvoiceStatus` can hold — the service's `InvoiceStatus`, all eleven.
+ * The values `InvoiceStatus` can hold — the service's `InvoiceStatus`, all twelve.
  *
  * `CONSISTENCY_PASSED` is the one to keep in mind: it is where a successful read
  * ends, not `DATA_EXTRACTED`, which the service only falls back to when the
@@ -20,6 +20,7 @@ export type InvoiceStatus =
     | 'SUNAT_VALIDATED'
     | 'APPROVED'
     | 'PUBLISHED'
+    | 'FUNDED'
     | 'REQUIRES_REVIEW'
     | 'NOT_ELIGIBLE'
     | 'REJECTED';
@@ -33,6 +34,7 @@ const KNOWN_STATUSES: readonly InvoiceStatus[] = [
     'SUNAT_VALIDATED',
     'APPROVED',
     'PUBLISHED',
+    'FUNDED',
     'REQUIRES_REVIEW',
     'NOT_ELIGIBLE',
     'REJECTED'
@@ -84,6 +86,9 @@ const PRESENTATION_BY_STATUS: Record<InvoiceStatus, StatusPresentation> = {
     },
     APPROVED: {labelKey: 'invoicing.status.APPROVED', fgClass: 'text-status-approved', bgClass: 'bg-status-approved-bg'},
     PUBLISHED: {labelKey: 'invoicing.status.PUBLISHED', fgClass: 'text-status-published', bgClass: 'bg-status-published-bg'},
+    // The happy ending: the state/success pair rather than another shade of the auction green,
+    // so «Fondeada» does not read as one more step of «En subasta».
+    FUNDED: {labelKey: 'invoicing.status.FUNDED', fgClass: 'text-success', bgClass: 'bg-success-bg'},
     REQUIRES_REVIEW: {
         labelKey: 'invoicing.status.REQUIRES_REVIEW',
         fgClass: 'text-status-requires-review',
@@ -115,6 +120,7 @@ export const STATUS_FILTER_GROUPS: readonly (readonly [InvoiceStatus, ...Invoice
     ['CONSISTENCY_PASSED', 'SUNAT_VALIDATING', 'SUNAT_VALIDATED'],
     ['APPROVED'],
     ['PUBLISHED'],
+    ['FUNDED'],
     ['REQUIRES_REVIEW'],
     ['NOT_ELIGIBLE'],
     ['REJECTED']
@@ -152,7 +158,9 @@ const MILESTONE_BY_STATUS: Partial<Record<InvoiceStatus, InvoiceMilestone>> = {
     SUNAT_VALIDATED: 'validating',
     NOT_ELIGIBLE: 'validating',
     APPROVED: 'approved',
-    PUBLISHED: 'inAuction'
+    PUBLISHED: 'inAuction',
+    // Not a sixth step: the last one, finished. See `RailState.currentState`'s `done`.
+    FUNDED: 'inAuction'
 };
 
 /** Where a status places the rail: which milestone, and how it reads. */
@@ -162,9 +170,10 @@ export interface RailState {
      * Automatic (indigo) — the system is working it. Attention (amber) — a person has
      * to. Blocked (solid red, no ring) — a dead end; unlike the other two, its
      * connecting segments stay neutral gray rather than taking its color, since
-     * nothing is actively moving through it.
+     * nothing is actively moving through it. Done — the last step is behind the
+     * invoice too: the auction was fully funded and there is nothing left to wait for.
      */
-    currentState: 'automatic' | 'attention' | 'blocked';
+    currentState: 'automatic' | 'attention' | 'blocked' | 'done';
 }
 
 /**
@@ -180,7 +189,14 @@ export function railStateFor(status: InvoiceStatus): RailState | null {
     if (!milestone) return null;
     return {
         currentIndex: MILESTONE_ORDER.indexOf(milestone),
-        currentState: status === 'REQUIRES_REVIEW' ? 'attention' : status === 'NOT_ELIGIBLE' ? 'blocked' : 'automatic'
+        currentState:
+            status === 'REQUIRES_REVIEW'
+                ? 'attention'
+                : status === 'NOT_ELIGIBLE'
+                  ? 'blocked'
+                  : status === 'FUNDED'
+                    ? 'done'
+                    : 'automatic'
     };
 }
 

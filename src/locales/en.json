@@ -107,7 +107,8 @@
                 "reading": "Reading data",
                 "validating": "Validating with SUNAT",
                 "approved": "Approved",
-                "inAuction": "In auction"
+                "inAuction": "In auction",
+                "funded": "Funded"
             }
         },
         "steps": {
@@ -136,7 +137,8 @@
             "inAuction": {
                 "published": "Published on {{date}}.",
                 "funding": "Funded {{current}} of {{target}}.",
-                "closes": "The auction closes on {{date}}."
+                "closes": "The auction closes on {{date}}.",
+                "funded": "Investors covered the auction: {{amount}} is already in your wallet."
             }
         },
         "myInvoices": {
@@ -178,6 +180,7 @@
             "SUNAT_VALIDATED": "Validating with SUNAT",
             "APPROVED": "Approved",
             "PUBLISHED": "In auction",
+            "FUNDED": "Funded",
             "REQUIRES_REVIEW": "Requires review",
             "NOT_ELIGIBLE": "Not eligible",
             "REJECTED": "Rejected"
@@ -216,7 +219,8 @@
                 },
                 "inAuction": {
                     "automatic": "Step 5 of 5 · the invoice is published in the auction.",
-                    "attention": "Stopped at step 5 of 5 · this does not move on its own: someone has to fix it."
+                    "attention": "Stopped at step 5 of 5 · this does not move on its own: someone has to fix it.",
+                    "done": "Done · the auction was funded and the advance is already in your wallet."
                 }
             },
             "facts": {

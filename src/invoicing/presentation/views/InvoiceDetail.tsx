@@ -186,14 +186,20 @@ export function InvoiceDetail() {
         };
     }, [awaitingAuction, id, refreshAuction]);
 
-    const steps = RAIL_MILESTONES.map(milestone => ({label: t(`invoicing.upload.steps.${milestone}`)}));
     // The rail and the pill follow the auction once there is one; see `progressFor`.
     const progress = invoice ? progressFor(invoice, auction) : null;
     const rail = progress?.rail ?? null;
+    // Once funded, the last step says so instead of «En subasta».
+    const steps = RAIL_MILESTONES.map(milestone => ({
+        label:
+            milestone === 'inAuction' && rail?.currentState === 'done'
+                ? t('invoicing.upload.steps.funded')
+                : t(`invoicing.upload.steps.${milestone}`)
+    }));
     const selectedStep =
         rail === null ? undefined : picked !== null && picked.atCurrent === rail.currentIndex ? picked.index : rail.currentIndex;
     const stepPhase = (index: number): RailStepPhase => {
-        if (rail === null || index < rail.currentIndex) return 'done';
+        if (rail === null || index < rail.currentIndex || rail.currentState === 'done') return 'done';
         if (rail.currentState === 'attention') return 'attention';
         if (rail.currentState === 'blocked') return 'blocked';
         // The last milestone is where the work ends: once there, the invoice is in auction, not "being published".
