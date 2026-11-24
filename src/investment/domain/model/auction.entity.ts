@@ -90,4 +90,9 @@ export class Auction {
     isPublished(): boolean {
         return isPublishedStatus(this.status);
     }
+
+    /** Whether the investors covered the whole target, so the money is the MYPE's. */
+    isFullyFunded(): boolean {
+        return this.status === 'FULLY_FUNDED' || this.status === 'CLOSED';
+    }
 }

@@ -12,6 +12,11 @@ import type {UploadInvoiceCommand} from '../domain/model/upload-invoice.command'
 
 const invoicingApi = new InvoicingApi({requestInterceptors: [iamInterceptor]});
 
+/** The most `GET /invoices` answers in one page (`ListMyInvoicesQuery.MaxPageSize`). */
+const OVERVIEW_PAGE_SIZE = 100;
+/** How many pages the overview reads at most: a thousand invoices, far past any MYPE today. */
+const OVERVIEW_MAX_PAGES = 10;
+
 /** State and use cases of the invoicing bounded context. */
 export interface InvoicingState {
     submitting: boolean;
@@ -34,6 +39,17 @@ export interface InvoicingState {
     invoicesLoading: boolean;
     invoicesLoaded: boolean;
     fetchInvoices: (query?: InvoiceListQuery) => Promise<void>;
+
+    /** Every invoice of the MYPE, newest first, for the home's figures. Apart from `invoices`, which is one page of the list. */
+    overviewInvoices: Invoice[];
+    overviewLoaded: boolean;
+    /**
+     * Reads every invoice the MYPE has, page after page, so the home can count them.
+     *
+     * There is no summary endpoint, and the list answers at most a hundred per page; a
+     * MYPE with more than `OVERVIEW_MAX_PAGES` pages is counted on the newest ones.
+     */
+    loadInvoiceOverview: () => Promise<void>;
 
     invoiceDetail: InvoiceDetail | null;
     invoiceDetailLoading: boolean;
@@ -73,6 +89,8 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
     invoicesTotal: 0,
     invoicesLoading: false,
     invoicesLoaded: false,
+    overviewInvoices: [],
+    overviewLoaded: false,
     invoiceDetail: null,
     invoiceDetailLoading: false,
     invoiceDetailLoaded: false,
@@ -123,6 +141,22 @@ export const useInvoicingStore = create<InvoicingState>()((set, get) => ({
             set({invoices, invoicesTotal: totalItems, invoicesLoading: false, invoicesLoaded: true});
         } catch (error) {
             set({errors: [error as Error], invoices: [], invoicesTotal: 0, invoicesLoading: false, invoicesLoaded: true});
+        }
+    },
+
+    loadInvoiceOverview: async () => {
+        set({errors: []});
+        try {
+            const collected: Invoice[] = [];
+            for (let page = 1; page <= OVERVIEW_MAX_PAGES; page++) {
+                const response = await invoicingApi.getInvoices({page, pageSize: OVERVIEW_PAGE_SIZE});
+                const {invoices, totalItems} = InvoiceAssembler.toInvoicePageFromResponse(response);
+                collected.push(...invoices);
+                if (response.data.items.length < OVERVIEW_PAGE_SIZE || page * OVERVIEW_PAGE_SIZE >= totalItems) break;
+            }
+            set({overviewInvoices: collected, overviewLoaded: true});
+        } catch (error) {
+            set({errors: [error as Error], overviewInvoices: [], overviewLoaded: true});
         }
     },
 

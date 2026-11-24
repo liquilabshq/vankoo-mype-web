@@ -19,6 +19,7 @@ import {
 } from '../../domain/model/invoice-status';
 import {InvoicingErrorAlert} from '../components/InvoicingErrorAlert';
 import {InvoiceRow} from '../components/InvoiceRow';
+import {InvoiceTableHeader} from '../components/InvoiceTableHeader';
 import {KycGateAlert} from '../components/KycGate';
 import {useCanUploadInvoices} from '../use-can-upload-invoices';
 import {invoicingPaths} from '../invoicing-paths';
@@ -190,14 +191,7 @@ export function MyInvoices() {
                             payer name column into overlapping its neighbor. */}
                         <div className="overflow-x-auto">
                             <div className="sm:min-w-[1000px]">
-                                <div className="bg-surface-sunken border-border-subtle text-caption text-fg-secondary hidden gap-4 border-b px-4 py-3 font-semibold sm:flex">
-                                    <p className="w-[140px] shrink-0">{t('invoicing.myInvoices.columns.number')}</p>
-                                    <p className="min-w-0 flex-1">{t('invoicing.myInvoices.columns.payer')}</p>
-                                    <p className="w-[150px] shrink-0">{t('invoicing.myInvoices.columns.payerRuc')}</p>
-                                    <p className="w-[130px] shrink-0">{t('invoicing.myInvoices.columns.dueDate')}</p>
-                                    <p className="w-[170px] shrink-0">{t('invoicing.myInvoices.columns.status')}</p>
-                                    <p className="w-[150px] shrink-0 text-right">{t('invoicing.myInvoices.columns.amount')}</p>
-                                </div>
+                                <InvoiceTableHeader />
 
                                 {!invoicesLoading && (
                                     <div className="flex flex-col">
