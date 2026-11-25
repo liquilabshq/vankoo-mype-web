@@ -20,11 +20,13 @@ test.describe('Facturas de la MYPE (con sesión)', () => {
     test('abre el detalle de una factura', async ({page}) => {
         await page.goto('/invoicing');
         const first = page.getByRole('main').getByRole('link', {name: INVOICE_ROW}).first();
-        const number = (await first.textContent())?.match(INVOICE_ROW)?.[0] ?? '';
+        // innerText separa las columnas con saltos de línea; textContent las pega.
+        const number = (await first.innerText()).trim().match(INVOICE_ROW)?.[0] ?? '';
+        expect(number, 'número de la primera factura').not.toBe('');
         await first.click();
 
         await expect(page).toHaveURL(/\/invoicing\/[^/]+$/);
-        await expect(page.getByRole('heading', {name: new RegExp(number)})).toBeVisible();
+        await expect(page.getByRole('heading', {level: 1, name: number})).toBeVisible();
     });
 
     test('la subida de facturas ofrece elegir el PDF', async ({page}) => {
