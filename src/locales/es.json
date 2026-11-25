@@ -107,7 +107,8 @@
                 "reading": "Leyendo datos",
                 "validating": "Validando con SUNAT",
                 "approved": "Aprobada",
-                "inAuction": "En subasta"
+                "inAuction": "En subasta",
+                "funded": "Fondeada"
             }
         },
         "steps": {
@@ -136,7 +137,8 @@
             "inAuction": {
                 "published": "Publicada el {{date}}.",
                 "funding": "Financiado {{current}} de {{target}}.",
-                "closes": "La subasta cierra el {{date}}."
+                "closes": "La subasta cierra el {{date}}.",
+                "funded": "Los inversionistas cubrieron la subasta: {{amount}} ya están en tu billetera."
             }
         },
         "myInvoices": {
@@ -178,6 +180,7 @@
             "SUNAT_VALIDATED": "Validando con SUNAT",
             "APPROVED": "Aprobada",
             "PUBLISHED": "En subasta",
+            "FUNDED": "Fondeada",
             "REQUIRES_REVIEW": "Requiere revisión",
             "NOT_ELIGIBLE": "No elegible",
             "REJECTED": "Rechazada"
@@ -216,7 +219,8 @@
                 },
                 "inAuction": {
                     "automatic": "Paso 5 de 5 · la factura está publicada en la subasta.",
-                    "attention": "Parada en el paso 5 de 5 · esto no avanza solo: hace falta que alguien lo corrija."
+                    "attention": "Parada en el paso 5 de 5 · esto no avanza solo: hace falta que alguien lo corrija.",
+                    "done": "Listo · la subasta se fondeó y el adelanto ya está en tu billetera."
                 }
             },
             "facts": {

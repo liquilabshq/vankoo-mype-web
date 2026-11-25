@@ -15,9 +15,10 @@ interface InvoiceRailProps {
     currentIndex?: number;
     /**
      * Automatic (indigo) — the system is working it. Attention (amber) — a person has
-     * to. Blocked (solid red) — a dead end.
+     * to. Blocked (solid red) — a dead end. Done — the current step is finished too,
+     * so it reads like the ones behind it.
      */
-    currentState?: 'automatic' | 'attention' | 'blocked';
+    currentState?: 'automatic' | 'attention' | 'blocked' | 'done';
     /**
      * Only the track, 8px dots and no labels — the design's `Riel · Compacto`, for a
      * list row. It is hidden from assistive tech: the row prints the status next to
@@ -40,10 +41,10 @@ type StepState = 'done' | 'current-automatic' | 'current-attention' | 'current-b
 function stateFor(
     index: number,
     currentIndex: number | undefined,
-    currentState: 'automatic' | 'attention' | 'blocked'
+    currentState: 'automatic' | 'attention' | 'blocked' | 'done'
 ): StepState {
     if (currentIndex === undefined) return 'pending';
-    if (index < currentIndex) return 'done';
+    if (index < currentIndex || (index === currentIndex && currentState === 'done')) return 'done';
     if (index === currentIndex) {
         if (currentState === 'attention') return 'current-attention';
         if (currentState === 'blocked') return 'current-blocked';

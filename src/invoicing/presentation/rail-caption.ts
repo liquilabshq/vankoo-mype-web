@@ -22,6 +22,7 @@ export type RailCaptionKey =
     | 'invoicing.detail.railCaption.approved.automatic'
     | 'invoicing.detail.railCaption.approved.attention'
     | 'invoicing.detail.railCaption.inAuction.automatic'
+    | 'invoicing.detail.railCaption.inAuction.done'
     | 'invoicing.detail.railCaption.inAuction.attention';
 
 /**
@@ -62,6 +63,9 @@ export interface InvoiceProgress {
  */
 export function progressFor(invoice: {status: InvoiceStatus}, auction: Auction | null): InvoiceProgress {
     if (auction?.isRejected()) return {rail: railStateFor('NOT_ELIGIBLE'), status: 'NOT_ELIGIBLE'};
+    // Funded: either side can say it first — Invoicing from `AuctionFullyFunded`, or the
+    // auction itself — and both mean the advance is already in the MYPE's wallet.
+    if (invoice.status === 'FUNDED' || auction?.isFullyFunded()) return {rail: railStateFor('FUNDED'), status: 'FUNDED'};
     if (auction?.isPublished()) return {rail: railStateFor('PUBLISHED'), status: 'PUBLISHED'};
     if (auction?.canBeQuoted()) {
         return {rail: {currentIndex: RAIL_MILESTONES.indexOf('approved'), currentState: 'attention'}, status: 'APPROVED'};

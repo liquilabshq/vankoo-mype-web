@@ -89,12 +89,11 @@ function totalsByCurrency(amounts: readonly InvoiceAmount[]): InvoiceAmount[] {
  * Places one invoice in its bucket and says what it waits on.
  *
  * Reads the status the same way the list and the detail do (`progressFor`), so the home
- * never contradicts the screen a row opens. The one thing it adds is `funded`, which the
- * rail folds into «En subasta» and only the auction knows.
+ * never contradicts the screen a row opens, «Fondeada» included.
  */
 export function readHomeInvoice(invoice: Invoice, auction: Auction | null): HomeInvoice {
     const {status} = progressFor(invoice, auction);
-    const bucket: HomeBucket = auction?.isFullyFunded()
+    const bucket: HomeBucket = status === 'FUNDED'
         ? 'funded'
         : status === 'PUBLISHED'
           ? 'inAuction'

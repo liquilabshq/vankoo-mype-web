@@ -138,6 +138,9 @@ export function RailStepSummary({
             break;
         }
         case 'inAuction':
+            if (auction?.isFullyFunded() && auction.acceptedQuote) {
+                lines.push(t('invoicing.steps.inAuction.funded', {amount: formatInvoiceAmount(auction.acceptedQuote.mypeAdvance)}));
+            }
             if (auction?.publishedAt) lines.push(t('invoicing.steps.inAuction.published', {date: dateTime(auction.publishedAt)}));
             if (auction?.targetAmount) {
                 lines.push(
