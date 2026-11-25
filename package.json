@@ -9,7 +9,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:report": "playwright show-report",
+    "test:a11y:summary": "node e2e/axe-summary.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -34,7 +37,9 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "1.65.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
