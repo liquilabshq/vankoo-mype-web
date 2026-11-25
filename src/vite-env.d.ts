@@ -11,6 +11,7 @@ interface ImportMetaEnv {
     readonly VITE_AUCTIONS_ENDPOINT_PATH: string;
     readonly VITE_COMPANY_ENDPOINT_PATH: string;
     readonly VITE_RISK_ASSESSMENTS_ENDPOINT_PATH?: string;
+    readonly VITE_FINANCE_ACCOUNTS_ENDPOINT_PATH?: string;
 }
 
 interface ImportMeta {

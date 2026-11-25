@@ -1,4 +1,5 @@
 import {createBrowserRouter} from 'react-router';
+import {financeRoutes} from './finance/presentation/finance-routes';
 import {authenticationLoader} from './iam/infrastructure/authentication.loader';
 import {iamRoutes} from './iam/presentation/iam-routes';
 import {invoicingRoutes} from './invoicing/presentation/invoicing-routes';
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
             {index: true, Component: Home, loader: shellLoader},
             {path: 'invoicing', children: invoicingRoutes, loader: shellLoader},
             {path: 'profile', children: profileRoutes, loader: shellLoader},
+            {path: 'finance', children: financeRoutes, loader: shellLoader},
             {path: '*', Component: NotFound}
         ]
     }

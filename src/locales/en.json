@@ -606,5 +606,38 @@
             "change": "Change the logo",
             "alt": "{{name}} logo"
         }
+    },
+    "finance": {
+        "title": "Wallet",
+        "loading": "Loading your wallet",
+        "panel": {
+            "inTransit": "On the way",
+            "inTransitCount_one": "{{count}} invoice in progress",
+            "inTransitCount_other": "{{count}} invoices in progress",
+            "inTransitNone": "no invoices in progress",
+            "available": "Available to withdraw"
+        },
+        "movements": {
+            "title": "Movements",
+            "summary": "{{shown}} of {{total}} movements",
+            "types": {
+                "ADELANTO": "Invoice payout",
+                "RECARGA": "Top-up",
+                "INVERSION": "Investment",
+                "RETIRO": "Withdrawal",
+                "COMISION": "Vankoo fee",
+                "unknown": "Movement"
+            },
+            "adelantoDetail": "Auction funded · {{date}}"
+        },
+        "empty": {
+            "title": "Your wallet opens with your first payout",
+            "description": "When one of your invoices gets funded, the money lands here and you can withdraw it to your bank account.",
+            "action": "See my invoices"
+        },
+        "error": {
+            "title": "We couldn't load your wallet",
+            "message": "Check your connection and try again in a few seconds."
+        }
     }
 }

@@ -606,5 +606,38 @@
             "change": "Cambiar el logo",
             "alt": "Logo de {{name}}"
         }
+    },
+    "finance": {
+        "title": "Billetera",
+        "loading": "Cargando tu billetera",
+        "panel": {
+            "inTransit": "En camino",
+            "inTransitCount_one": "{{count}} factura en proceso",
+            "inTransitCount_other": "{{count}} facturas en proceso",
+            "inTransitNone": "ninguna factura en proceso",
+            "available": "Disponible para retirar"
+        },
+        "movements": {
+            "title": "Movimientos",
+            "summary": "{{shown}} de {{total}} movimientos",
+            "types": {
+                "ADELANTO": "Cobro de factura",
+                "RECARGA": "Recarga",
+                "INVERSION": "Inversión",
+                "RETIRO": "Retiro",
+                "COMISION": "Comisión Vankoo",
+                "unknown": "Movimiento"
+            },
+            "adelantoDetail": "Subasta fondeada · {{date}}"
+        },
+        "empty": {
+            "title": "Tu billetera se abre con tu primer cobro",
+            "description": "Cuando una de tus facturas se financie, el dinero entra aquí y podrás retirarlo a tu cuenta bancaria.",
+            "action": "Ver mis facturas"
+        },
+        "error": {
+            "title": "No pudimos cargar tu billetera",
+            "message": "Revisa tu conexión e inténtalo de nuevo en unos segundos."
+        }
     }
 }

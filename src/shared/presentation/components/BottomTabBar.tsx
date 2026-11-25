@@ -3,6 +3,7 @@ import type {ComponentType} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router';
 import {cn} from '@/lib/utils';
+import {financePaths} from '../../../finance/presentation/finance-paths';
 import {invoicingPaths} from '../../../invoicing/presentation/invoicing-paths';
 import {profilePaths} from '../../../profile/presentation/profile-paths';
 
@@ -60,7 +61,7 @@ export function BottomTabBar() {
         <nav className="bg-surface-raised border-border-subtle fixed inset-x-0 bottom-0 z-30 flex justify-between border-t px-4 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] lg:hidden">
             <BottomTab icon={House} label={t('common.nav.home')} to="/" />
             <BottomTab icon={FileText} label={t('common.nav.invoices')} to={invoicingPaths.myInvoices()} end={false} />
-            <BottomTab icon={Wallet} label={t('common.nav.wallet')} />
+            <BottomTab icon={Wallet} label={t('common.nav.wallet')} to={financePaths.myWallet()} />
             <BottomTab icon={User} label={t('common.nav.profile')} to={profilePaths.myCompany()} />
         </nav>
     );
