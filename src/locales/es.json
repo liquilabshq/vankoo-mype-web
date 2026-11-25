@@ -309,11 +309,49 @@
         }
     },
     "home": {
-        "title": "Sesión iniciada",
-        "signedInAs": "Entraste como <strong>{{email}}</strong>.",
-        "roles": "Roles",
-        "expiresAt": "La sesión caduca",
-        "placeholder": "Pantalla provisional. El panel de la MYPE llega cuando se diseñen facturas, perfil y billetera."
+        "greeting": "Hola, {{name}}",
+        "title": "Inicio",
+        "loading": "Cargando tu resumen…",
+        "kpis": {
+            "label": "Tus facturas en cifras",
+            "total": "Facturas subidas",
+            "totalCaption_one": "{{count}} este mes",
+            "totalCaption_other": "{{count}} este mes",
+            "inReview": "En revisión",
+            "inReviewCaption_zero": "Ninguna espera tu acción",
+            "inReviewCaption_one": "{{count}} espera tu acción",
+            "inReviewCaption_other": "{{count}} esperan tu acción",
+            "inAuction": "En subasta",
+            "inAuctionCaption": "Abiertas a inversionistas",
+            "funded": "Fondeadas",
+            "fundedCaption": "Cubiertas por completo",
+            "notEligible": "No elegibles",
+            "notEligibleCaption": "No se pueden financiar",
+            "submitted": "Monto enviado",
+            "submittedCaption": "Suma de las facturas ya leídas",
+            "fundedAmount": "Monto financiado",
+            "fundedAmountCaption": "Aportado por inversionistas hasta hoy"
+        },
+        "chart": {
+            "title": "Facturas por mes",
+            "description": "Subidas en los últimos 6 meses, según su estado actual",
+            "total": "Total",
+            "month": "Mes",
+            "empty": "Aún no subiste facturas en estos meses."
+        },
+        "attention": {
+            "title": "Necesitan tu atención",
+            "review": "Revisa los datos que leímos",
+            "acceptQuote": "Acepta la oferta para publicarla",
+            "reviewCta": "Revisar",
+            "acceptQuoteCta": "Ver oferta"
+        },
+        "recent": {
+            "title": "Últimas facturas",
+            "titleOthers": "Tus otras facturas",
+            "viewAll": "Ver todas",
+            "none": "No tienes otras facturas."
+        }
     },
     "notFound": {
         "title": "Esta página no existe",
