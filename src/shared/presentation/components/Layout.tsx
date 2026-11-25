@@ -4,6 +4,7 @@ import {Outlet, useLocation, useNavigate} from 'react-router';
 import {Button} from '@/components/ui/button';
 import {useIamStore} from '../../../iam/application/iam.store';
 import {iamPaths} from '../../../iam/presentation/iam-paths';
+import {financePaths} from '../../../finance/presentation/finance-paths';
 import {invoicingPaths} from '../../../invoicing/presentation/invoicing-paths';
 import {useProfileStore} from '../../../profile/application/profile.store';
 import {profilePaths} from '../../../profile/presentation/profile-paths';
@@ -19,8 +20,7 @@ import {Wordmark} from './Wordmark';
  *
  * The layout is the one place allowed to reach into a bounded context from outside,
  * and it does so through that context's store and its paths, which is the loosest
- * coupling available. The wallet has no screen yet, so its sidebar entry renders
- * inert instead of linking somewhere that would 404. The foot of the sidebar names the
+ * coupling available. The foot of the sidebar names the
  * company, as the mockups do, and falls back to the account's email until it has one.
  */
 export function Layout() {
@@ -49,7 +49,7 @@ export function Layout() {
                         to={invoicingPaths.myInvoices()}
                         end={false}
                     />
-                    <SidebarItem icon={Wallet} label={t('common.nav.wallet')} />
+                    <SidebarItem icon={Wallet} label={t('common.nav.wallet')} to={financePaths.myWallet()} />
                     <SidebarItem icon={User} label={t('common.nav.profile')} to={profilePaths.myCompany()} />
                 </nav>
 

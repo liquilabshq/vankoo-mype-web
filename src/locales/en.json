@@ -309,11 +309,49 @@
         }
     },
     "home": {
-        "title": "Signed in",
-        "signedInAs": "You are signed in as <strong>{{email}}</strong>.",
-        "roles": "Roles",
-        "expiresAt": "Session expires",
-        "placeholder": "Placeholder screen. The MYPE dashboard arrives once invoices, profile and wallet are designed."
+        "greeting": "Hi, {{name}}",
+        "title": "Home",
+        "loading": "Loading your summary…",
+        "kpis": {
+            "label": "Your invoices in numbers",
+            "total": "Invoices uploaded",
+            "totalCaption_one": "{{count}} this month",
+            "totalCaption_other": "{{count}} this month",
+            "inReview": "In review",
+            "inReviewCaption_zero": "None waiting on you",
+            "inReviewCaption_one": "{{count}} waiting on you",
+            "inReviewCaption_other": "{{count}} waiting on you",
+            "inAuction": "In auction",
+            "inAuctionCaption": "Open to investors",
+            "funded": "Funded",
+            "fundedCaption": "Fully covered",
+            "notEligible": "Not eligible",
+            "notEligibleCaption": "Cannot be funded",
+            "submitted": "Amount submitted",
+            "submittedCaption": "Sum of the invoices read so far",
+            "fundedAmount": "Amount funded",
+            "fundedAmountCaption": "Put in by investors to date"
+        },
+        "chart": {
+            "title": "Invoices by month",
+            "description": "Uploaded in the last 6 months, by current status",
+            "total": "Total",
+            "month": "Month",
+            "empty": "You did not upload invoices in these months."
+        },
+        "attention": {
+            "title": "Need your attention",
+            "review": "Check the data we read",
+            "acceptQuote": "Accept the offer to publish it",
+            "reviewCta": "Review",
+            "acceptQuoteCta": "See offer"
+        },
+        "recent": {
+            "title": "Latest invoices",
+            "titleOthers": "Your other invoices",
+            "viewAll": "View all",
+            "none": "You have no other invoices."
+        }
     },
     "notFound": {
         "title": "This page does not exist",
@@ -567,6 +605,39 @@
         "logo": {
             "change": "Change the logo",
             "alt": "{{name}} logo"
+        }
+    },
+    "finance": {
+        "title": "Wallet",
+        "loading": "Loading your wallet",
+        "panel": {
+            "inTransit": "On the way",
+            "inTransitCount_one": "{{count}} invoice in progress",
+            "inTransitCount_other": "{{count}} invoices in progress",
+            "inTransitNone": "no invoices in progress",
+            "available": "Available to withdraw"
+        },
+        "movements": {
+            "title": "Movements",
+            "summary": "{{shown}} of {{total}} movements",
+            "types": {
+                "ADELANTO": "Invoice payout",
+                "RECARGA": "Top-up",
+                "INVERSION": "Investment",
+                "RETIRO": "Withdrawal",
+                "COMISION": "Vankoo fee",
+                "unknown": "Movement"
+            },
+            "adelantoDetail": "Auction funded · {{date}}"
+        },
+        "empty": {
+            "title": "Your wallet opens with your first payout",
+            "description": "When one of your invoices gets funded, the money lands here and you can withdraw it to your bank account.",
+            "action": "See my invoices"
+        },
+        "error": {
+            "title": "We couldn't load your wallet",
+            "message": "Check your connection and try again in a few seconds."
         }
     }
 }
